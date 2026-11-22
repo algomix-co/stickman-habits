@@ -517,7 +517,7 @@ function captionBlock(t, tm, C = ctx) {
   let text = B.b.caption || '';
   if (tm.kind === 'hook') text = T.spec.hook || 'HOW DID THIS HAPPEN?';
   if (tm.kind === 'rewind') text = '';
-  let a = (B.bi === 0 || tm.kind !== 'play' && tm.kind !== 'slow') ? 1 : ss(B.t0, B.t0 + .12, t);
+  let a = (B.bi === 0 || tm.kind !== 'play' && tm.kind !== 'slow') ? 1 : ss(B.t0, B.t0 + .05, t);
   if (st.transition === 'cut') a = 1;
   let xoff = 0; if (st.transition === 'slide' && tm.kind !== 'hook') xoff = (1 - ss(B.t0, B.t0 + .35, t)) * 160 * (B.bi ? 1 : 0) - (last ? 0 : ss(B.t1 - .22, B.t1, t) * 160);
   const gold = q || tm.kind === 'hook', color = gold ? GOLD : '#dfe4e9';

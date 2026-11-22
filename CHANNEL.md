@@ -27,6 +27,22 @@ New Shorts every week. Mind the gap.
 - Every beat starts with something happening in its first second (event, bubble or value change).
 - Rotate scenes and story structures; the engine varies look and sound automatically.
 
+## The mirror cast (who viewers see themselves in)
+Every story is built so a 22-45 year old instantly finds themselves on screen. Enforced by
+`storyRules` in `brands/mind-the-gap.json` (make.js rejects specs that break it).
+- **Everyone starts identical** ("SAME PAY. SAME SALES.") so the only difference is behaviour.
+- **A: the Default** (`role: default`, listed first): what most people actually do today, named in
+  everyday words, with their real inner voice as bubbles ("just checking one thing").
+- **B: the Extreme** (`role: extreme`): the same trap taken all the way; they crash.
+- **C/D: the Alternative trap** (`role: alternative`, optional): the one who thinks they're immune or
+  chases the next shiny thing.
+- **The Winner** (`role: winner`, owns the climax): the Default plus ONE small, doable change, and named
+  after it ("PHONE AWAY", "OWN PRICE", "7AM = GYM").
+- One caption names the effect ("THAT'S ANCHORING.") and one states the change ("ONE CHANGE: ...").
+  The change is named **before** the winner pulls ahead.
+- The number measures something concrete (money kept, free hours, workouts), and the effect stays
+  realistic: small effects get small gaps.
+
 ## Story structures to rotate
 1. **Classic race**: flashy starter crashes, the steady one wins (anchoring, if-then plans).
 2. **The leader loses**: the one ahead is in the wrong game (sunk cost).

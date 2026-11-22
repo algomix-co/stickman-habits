@@ -22,6 +22,26 @@ specs/<id>.json ──► validate ──► preview sheet (approve) ──► f
 - **Lift scene rebuilt** (front view, barbell + plates scale with the character and weight).
 - **Safety checks**: text off-screen, text under the Shorts like/comment buttons, auto-shrinking labels.
 
+## Review before render (two layers)
+1. **Automatic reviewer** (`node make.js --review specs/<id>.json`, and always before a full render).
+   It renders every frame in memory and checks:
+   - label/bubble/badge overlaps and text off screen;
+   - the Shorts bottom overlay and right button strip;
+   - text under 26-27px;
+   - characters covering their own labels;
+   - labels overlapping the caption block;
+   - props crossing faces or not held by the hands;
+   - scenery lines striking through text;
+   - washed-out characters, bright backgrounds and quiet seconds early in the video;
+   - beats with nothing in their first second.
+
+   It applies automatic fixes in a loop (energy boost, leaderboard labels, smaller labels at the edges,
+   less glow, darker theme). **Any warning it cannot fix fails the review and blocks the render.**
+   Output: `out/<id>/review.json`, `out/<id>/review-strip.jpg` (32 frames across the video).
+2. **Independent visual review** of the strips plus full-resolution frames by a reviewer who did not make
+   the video: visual defects, mirror-cast relatability, scientific accuracy, channel rules and story
+   logic. Fix and repeat until every video is READY, then render.
+
 ## Pacing & liveliness (v4)
 - **Energy curve**: full energy for the first ~65% of the story, one planned breather around 70-82%
   (tension before the payoff), full again from ~1.6s before the climax to the end.

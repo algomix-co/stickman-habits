@@ -1,0 +1,227 @@
+{
+ "id": "why-you-cant-quit",
+ "brand": "mind-the-gap",
+ "scene": "dig",
+ "characters": [
+  {
+   "name": "QUITTER",
+   "color": "#5ec8ff",
+   "accessory": "cap"
+  },
+  {
+   "name": "STUBBORN",
+   "color": "#ff5a6e",
+   "accessory": "headband"
+  },
+  {
+   "name": "PIVOTER",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  }
+ ],
+ "metric": {
+  "suffix": " H",
+  "scale": 0.9,
+  "max": 900
+ },
+ "counter": {
+  "label": "MONTH",
+  "start": 0
+ },
+ "footnote": "Illustrative · hours in the current idea · sunk cost fallacy",
+ "upload": {
+  "title": "Why You Can't Quit",
+  "description": "\"I've come too far to stop now.\" That's the sunk cost fallacy talking. Three people, three holes, one gold mine. Which one are you? (Illustrative numbers.)",
+  "hashtags": [
+   "psychology",
+   "brainscience",
+   "mindset",
+   "shorts",
+   "sunkcost",
+   "decisions"
+  ]
+ },
+ "beats": [
+  {
+   "dur": 2.6,
+   "caption": "THREE IDEAS. ONE GOLD MINE.",
+   "counter": 0,
+   "bubbles": [
+    {
+     "who": "QUITTER",
+     "text": "this'll be easy.",
+     "at": 0.5
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "QUITTER DIGS. GETS BORED.",
+   "counter": 2,
+   "values": {
+    "QUITTER": 60,
+    "STUBBORN": 120,
+    "PIVOTER": 100
+   },
+   "bubbles": [
+    {
+     "who": "QUITTER",
+     "text": "next idea!",
+     "at": 1.4
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "PIVOTER TESTS. NO GOLD.",
+   "counter": 4,
+   "values": {
+    "PIVOTER": 160,
+    "QUITTER": 20,
+    "STUBBORN": 220
+   },
+   "curves": {
+    "QUITTER": "early"
+   },
+   "states": {
+    "QUITTER": "idle"
+   },
+   "bubbles": [
+    {
+     "who": "PIVOTER",
+     "text": "data says no.",
+     "at": 0.4
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "SO PIVOTER MOVES ON.",
+   "counter": 5,
+   "values": {
+    "PIVOTER": 0,
+    "STUBBORN": 300
+   },
+   "curves": {
+    "PIVOTER": "early"
+   },
+   "events": [
+    {
+     "type": "marker",
+     "who": "PIVOTER",
+     "text": "NEW HOLE",
+     "at": 1.0,
+     "dur": 1.8,
+     "color": "#36e0c8",
+     "dx": 0,
+     "dy": 230
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "STUBBORN",
+     "text": "I've come too far.",
+     "at": 0.8
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "STUBBORN DIGS DEEPER.",
+   "counter": 9,
+   "values": {
+    "STUBBORN": 600,
+    "PIVOTER": 250,
+    "QUITTER": 40
+   },
+   "states": {
+    "QUITTER": "sad"
+   },
+   "bubbles": [
+    {
+     "who": "STUBBORN",
+     "text": "can't stop now.",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "BUT THERE WAS NO GOLD.",
+   "counter": 12,
+   "values": {
+    "STUBBORN": 600,
+    "PIVOTER": 420
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "STUBBORN",
+     "at": 0.3
+    }
+   ],
+   "tags": {
+    "STUBBORN": "600 H SUNK"
+   }
+  },
+  {
+   "dur": 3.8,
+   "caption": "PIVOTER HITS GOLD.",
+   "counter": 18,
+   "curve": "accel",
+   "values": {
+    "PIVOTER": 900
+   },
+   "states": {
+    "PIVOTER": "win"
+   },
+   "stateAt": {
+    "PIVOTER": 3.6
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "PIVOTER",
+     "at": 3.65
+    },
+    {
+     "type": "marker",
+     "who": "PIVOTER",
+     "text": "GOLD",
+     "at": 3.7,
+     "dur": 6.5,
+     "color": "#ffc53d",
+     "dx": 0,
+     "dy": 250
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "QUITTER",
+     "text": "wait, that was easy?",
+     "at": 0.5
+    }
+   ]
+  },
+  {
+   "dur": 3.4,
+   "caption": "SAME EFFORT. DIFFERENT HOLES.",
+   "dim": [
+    "STUBBORN",
+    "QUITTER"
+   ],
+   "tags": {
+    "PIVOTER": {
+     "text": "TOP",
+     "color": "#36e0c8"
+    },
+    "QUITTER": "6 HOLES. NO DEPTH."
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

@@ -1,5 +1,7 @@
 # Stickman Habits: Shorts Factory
 
+Engine for the **Mind the Gap** channel ([@mindDgap](https://www.youtube.com/@mindDgap)). Channel positioning, title rules and story backlog: [CHANNEL.md](CHANNEL.md). Channel brand: `brands/mind-the-gap.json`. Channel stories: `specs/`. Earlier demo stories from other niches: `examples/specs/`.
+
 Turns a short **story spec (JSON)** into a finished 1080×1920 vertical video in the
 "neon archetypes" format: colour-coded stick-figure characters, one visual metaphor, a ticking
 number, a time counter, early leader crashes, consistent one wins, *"WHICH ONE ARE YOU?"*.
@@ -108,6 +110,8 @@ Also needs `ffmpeg` and the **Inter** font installed on the machine.
 **Variation history:** `brands/<brand>.history.json` is written after every full render and steers the next
 video's style away from recent ones. Commit it after you publish, so the next session (or teammate) knows
 what the channel has already used.
+
+**Titles:** a brand can cap title length with `"titleMaxWords"` (Mind the Gap: 5); `make.js` rejects longer titles.
 
 **Characters per video:** 2 to 5. With 5, numbers switch to short form (5.5K) and the style picker prefers
 the leaderboard layout where the scene supports it. All six scenes are tested with 5 characters.

@@ -1,0 +1,234 @@
+{
+ "id": "why-you-check-your-phone",
+ "brand": "mind-the-gap",
+ "scene": "race",
+ "characters": [
+  {
+   "name": "PINGED",
+   "color": "#ff5a6e",
+   "accessory": "headphones"
+  },
+  {
+   "name": "SCROLLER",
+   "color": "#b98cff",
+   "accessory": "cap"
+  },
+  {
+   "name": "BATCHER",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  }
+ ],
+ "metric": {
+  "suffix": " H",
+  "scale": 0.85,
+  "max": 90
+ },
+ "counter": {
+  "label": "DAY",
+  "start": 1
+ },
+ "footnote": "Illustrative · deep-work hours · variable rewards",
+ "upload": {
+  "title": "Why You Check Your Phone",
+  "description": "Every ping is a tiny slot machine. Your brain craves the maybe (variable rewards), and it costs you more than you think. Which one are you? (Illustrative numbers.)",
+  "hashtags": [
+   "psychology",
+   "brainscience",
+   "mindset",
+   "shorts",
+   "dopamine",
+   "focus"
+  ]
+ },
+ "beats": [
+  {
+   "dur": 2.6,
+   "caption": "SAME JOB. SAME PHONE.",
+   "counter": 1,
+   "bubbles": [
+    {
+     "who": "PINGED",
+     "text": "just checking...",
+     "at": 0.5
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "EVERY PING IS A SLOT MACHINE.",
+   "counter": 3,
+   "values": {
+    "PINGED": 2,
+    "SCROLLER": 1.5,
+    "BATCHER": 8
+   },
+   "events": [
+    {
+     "type": "marker",
+     "who": "PINGED",
+     "text": "PING!",
+     "at": 0.2,
+     "dur": 0.8,
+     "color": "#ff5a6e"
+    },
+    {
+     "type": "marker",
+     "who": "PINGED",
+     "text": "PING!",
+     "at": 1.3,
+     "dur": 0.8,
+     "color": "#ff5a6e"
+    },
+    {
+     "type": "marker",
+     "who": "PINGED",
+     "text": "PING!",
+     "at": 2.2,
+     "dur": 0.7,
+     "color": "#ff5a6e"
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "SCROLLER",
+     "text": "one more swipe...",
+     "at": 0.7
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "YOUR BRAIN CRAVES THE MAYBE.",
+   "counter": 7,
+   "values": {
+    "PINGED": 6,
+    "SCROLLER": 4,
+    "BATCHER": 21
+   },
+   "events": [
+    {
+     "type": "shake",
+     "who": "PINGED",
+     "at": 0.3
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "BATCHER",
+     "text": "phone's in the drawer.",
+     "at": 0.6
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "SCROLLER LOSES A WHOLE DAY.",
+   "counter": 10,
+   "values": {
+    "SCROLLER": 5,
+    "PINGED": 8,
+    "BATCHER": 30
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "SCROLLER",
+     "at": 0.3
+    }
+   ],
+   "tags": {
+    "SCROLLER": "DOOMSCROLLING"
+   }
+  },
+  {
+   "dur": 3.4,
+   "caption": "PINGED NEVER FINISHES ANYTHING.",
+   "counter": 18,
+   "values": {
+    "PINGED": 12,
+    "BATCHER": 50
+   },
+   "bubbles": [
+    {
+     "who": "PINGED",
+     "text": "wait, where was I?",
+     "at": 0.4
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "BATCHER CHECKS 3 TIMES A DAY.",
+   "counter": 24,
+   "curve": "linear",
+   "values": {
+    "BATCHER": 68,
+    "PINGED": 14
+   },
+   "bubbles": [
+    {
+     "who": "BATCHER",
+     "text": "notifications: off.",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "dur": 3.8,
+   "caption": "FOCUS COMPOUNDS.",
+   "counter": 30,
+   "curve": "accel",
+   "values": {
+    "BATCHER": 90,
+    "PINGED": 15
+   },
+   "states": {
+    "PINGED": "shock",
+    "BATCHER": "win"
+   },
+   "stateAt": {
+    "PINGED": 1.2,
+    "BATCHER": 3.6
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "BATCHER",
+     "at": 3.65
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "PINGED",
+     "text": "how?!",
+     "at": 1.3,
+     "dur": 1.6
+    }
+   ]
+  },
+  {
+   "dur": 3.4,
+   "caption": "SAME PHONE. DIFFERENT MONTHS.",
+   "states": {
+    "PINGED": "sad"
+   },
+   "dim": [
+    "PINGED",
+    "SCROLLER"
+   ],
+   "tags": {
+    "BATCHER": {
+     "text": "TOP",
+     "color": "#36e0c8"
+    },
+    "PINGED": "ALWAYS ON"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

@@ -1,0 +1,254 @@
+{
+ "id": "that-sale-price-fooled-you",
+ "brand": "mind-the-gap",
+ "scene": "towers",
+ "characters": [
+  {
+   "name": "ANCHORED",
+   "color": "#ff9e7a",
+   "accessory": "cap"
+  },
+  {
+   "name": "IMPULSE",
+   "color": "#ff5a6e",
+   "accessory": "headphones"
+  },
+  {
+   "name": "BUNDLER",
+   "color": "#b98cff",
+   "accessory": "beanie"
+  },
+  {
+   "name": "CHECKER",
+   "color": "#ffc53d",
+   "accessory": "glasses"
+  }
+ ],
+ "start": {
+  "ANCHORED": 300,
+  "IMPULSE": 300,
+  "BUNDLER": 300,
+  "CHECKER": 300
+ },
+ "metric": {
+  "prefix": "$",
+  "compact": false,
+  "scale": 0.75
+ },
+ "counter": {
+  "label": "MONTH",
+  "start": 1
+ },
+ "footnote": "Illustrative · money kept from $300/mo spare · anchoring",
+ "upload": {
+  "title": "That Sale Price Fooled You",
+  "description": "\"Was $200, now $99\" works because the first number you see becomes your anchor. Four shoppers, one year. Which one are you? (Illustrative numbers.)",
+  "hashtags": [
+   "psychology",
+   "brainscience",
+   "mindset",
+   "shorts",
+   "anchoring",
+   "money"
+  ]
+ },
+ "beats": [
+  {
+   "dur": 2.6,
+   "caption": "SAME PAYCHECK. SAME SHOPS.",
+   "counter": 1,
+   "events": [
+    {
+     "type": "rain",
+     "at": 0.15,
+     "count": 6,
+     "interval": 0.3
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "WAS $200. NOW $99.",
+   "counter": 2,
+   "values": {
+    "ANCHORED": 380,
+    "IMPULSE": 450,
+    "BUNDLER": 500,
+    "CHECKER": 600
+   },
+   "events": [
+    {
+     "type": "marker",
+     "who": "ANCHORED",
+     "text": "−$99",
+     "at": 0.4,
+     "dur": 1.6
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "ANCHORED",
+     "text": "what a steal!",
+     "at": 0.6
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THE FIRST PRICE IS THE TRAP.",
+   "counter": 3,
+   "values": {
+    "ANCHORED": 520,
+    "IMPULSE": 600,
+    "BUNDLER": 700,
+    "CHECKER": 900
+   },
+   "bubbles": [
+    {
+     "who": "CHECKER",
+     "text": "was it ever $200?",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "IMPULSE SEES A COUNTDOWN.",
+   "counter": 4,
+   "values": {
+    "IMPULSE": 250,
+    "ANCHORED": 650,
+    "BUNDLER": 850,
+    "CHECKER": 1200
+   },
+   "curves": {
+    "IMPULSE": "early"
+   },
+   "states": {
+    "IMPULSE": "throw"
+   },
+   "events": [
+    {
+     "type": "fling",
+     "who": "IMPULSE",
+     "at": 0.5
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "IMPULSE",
+     "text": "only 2 left!!",
+     "at": 0.2
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "BUNDLER BUYS 3 FOR 2.",
+   "counter": 7,
+   "values": {
+    "BUNDLER": 1300,
+    "ANCHORED": 1000,
+    "IMPULSE": 400,
+    "CHECKER": 1900
+   },
+   "states": {
+    "IMPULSE": "idle"
+   },
+   "events": [
+    {
+     "type": "marker",
+     "who": "BUNDLER",
+     "text": "3 FOR 2",
+     "at": 0.3,
+     "dur": 1.6,
+     "color": "#b98cff"
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "BUNDLER",
+     "text": "the third one's free!",
+     "at": 1.0
+    }
+   ]
+  },
+  {
+   "dur": 3.2,
+   "caption": "THEN BLACK FRIDAY HITS.",
+   "counter": 11,
+   "values": {
+    "IMPULSE": 0,
+    "ANCHORED": 1400,
+    "BUNDLER": 1700,
+    "CHECKER": 2700
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "IMPULSE",
+     "at": 0.3
+    },
+    {
+     "type": "shake",
+     "who": "ANCHORED",
+     "at": 1.5
+    }
+   ],
+   "tags": {
+    "IMPULSE": "MAXED OUT"
+   }
+  },
+  {
+   "dur": 3.6,
+   "caption": "CHECKER WAITS 48 HOURS.",
+   "counter": 12,
+   "curve": "accel",
+   "values": {
+    "CHECKER": 3000,
+    "ANCHORED": 1500,
+    "BUNDLER": 1800
+   },
+   "states": {
+    "CHECKER": "win"
+   },
+   "stateAt": {
+    "CHECKER": 3.4
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "CHECKER",
+     "at": 3.45
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "CHECKER",
+     "text": "still want it? nope.",
+     "at": 0.4
+    }
+   ]
+  },
+  {
+   "dur": 3.4,
+   "caption": "SAME PAY. DIFFERENT SAVINGS.",
+   "dim": [
+    "IMPULSE",
+    "ANCHORED"
+   ],
+   "tags": {
+    "CHECKER": {
+     "text": "TOP",
+     "color": "#ffc53d"
+    },
+    "ANCHORED": "FELL FOR IT"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

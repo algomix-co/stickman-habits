@@ -631,7 +631,7 @@ function drawEndcard(u) {
   drawAccessory(ctx, ec.accessory || look.accessory, cx, cy, r * 0.86, 0, u * 3, ec.accent || look.accent || col);
   ctx.restore();
   ctx.save(); ctx.translate(540, 1180); const tp = lerp(1.6, 1, easeBack(ss(0.15, 0.45, u))); ctx.scale(tp, tp); spaced(ctx, ec.title || '', 0, 0, '800 66px Inter', '#ffffff', 3, ss(0.15, 0.3, u), 10); ctx.restore();
-  const pa = ss(0.4, 0.6, u), pp = 1 + 0.06 * Math.sin(u * 30); if (pa > 0) { ctx.save(); ctx.globalAlpha = pa; ctx.translate(540, 1320); ctx.scale(pp, pp); ctx.fillStyle = ec.color || GOLD; ctx.beginPath(); ctx.roundRect(-170, -34, 340, 64, 32); ctx.fill(); ctx.restore(); spaced(ctx, ec.cta || 'FOLLOW FOR MORE', 540, 1330, '800 26px Inter', INK, 3, pa); }
+  const pa = ss(0.4, 0.6, u), pp = 1 + 0.06 * Math.sin(u * 30); if (pa > 0) { ctx.save(); ctx.globalAlpha = pa; ctx.translate(540, 1320); ctx.scale(pp, pp); const cta = ec.cta || 'FOLLOW FOR MORE'; ctx.font = '800 26px Inter'; ctx.letterSpacing = '2px'; const pw = ctx.measureText(cta).width + 64; ctx.fillStyle = ec.color || GOLD; ctx.beginPath(); ctx.roundRect(-pw / 2, -34, pw, 64, 32); ctx.fill(); ctx.restore(); spaced(ctx, cta, 540, 1330, '800 26px Inter', INK, 2, pa); }
   spaced(ctx, ec.tagline || '', 540, 1236, '500 26px Inter', '#9aa7b8', 4, ss(0.25, 0.5, u));
 }
 

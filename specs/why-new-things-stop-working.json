@@ -1,0 +1,229 @@
+{
+ "id": "why-new-things-stop-working",
+ "brand": "mind-the-gap",
+ "scene": "climb",
+ "characters": [
+  {
+   "name": "UPGRADER",
+   "color": "#ff9e7a",
+   "accessory": "cap"
+  },
+  {
+   "name": "COMPARER",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "SAVORER",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  }
+ ],
+ "start": {
+  "UPGRADER": 40,
+  "COMPARER": 40,
+  "SAVORER": 40
+ },
+ "metric": {
+  "suffix": "%",
+  "scale": 1.0,
+  "max": 100
+ },
+ "counter": {
+  "label": "MONTH",
+  "start": 0
+ },
+ "footnote": "Illustrative · happiness score · hedonic adaptation",
+ "upload": {
+  "title": "Why New Things Stop Working",
+  "description": "The new phone feels amazing, for about two weeks. Then your brain resets to normal (hedonic adaptation). Three ways to chase happiness. Which one are you? (Illustrative numbers.)",
+  "hashtags": [
+   "psychology",
+   "brainscience",
+   "mindset",
+   "shorts",
+   "happiness",
+   "dopamine"
+  ]
+ },
+ "beats": [
+  {
+   "dur": 2.6,
+   "caption": "EVERYONE WANTS TO BE HAPPIER.",
+   "counter": 0,
+   "bubbles": [
+    {
+     "who": "UPGRADER",
+     "text": "new phone = happy.",
+     "at": 0.5
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "UPGRADER BUYS THE NEW PHONE.",
+   "counter": 1,
+   "values": {
+    "UPGRADER": 80,
+    "COMPARER": 38,
+    "SAVORER": 44
+   },
+   "curves": {
+    "UPGRADER": "decel"
+   },
+   "events": [
+    {
+     "type": "marker",
+     "who": "UPGRADER",
+     "text": "+ NEW PHONE",
+     "at": 0.3,
+     "dur": 1.6,
+     "color": "#ffc53d",
+     "dx": 0,
+     "dy": -60
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "TWO WEEKS LATER...",
+   "counter": 2,
+   "values": {
+    "UPGRADER": 46,
+    "SAVORER": 48
+   },
+   "bubbles": [
+    {
+     "who": "UPGRADER",
+     "text": "huh. it's just a phone.",
+     "at": 0.5
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "SO UPGRADER BUYS A CAR.",
+   "counter": 4,
+   "values": {
+    "UPGRADER": 85,
+    "COMPARER": 30,
+    "SAVORER": 53
+   },
+   "curves": {
+    "UPGRADER": "decel"
+   },
+   "events": [
+    {
+     "type": "marker",
+     "who": "UPGRADER",
+     "text": "+ NEW CAR",
+     "at": 0.3,
+     "dur": 1.5,
+     "color": "#ffc53d",
+     "dx": 0,
+     "dy": -60
+    },
+    {
+     "type": "shake",
+     "who": "COMPARER",
+     "at": 1.4
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "COMPARER",
+     "text": "everyone's richer.",
+     "at": 1.6
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "YOUR BRAIN RESETS. AGAIN.",
+   "counter": 6,
+   "values": {
+    "UPGRADER": 47,
+    "SAVORER": 60
+   },
+   "tags": {
+    "UPGRADER": "TREADMILL"
+   },
+   "bubbles": [
+    {
+     "who": "SAVORER",
+     "text": "this coffee is great.",
+     "at": 0.4
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "COMPARER CAN'T KEEP UP.",
+   "counter": 8,
+   "values": {
+    "COMPARER": 15,
+    "SAVORER": 66
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "COMPARER",
+     "at": 0.3
+    }
+   ],
+   "tags": {
+    "COMPARER": "BURNED OUT"
+   }
+  },
+  {
+   "dur": 3.8,
+   "caption": "SMALL JOYS, SAVORED, ADD UP.",
+   "counter": 12,
+   "curve": "accel",
+   "values": {
+    "SAVORER": 90,
+    "UPGRADER": 50
+   },
+   "states": {
+    "SAVORER": "win"
+   },
+   "stateAt": {
+    "SAVORER": 3.6
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "SAVORER",
+     "at": 3.65
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "UPGRADER",
+     "text": "what's the secret?",
+     "at": 0.6
+    }
+   ]
+  },
+  {
+   "dur": 3.4,
+   "caption": "SAME YEAR. DIFFERENT HAPPY.",
+   "dim": [
+    "COMPARER",
+    "UPGRADER"
+   ],
+   "tags": {
+    "SAVORER": {
+     "text": "TOP",
+     "color": "#36e0c8"
+    },
+    "UPGRADER": "BACK TO 50%"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

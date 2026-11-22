@@ -62,7 +62,7 @@ function pickStyle(spec, brand, history) {
 }
 
 // ---------------------------------------------------------------- validation
-function validate(s) {
+function validate(s, brand = {}) {
   const E = [], Wn = [], need = (c, m) => { if (!c) E.push(m); };
   need(s.id && /^[a-z0-9-]+$/.test(s.id), 'id must be lowercase-kebab');
   need(SCENES.includes(s.scene), `scene must be one of ${SCENES.join(', ')}`);
@@ -87,6 +87,7 @@ function validate(s) {
   const last = (s.beats || [])[s.beats.length - 1];
   if (last && last.style !== 'question') Wn.push('last beat is not style:"question"');
   need(s.upload && s.upload.title && s.upload.title.length <= 100, 'upload.title required (<= 100 chars)');
+  if (s.upload && s.upload.title && brand.titleMaxWords) { const words = s.upload.title.split(/\s+/).filter(w => /[A-Za-z0-9]/.test(w)).length; need(words <= brand.titleMaxWords, `title "${s.upload.title}" has ${words} words; the ${brand.name} brand allows ${brand.titleMaxWords}`); }
   return { errors: E, warnings: Wn };
 }
 const readJSON = p => JSON.parse(fs.readFileSync(p, 'utf8'));
@@ -115,7 +116,7 @@ async function sheet(page, times, cols) {
     const brandPath = opt('--brand') || (spec.brand ? path.join(ROOT, 'brands', spec.brand + '.json') : path.join(ROOT, 'brands', 'default.json'));
     const brand = fs.existsSync(brandPath) ? readJSON(brandPath) : {};
     const histPath = brandPath.replace(/\.json$/, '.history.json'), history = (fs.existsSync(histPath) ? readJSON(histPath) : []).concat(session.filter(h => h.brand === brandPath));
-    const v = validate(spec);
+    const v = validate(spec, brand);
     console.log(`\n== ${spec.id || file} (${spec.scene}, brand: ${brand.name || 'none'})`);
     if (v.errors.length) { v.errors.forEach(e => console.log('  ERROR:', e)); failed++; continue; }
     const out = path.join(ROOT, 'out', spec.id); fs.mkdirSync(out, { recursive: true });

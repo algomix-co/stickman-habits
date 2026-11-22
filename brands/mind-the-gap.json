@@ -1,0 +1,47 @@
+{
+ "name": "Mind the Gap",
+ "handle": "@mindDgap",
+ "titleMaxWords": 5,
+ "character": {
+  "body": "bean",
+  "face": true,
+  "lineStyle": "neon",
+  "accent": "#ffffff",
+  "winnerCrown": false
+ },
+ "endcard": {
+  "title": "MIND THE GAP",
+  "tagline": "OUTSMART YOUR OWN BRAIN",
+  "cta": "FOLLOW @mindDgap",
+  "color": "#36e0c8",
+  "accessory": "glasses",
+  "look": {
+   "body": "bean"
+  }
+ },
+ "music": {
+  "motif": [
+   0,
+   5,
+   7,
+   12
+  ]
+ },
+ "sheetCharacters": [
+  {
+   "name": "A",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  },
+  {
+   "name": "B",
+   "color": "#ff5a6e",
+   "accessory": "headphones"
+  },
+  {
+   "name": "C",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  }
+ ]
+}

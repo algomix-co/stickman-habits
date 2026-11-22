@@ -71,7 +71,6 @@ SCENES.climb = {
   freeUpper(i, t) { return this.hip(i, t) > this.stand - 8; },
   setup(T) { this.xs = colsX(T.chars.length, 270); this.BAR = T.style.labels === 'board' ? 660 : 560; this.F = FLOOR_MAX; this.stand = this.F - 72.5 * this.K; this.high = this.BAR + 115 * this.K; },
   floorY() { return this.F; },
-  labelTop(i, top) { const B = this.BAR; return (top > B - 30 && top - 210 < B) ? B - 30 : top; },   // world units: lift the whole stack above the crossbar
   extent() { return { x0: this.xs[0] - 130, x1: this.xs[this.xs.length - 1] + 130, y0: this.BAR - 40, y1: this.F + 12 }; },
   hipAt(i, t) { return lerp(this.stand, this.high, fracAt(i, t)); },
   hip(i, t) { const since = fallStart(i, t); if (since != null) { const y0 = this.hipAt(i, since), u = clamp((t - since) / 0.6); return lerp(y0, this.F - 14 * this.K, u * u); } return this.hipAt(i, t); },
@@ -79,7 +78,7 @@ SCENES.climb = {
   activePose(i, t) { const y = this.hip(i, t); return blendPose(POSES.stand, climbPose(y / (11 * this.K) + t * 3.2 * energyAt(t)), ss(this.stand - 5, this.stand - 45, y)); },
   draw(c, t) {
     const x0 = this.xs[0] - 125, x1 = this.xs[this.xs.length - 1] + 125;
-    c.fillStyle = 'rgba(255,255,255,0.7)'; c.fillRect(x0, this.BAR - 3, x1 - x0, 6); floorLine(c, this.F);
+    c.fillStyle = 'rgba(255,255,255,0.7)'; c.fillRect(x0, this.BAR - 3, x1 - x0, 6); floorLine(c, this.F); if (T.__lines) T.__lines.push({ y: this.BAR, x0, x1 });
     charsDo((ch, i) => {
       const x = this.xs[i];
       c.strokeStyle = 'rgba(214,180,130,0.55)'; c.lineWidth = 6; c.beginPath(); c.moveTo(x, this.BAR); c.lineTo(x, this.F - 4); c.stroke();
@@ -105,7 +104,7 @@ SCENES.pullup = {
   winPose() { return PULL; },
   draw(c, t) {
     const x0 = this.xs[0] - 145, x1 = this.xs[this.xs.length - 1] + 145;
-    c.fillStyle = 'rgba(255,255,255,0.8)'; c.fillRect(x0, this.BAR - 3, x1 - x0, 7);
+    c.fillStyle = 'rgba(255,255,255,0.8)'; c.fillRect(x0, this.BAR - 3, x1 - x0, 7); if (T.__lines) T.__lines.push({ y: this.BAR, x0, x1 });
     c.fillStyle = 'rgba(255,255,255,0.45)'; c.fillRect(x0, this.BAR, 5, this.F - this.BAR); c.fillRect(x1 - 5, this.BAR, 5, this.F - this.BAR); floorLine(c, this.F);
     return charsDo((ch, i) => {
       const p = this.place(i, t), anchor = tt => { const d = this.dropped(i, tt), pp = this.place(i, tt); return d == null ? { mode: 'hands', x: this.xs[i], y: this.BAR } : { mode: 'feet', x: this.xs[i], y: pp.feet }; };
@@ -117,7 +116,7 @@ SCENES.pullup = {
 // ---------------------------------------------------------------- lift (front view: barbell and plates scale with the character)
 const LIFT_DOWN = { la: [-0.16, -0.02], ra: [0.16, 0.02], ll: [-0.95, 0.3], rl: [0.95, -0.3], lean: 0, drop: 0.25 };
 const LIFT_UP = { la: [-0.16, -0.06], ra: [0.16, 0.06], ll: [-0.12, -0.04], rl: [0.12, 0.04], lean: 0, drop: -0.1 };
-const LIFT_OVER = { la: [-2.6, -2.95], ra: [2.6, 2.95], ll: [-0.2, -0.1], rl: [0.2, 0.1], lean: 0, drop: -0.35 };
+const LIFT_RACK = { la: [-0.5, -2.7], ra: [0.5, 2.7], ll: [-0.2, -0.1], rl: [0.2, 0.1], lean: 0, drop: -0.35 };   // winner: bar held at chest, hands on the bar (an overhead bar would cross the big heads)
 SCENES.lift = {
   facing: 'front', upperBodyFree: false,   // hands stay on the bar: reactions and fidgets use the legs
   setup(T) { const n = T.chars.length; this.sp = Math.min(300, 920 / n); this.xs = colsX(n, 300); this.s = clamp(this.sp / 165, 0.9, 1.8); this.F = 1450; },
@@ -126,7 +125,7 @@ SCENES.lift = {
   place(i, t) { return { x: this.xs[i], top: this.F - (figH() + 18) * this.s, s: this.s, floor: this.F }; },
   activePose(i, t) { const p = 0.5 - 0.5 * Math.cos(2 * Math.PI * phaseInt(i, t, 3.2, 0.45, 1.6)); return blendPose(LIFT_UP, blendPose(LIFT_DOWN, LIFT_UP, p), Math.max(moving(i, t), 0.8 * energyAt(t))); },
   idlePose() { return LIFT_UP; },
-  winPose() { return LIFT_OVER; },
+  winPose() { return LIFT_RACK; },
   plates(i, t) { const f = clamp(value(i, t) / T.maxV), n = Math.round(f * 4), out = []; for (let k = 0; k < n; k++) out.push([1, 0.92, 0.8, 0.68, 0.52, 0.42][k]); return out; },
   draw(c, t) {
     floorLine(c, this.F);
@@ -137,8 +136,7 @@ SCENES.lift = {
       const half = collar + Math.max(3, plates.length) * sleeve + 6 * s, big = plates.length ? plates[0] * PR : 0.4 * PR;
       let cx = (J.lhand[0] + J.rhand[0]) / 2, by = (J.lhand[1] + J.rhand[1]) / 2;
       if (down) { cx = this.xs[i] + 8 * s; by = this.F - big; } else by = Math.min(by, this.F - big);
-      if ((st === 'win' || st === 'boast') && !window.__noOverheadFix) { const j = T.__joints && T.__joints[i]; if (j) by = Math.min(by, j.head[1] - j.hr - big - 10 * s); }   // overhead: above the head, not across the face
-      if (T.__props && !down) T.__props.push({ i, x0: cx - half, y0: by, x1: cx + half, y1: by });
+      if (T.__props && !down) T.__props.push({ i, x0: cx - half, y0: by, x1: cx + half, y1: by, held: true });
       if (T.__joints && T.__joints[i]) T.__joints[i].minY = Math.min(T.__joints[i].minY, by - big - 6 * s);
       c.save(); c.globalAlpha = a; c.lineCap = 'round';
       c.strokeStyle = '#d7dde4'; c.lineWidth = 5 * s; c.beginPath(); c.moveTo(cx - half, by); c.lineTo(cx + half, by); c.stroke();

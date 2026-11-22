@@ -560,13 +560,13 @@ function rectOf(owner, text, x, y, font, sp) { sc.font = font; sc.letterSpacing 
 const ownerName = o => o >= 300 ? 'LEADERBOARD' : (T.chars[o % 100] || { name: '?' }).name + (o >= 200 ? ' marker' : o >= 100 ? ' badge' : '');
 function qaLayout(t, P) {
   for (let a = 0; a < RECTS.length; a++) for (let b = a + 1; b < RECTS.length; b++) {
-    const A = RECTS[a], B = RECTS[b]; if (A.owner === B.owner || A.owner === 300 || B.owner === 300) continue;
+    const A = RECTS[a], B = RECTS[b]; if (A.owner === B.owner || (A.owner >= 300 && B.owner >= 300)) continue;
     const ox = Math.min(A.x1, B.x1) - Math.max(A.x0, B.x0), oy = Math.min(A.y1, B.y1) - Math.max(A.y0, B.y0);
     if (ox > 3 && oy > 3) WARN.add(`labels overlap: ${ownerName(A.owner)} "${String(A.text).replace(/[0-9][0-9,.]*/g, '#')}" / ${ownerName(B.owner)} "${String(B.text).replace(/[0-9][0-9,.]*/g, '#')}"`);
   }
   P.forEach((p, i) => { if (p.x < 10 || p.x > W - 10 || p.top < 0 || p.top > H - 60) WARN.add(`character out of frame: ${T.chars[i].name}`); });
   for (const A of RECTS) {
-    if (A.owner === 300) continue;
+    if (A.owner >= 300) continue;
     if ((A.y1 - A.y0) / 0.88 < 27) WARN.add(`text too small: "${String(A.text).replace(/[0-9][0-9,.]*/g, '#')}"`);
     const nm = A.owner >= 200 ? T.chars[A.owner - 200].name : A.owner >= 100 ? T.chars[A.owner - 100].name : T.chars[A.owner].name;
     if (A.y1 > 1525) WARN.add(`text in the Shorts bottom overlay: ${nm} "${String(A.text).replace(/[0-9][0-9,.]*/g, '#')}"`);
@@ -575,7 +575,9 @@ function qaLayout(t, P) {
       if (pts.some(([x, y, r]) => x + r > A.x0 + 2 && x - r < A.x1 - 2 && y + r > A.y0 + 2 && y - r < A.y1 - 2)) WARN.add(`character covers its own label: ${nm} "${String(A.text).replace(/[0-9][0-9,.]*/g, '#')}"`); }
   }
   T.chars.forEach((ch, i) => { const j = T.__joints[i]; if (j && T.__Y(j.head[1]) > 1560) WARN.add(`character in the Shorts bottom overlay: ${ch.name}`); });
-  for (const A of RECTS) { if (A.owner === 300) continue; for (const C of CAPRECTS) if (Math.min(A.x1, C.x1) - Math.max(A.x0, C.x0) > 2 && Math.min(A.y1, C.y1) - Math.max(A.y0, C.y0) > 2) WARN.add(`label overlaps the caption block: ${ownerName(A.owner)} "${String(A.text).replace(/[0-9][0-9,.]*/g, '#')}" / "${String(C.text).slice(0, 24)}"`); }
+  for (const A of RECTS) { for (const C of CAPRECTS) if (Math.min(A.x1, C.x1) - Math.max(A.x0, C.x0) > 2 && Math.min(A.y1, C.y1) - Math.max(A.y0, C.y0) > 2) WARN.add(`label overlaps the caption block: ${ownerName(A.owner)} "${String(A.text).replace(/[0-9][0-9,.]*/g, '#')}" / "${String(C.text).slice(0, 24)}"`); }
+  for (const pr of (T.__props || [])) { const j = T.__joints[pr.i]; if (!j || !pr.held) continue; const tol = 14 * (j.hr / 27); if (j.hands.some(h => Math.abs(h[1] - pr.y0) > tol || h[0] < pr.x0 - tol || h[0] > pr.x1 + tol)) WARN.add(`prop not held by the hands: ${T.chars[pr.i].name}`); }
+  for (const ln of (T.__lines || [])) { const y = T.__Y(ln.y), x0 = T.__X(ln.x0), x1 = T.__X(ln.x1); for (const A of RECTS) { if (A.owner >= 300 || A.plated) continue; if (y > A.y0 + 3 && y < A.y1 - 3 && Math.min(A.x1, x1) - Math.max(A.x0, x0) > 4) WARN.add(`scenery line strikes through text: ${ownerName(A.owner)} "${String(A.text).replace(/[0-9][0-9,.]*/g, '#')}"`); } }
   for (const pr of (T.__props || [])) { const j = T.__joints[pr.i]; if (!j) continue; const hx = j.head[0], hy = j.head[1], r = j.hr * 0.95, dx = pr.x1 - pr.x0, dy = pr.y1 - pr.y0, L2 = dx * dx + dy * dy || 1, u = clamp(((hx - pr.x0) * dx + (hy - pr.y0) * dy) / L2), px = pr.x0 + u * dx, py = pr.y0 + u * dy; if (Math.hypot(hx - px, hy - py) < r) WARN.add(`prop crosses a face: ${T.chars[pr.i].name}`); }
   RECTS.length = 0;
 }
@@ -628,7 +630,7 @@ function drawLabels(t, P, boardTop) {
     T.chars.forEach((ch, i) => {
       const near = Math.min(1, ...pos.map((pp, j) => j === i ? 1 : Math.abs(pp - pos[i]))), y = boardTop + pos[i] * 60, a = Math.max(alphaAt(i, t), 0.8) * (0.25 + 0.75 * clamp(near / 0.7));
       sc.save(); sc.globalAlpha = a; sc.fillStyle = ch.color; sc.fillRect(x0, y - 28, 8, 34);
-      sc.font = '800 32px Inter'; sc.letterSpacing = '1px'; sc.textAlign = 'left'; sc.fillText(ch.name, x0 + 24, y); sc.textAlign = 'right'; sc.letterSpacing = '0px'; sc.font = '800 38px Inter'; sc.fillText(fmt(value(i, t)), x1, y + 2); RECTS.push({ owner: 300, text: 'board', x0: 0, x1: 0, y0: 0, y1: 0 }); sc.restore();
+      sc.font = '800 32px Inter'; sc.letterSpacing = '1px'; sc.textAlign = 'left'; sc.fillText(ch.name, x0 + 24, y); sc.textAlign = 'right'; sc.letterSpacing = '0px'; sc.font = '800 38px Inter'; sc.fillText(fmt(value(i, t)), x1, y + 2); RECTS.push({ owner: 300 + i, text: 'leaderboard ' + ch.name, x0: x0, x1: x1, y0: y - 32, y1: y + 8 }); sc.restore();
     });
   }
   for (const bb of T.bubbles) {
@@ -674,13 +676,15 @@ function drawEndcard(u) {
 }
 
 // =====================================================================================  frame
+// rough height of a character's label stack right now (screen px): name line(s), number, tag, bubble
+function stackEstimate(i, t) { const board = T.style.labels === 'board', nm = T.chars[i].name; return 50 + (nm.includes(' ') ? 36 : 0) + (board ? 0 : 76) + (tagAt(i, t) ? 46 : 0) + (T.bubbles.some(b => b.i === i && t > b.t0 - 0.2 && t < b.t1) ? 58 : 0); }
 function renderFrame(r) {
   const tm = storyAt(r), t = tm.s, st = T.style;
   const capCanvasBottom = captionBlock(t, tm, scratchC), boardOn = T.style.labels === 'board';
   const safeTop = (boardOn ? capCanvasBottom + 56 + T.chars.length * 60 : capCanvasBottom) + 30;
   const [shx, shy] = shakeAt(t, tm), cam = cameraAt(t, tm, safeTop), look = lookOf(T.chars[0]);
   const X = x => 540 + cam.dx + (x - 540) * cam.z + shx, Y = y => 960 + cam.dy + (y - 960) * cam.z + shy;
-  T.__joints = {}; T.__props = []; T.__X = X; T.__Y = Y; T.__z = cam.z; T.__kind = tm.kind;
+  T.__joints = {}; T.__props = []; T.__lines = []; T.__X = X; T.__Y = Y; T.__z = cam.z; T.__kind = tm.kind;
   sc.clearRect(0, 0, W, H);
   sc.save(); sc.translate(540 + cam.dx + shx, 960 + cam.dy + shy); sc.scale(cam.z, cam.z); sc.translate(-540, -960);
   const th = THEMES[st.theme] || THEMES.void;
@@ -689,7 +693,7 @@ function renderFrame(r) {
   const P0 = T.scene.draw(sc, t);
   drawEffects(sc, t, P0);
   sc.restore();
-  const P = P0.map((p, i) => { const j = T.__joints[i], top0 = j && !window.__disableLabelLift ? Math.min(p.top, j.minY - 24 * p.s) : p.top, top = T.scene.labelTop ? T.scene.labelTop(i, top0) : top0; return { ...p, x: X(p.x), top: Y(top), s: p.s * cam.z, floor: p.floor != null ? Y(p.floor) : null }; });
+  const P = P0.map((p, i) => { const j = T.__joints[i], top0 = j && !window.__disableLabelLift ? Math.min(p.top, j.minY - 24 * p.s) : p.top, top = T.scene.labelTop ? T.scene.labelTop(i, top0, t, stackEstimate(i, t) / p.s) : top0; return { ...p, x: X(p.x), top: Y(top), s: p.s * cam.z, floor: p.floor != null ? Y(p.floor) : null }; });
   drawConfetti(sc, t);
   const warm = T.burst ? ss(T.burst.t - 4, T.burst.t + 0.6, t) : 0;
   const FY = T.scene.floorY ? Y(T.scene.floorY(t)) : null;
@@ -711,6 +715,9 @@ function renderFrame(r) {
   // UI layer (numbers, names, tags, bubbles) drawn after the glow so text stays sharp
   sc.clearRect(0, 0, W, H);
   drawLabels(t, P, capCanvasBottom + 56);
+  for (const ln of (T.__lines || [])) { const y = T.__Y(ln.y), x0 = T.__X(ln.x0), x1 = T.__X(ln.x1);   // text crossed by a scenery line gets a dark plate behind it
+    for (const A of RECTS) { if (A.owner >= 300 || !(y > A.y0 - 6 && y < A.y1 + 6 && Math.min(A.x1, x1) - Math.max(A.x0, x0) > 0)) continue;
+      ctx.save(); ctx.fillStyle = 'rgba(5,7,11,0.92)'; ctx.beginPath(); ctx.roundRect(A.x0 - 12, A.y0 - 8, A.x1 - A.x0 + 24, A.y1 - A.y0 + 14, 10); ctx.fill(); ctx.restore(); A.plated = true; } }
   if (tm.kind === 'play' || tm.kind === 'slow' || tm.kind === 'hook') qaLayout(t, P); else RECTS.length = 0;
   ctx.drawImage(scene, 0, 0);
   captionBlock(t, tm);

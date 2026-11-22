@@ -138,6 +138,8 @@ async function reviewLoop(page, spec, brand, style0, out) {
       else if (edge.length && !crowd.some(w => /too small/.test(w)) && (style.labelScale || 1) > 0.85) { style.labelScale = +((style.labelScale || 1) * 0.94).toFixed(3); fixes.push('labels -6%'); }
       // "too small" is never fixed by shrinking; if the leaderboard is already on, a human has to shorten names/tags
     }
+    const other = st.warnings.filter(w => !crowd.includes(w) && !edge.includes(w));   // anything without an automatic fix still fails the review
+    if (other.length) issues.push(...other.slice(0, 4));
     const washed = st.washed.filter(w => w.frac > 0.3);
     if (washed.length) { issues.push('washed out: ' + washed.map(w => `${w.name} ${(w.frac * 100).toFixed(0)}%`).join(', ')); if ((style.glow != null ? style.glow : 1) > 0.3) { style.glow = +((style.glow != null ? style.glow : 1) * 0.7).toFixed(3); fixes.push('glow -30%'); } }
     if (st.bgLum > 28) { issues.push(`background too bright (${st.bgLum.toFixed(1)})`); if (style.theme !== 'void') { style.theme = 'void'; fixes.push('darker theme'); } else if ((style.glow != null ? style.glow : 1) > 0.3) { style.glow = +((style.glow != null ? style.glow : 1) * 0.8).toFixed(3); fixes.push('glow -20%'); } }

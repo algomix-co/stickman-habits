@@ -10,13 +10,13 @@
    "accessory": "cap"
   },
   {
-   "name": "ONE-CLICK",
+   "name": "HALF-PRICE",
    "role": "extreme",
    "color": "#ff5a6e",
    "accessory": "headphones"
   },
   {
-   "name": "24H RULE",
+   "name": "OWN PRICE",
    "role": "winner",
    "color": "#36e0c8",
    "accessory": "glasses"
@@ -24,8 +24,8 @@
  ],
  "start": {
   "DEAL HUNTER": 300,
-  "ONE-CLICK": 300,
-  "24H RULE": 300
+  "HALF-PRICE": 300,
+  "OWN PRICE": 300
  },
  "metric": {
   "prefix": "$",
@@ -39,7 +39,7 @@
  "footnote": "Illustrative · money kept from $300/mo spare · anchoring",
  "upload": {
   "title": "That Sale Price Fooled You",
-  "description": "\"Was $200, now $99!\" The first price you see becomes the anchor, so $99 feels like a win even if it was never worth $200. Three shoppers, one year. Which one are you? (Illustrative numbers.)",
+  "description": "\"Was $200, now $99!\" The first price you see becomes the anchor, so $99 feels like a win even if it was never worth $200. Deciding what something is worth to you before you look at the price breaks the spell. Which one are you? (Illustrative numbers.)",
   "hashtags": [
    "psychology",
    "brainscience",
@@ -68,9 +68,9 @@
    "caption": "WAS $200. NOW $99.",
    "counter": 2,
    "values": {
-    "DEAL HUNTER": 420,
-    "ONE-CLICK": 380,
-    "24H RULE": 600
+    "DEAL HUNTER": 400,
+    "HALF-PRICE": 380,
+    "OWN PRICE": 420
    },
    "events": [
     {
@@ -94,65 +94,62 @@
    "caption": "THAT'S ANCHORING.",
    "counter": 3,
    "values": {
-    "DEAL HUNTER": 560,
-    "ONE-CLICK": 450,
-    "24H RULE": 900
+    "DEAL HUNTER": 480,
+    "HALF-PRICE": 430,
+    "OWN PRICE": 520
    },
    "bubbles": [
     {
-     "who": "24H RULE",
+     "who": "OWN PRICE",
      "text": "was it ever $200?",
      "at": 0.3
     }
    ]
   },
   {
-   "dur": 3.0,
-   "caption": "ONE-CLICK SEES A COUNTDOWN.",
+   "dur": 3.2,
+   "caption": "ONE CHANGE: DECIDE YOUR PRICE FIRST.",
    "counter": 4,
    "values": {
-    "ONE-CLICK": 200,
-    "DEAL HUNTER": 700,
-    "24H RULE": 1200
+    "OWN PRICE": 900,
+    "DEAL HUNTER": 560,
+    "HALF-PRICE": 460
    },
-   "curves": {
-    "ONE-CLICK": "early"
-   },
-   "states": {
-    "ONE-CLICK": "throw"
-   },
-   "events": [
-    {
-     "type": "fling",
-     "who": "ONE-CLICK",
-     "at": 0.5
-    }
-   ],
    "bubbles": [
     {
-     "who": "ONE-CLICK",
-     "text": "only 2 left!!",
-     "at": 0.2
+     "who": "OWN PRICE",
+     "text": "what's it worth to me?",
+     "at": 0.3
     }
    ]
   },
   {
    "dur": 3.0,
-   "caption": "ONE CHANGE: WAIT 24 HOURS.",
-   "counter": 7,
+   "caption": "RRP $500. NOW $250!",
+   "counter": 6,
    "values": {
-    "24H RULE": 1900,
-    "DEAL HUNTER": 1050,
-    "ONE-CLICK": 300
+    "HALF-PRICE": 180,
+    "OWN PRICE": 1400,
+    "DEAL HUNTER": 800
+   },
+   "curves": {
+    "HALF-PRICE": "early"
    },
    "states": {
-    "ONE-CLICK": "idle"
+    "HALF-PRICE": "throw"
    },
+   "events": [
+    {
+     "type": "fling",
+     "who": "HALF-PRICE",
+     "at": 0.5
+    }
+   ],
    "bubbles": [
     {
-     "who": "24H RULE",
-     "text": "still want it tomorrow?",
-     "at": 0.3
+     "who": "HALF-PRICE",
+     "text": "half price = must buy",
+     "at": 0.2
     }
    ]
   },
@@ -161,52 +158,55 @@
    "caption": "THEN BLACK FRIDAY HITS.",
    "counter": 11,
    "values": {
-    "ONE-CLICK": 0,
-    "DEAL HUNTER": 1350,
-    "24H RULE": 2700
+    "HALF-PRICE": 0,
+    "DEAL HUNTER": 700,
+    "OWN PRICE": 2600
+   },
+   "states": {
+    "HALF-PRICE": "idle"
    },
    "events": [
     {
      "type": "crash",
-     "who": "ONE-CLICK",
+     "who": "HALF-PRICE",
      "at": 0.3
     },
     {
      "type": "shake",
      "who": "DEAL HUNTER",
-     "at": 1.5
+     "at": 1.3
     }
    ],
    "tags": {
-    "ONE-CLICK": "MAXED OUT"
+    "HALF-PRICE": "MAXED OUT"
    }
   },
   {
    "dur": 3.6,
-   "caption": "MOST 'DEALS' WAIT FOR YOU.",
+   "caption": "YOUR PRICE. NOT THEIRS.",
    "counter": 12,
    "curve": "accel",
    "values": {
-    "24H RULE": 3000,
-    "DEAL HUNTER": 1450
+    "OWN PRICE": 3000,
+    "DEAL HUNTER": 760
    },
    "states": {
-    "24H RULE": "win"
+    "OWN PRICE": "win"
    },
    "stateAt": {
-    "24H RULE": 3.4
+    "OWN PRICE": 3.4
    },
    "events": [
     {
      "type": "burst",
-     "who": "24H RULE",
+     "who": "OWN PRICE",
      "at": 3.45
     }
    ],
    "bubbles": [
     {
      "who": "DEAL HUNTER",
-     "text": "but I saved so much...",
+     "text": "but they were deals...",
      "at": 0.5
     }
    ]
@@ -215,15 +215,15 @@
    "dur": 3.4,
    "caption": "SAME PAY. DIFFERENT SAVINGS.",
    "dim": [
-    "ONE-CLICK",
+    "HALF-PRICE",
     "DEAL HUNTER"
    ],
    "tags": {
-    "24H RULE": {
+    "OWN PRICE": {
      "text": "TOP",
      "color": "#36e0c8"
     },
-    "DEAL HUNTER": "'SAVED' $1,550"
+    "DEAL HUNTER": "FELL FOR 'WAS'"
    }
   },
   {

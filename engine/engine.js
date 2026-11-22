@@ -142,7 +142,7 @@ function drawFigure(c, ch, anchor, p, t, alpha, s = 1, opt = {}) {
     drawAccessory(c, acc, hx, hy, hr * s, fx, t, L.accent);
   }
   c.restore();
-  if (!opt.ghost && T && T.__joints && ch.i != null) { const hp = P(r.hip), nk = P(r.neck); T.__joints[ch.i] = { x: (hp[0] + nk[0]) / 2, y: (hp[1] + nk[1]) / 2, off: L.torso * 0.32 * s, torso: L.torso }; }
+  if (!opt.ghost && T && T.__joints && ch.i != null) { const hp = P(r.hip), nk = P(r.neck); const lh = P(r.la[2]), rh = P(r.ra[2]), hc = P(r.head); T.__joints[ch.i] = { x: (hp[0] + nk[0]) / 2, y: (hp[1] + nk[1]) / 2, off: L.torso * 0.32 * s, torso: L.torso, head: hc, hr: hr * s, hands: [lh, rh], minY: Math.min(hc[1] - hr * s, lh[1] - 6 * s, rh[1] - 6 * s) }; }
   return { head: [hx, hy], hr: hr * s, hip: P(r.hip), lhand: P(r.la[2]), rhand: P(r.ra[2]), lelbow: P(r.la[1]), relbow: P(r.ra[1]), top: hy - hr * s };
 }
 // character with optional motion trail + sweat; anchorFn(tt) -> anchor
@@ -401,14 +401,14 @@ function shotAt(t) { let best = null; for (const s of T.shots) if (t >= s.t0 && 
 // bounding box of one character incl. its labels, in world coords
 function charBox(i, t) {
   const p = T.scene.place(i, Math.max(0, t)), s = p.s, ch = T.chars[i];
-  const half = Math.max(78 * s, fmt(value(i, t)).length * 13 * s, ch.name.length * 9.5 * s);
+  const half = Math.max(80 * s, fmt(value(i, t)).length * 15 * s, ch.name.length * 11.5 * s);
   const bottom = Math.max(p.floor != null ? p.floor : 0, p.top + figH() * s) + 14;
-  return { x0: p.x - half, x1: p.x + half, y0: p.top - 190 * s, y1: bottom, cx: p.x, cy: p.top + 85 * s };
+  return { x0: p.x - half, x1: p.x + half, y0: p.top - 235 * s, y1: bottom, cx: p.x, cy: p.top + 85 * s };
 }
 function frameFor(t, safeTop, focus, zWant) {
   const b = T.scene.extent ? { ...T.scene.extent(t) } : { x0: 1e9, x1: -1e9, y0: 1e9, y1: -1e9 };
   T.chars.forEach((_, i) => { const c = charBox(i, t); b.x0 = Math.min(b.x0, c.x0); b.x1 = Math.max(b.x1, c.x1); b.y0 = Math.min(b.y0, c.y0); b.y1 = Math.max(b.y1, c.y1); });
-  const SX0 = 34, SX1 = 972, SY0 = safeTop, SY1 = 1850, bw = b.x1 - b.x0, bh = b.y1 - b.y0;
+  const SX0 = 40, SX1 = 950, SY0 = safeTop, SY1 = 1520, bw = b.x1 - b.x0, bh = b.y1 - b.y0;
   const z = clamp(Math.min(zWant, (SX1 - SX0) / bw, (SY1 - SY0) / bh), 0.6, 1.6);
   const cx = (b.x0 + b.x1) / 2, cy = (b.y0 + b.y1) / 2;
   let dx = (SX0 + SX1) / 2 - 540 - (cx - 540) * z, dy = (SY0 + SY1) / 2 - 960 - (cy - 960) * z;
@@ -461,7 +461,7 @@ function drawEffects(c, t, P) {
         else { const an = landed ? 0 : tt * (6 + 14 * d.d), L = 8 + 14 * d.c; c.save(); c.globalAlpha = al; c.strokeStyle = T.chars[e.i].color; c.lineWidth = 3; c.lineCap = 'round'; c.beginPath(); c.moveTo(x - Math.cos(an) * L / 2, y - Math.sin(an) * L / 2); c.lineTo(x + Math.cos(an) * L / 2, y + Math.sin(an) * L / 2); c.stroke(); c.restore(); }
       }
     }
-    if (e.type === 'fling' && dt < 2.6) { const p = P[e.i]; FLING.forEach((f, k) => { const tt = dt - k * 0.07; if (tt < 0 || tt > 2) return; flyingCoin(c, T.chars[e.i].color, p.x + 40 * p.s + (120 + f.a * 420) * tt, p.top + 20 * p.s - (700 + f.b * 500) * tt + 900 * tt * tt, tt * (6 + 10 * f.c), 1 - ss(1.0, 1.8, tt), p.s); }); }
+    if (e.type === 'fling' && dt < 2.6) { const p = P[e.i]; FLING.forEach((f, k) => { const tt = dt - k * 0.07; if (tt < 0 || tt > 2) return; flyingCoin(c, T.chars[e.i].color, p.x + (p.x < 540 ? -1 : 1) * (40 * p.s + (120 + f.a * 420) * tt), p.top + 20 * p.s - (700 + f.b * 500) * tt + 900 * tt * tt, tt * (6 + 10 * f.c), 1 - ss(1.0, 1.8, tt), p.s); }); }
     if (e.type === 'burst') { const p = P[e.i], bu = clamp(dt / 0.9); if (bu < 1) for (const k of [0, 0.18]) { const u = clamp(bu - k); if (u <= 0) continue; c.strokeStyle = `rgba(255,205,90,${(1 - u) * 0.9})`; c.lineWidth = 3; c.beginPath(); c.arc(p.x, p.top + 70 * p.s, 40 + 300 * u, 0, 7); c.stroke(); } }
   }
   if (T.burst) {
@@ -509,8 +509,8 @@ function captionBlock(t, tm, C = ctx) {
   let text = B.b.caption || '';
   if (tm.kind === 'hook') text = T.spec.hook || 'HOW DID THIS HAPPEN?';
   if (tm.kind === 'rewind') text = '';
-  let a = (B.bi === 0 || tm.kind !== 'play' && tm.kind !== 'slow') ? 1 : ss(B.t0, B.t0 + .35, t);
-  if (!last && tm.kind !== 'hook') a *= 1 - ss(B.t1 - .22, B.t1, t);
+  let a = (B.bi === 0 || tm.kind !== 'play' && tm.kind !== 'slow') ? 1 : ss(B.t0, B.t0 + .2, t);
+  if (!last && tm.kind !== 'hook') a *= 1 - ss(B.t1 - .12, B.t1, t);
   if (st.transition === 'cut') a = 1;
   let xoff = 0; if (st.transition === 'slide' && tm.kind !== 'hook') xoff = (1 - ss(B.t0, B.t0 + .35, t)) * 160 * (B.bi ? 1 : 0) - (last ? 0 : ss(B.t1 - .22, B.t1, t) * 160);
   const gold = q || tm.kind === 'hook', color = gold ? GOLD : '#dfe4e9';
@@ -519,10 +519,10 @@ function captionBlock(t, tm, C = ctx) {
   let bottom, wb = 0;
   if (st.captionStyle === 'bold') {
     const pz = (st.transition === 'dayzoom' || st.transition === 'cut') && B.bi > 0 ? 1 + 0.35 * (1 - easeOut(clamp((t - B.t0) / 0.4))) : 1;
-    if (counter) { C.save(); C.translate(W / 2, 175); C.scale(pz, pz); spaced(C, counter, 0, 0, '800 92px Inter', '#ffffff', 2, 1, 22, false); C.restore(); }
-    const lines = text ? wrapText(text, '600 34px Inter', 3, 940) : [];
-    lines.forEach((ln, k) => { wb += drawWords(C, ln, W / 2 + xoff, 250 + k * 44, '600 34px Inter', 3, gold ? GOLD : '#c9d0d8', a, gold ? 14 : 0, tStart, clock, wb); });
-    bottom = 250 + Math.max(0, lines.length - 1) * 44 + 16;
+    if (counter) { C.save(); C.translate(W / 2, 160); C.scale(pz, pz); spaced(C, counter, 0, 0, '800 72px Inter', '#ffffff', 2, 1, 18, false); C.restore(); }
+    const lines = text ? wrapText(text, '700 40px Inter', 2, 940) : [];
+    lines.forEach((ln, k) => { wb += drawWords(C, ln, W / 2 + xoff, 236 + k * 50, '700 40px Inter', 3, gold ? GOLD : '#c9d0d8', a, gold ? 14 : 0, tStart, clock, wb); });
+    bottom = 236 + Math.max(0, lines.length - 1) * 50 + 16;
   } else if (st.captionStyle === 'boxed') {
     const lines = text ? wrapText(text, '700 40px Inter', 1, 900) : [];
     if (lines.length && a > 0) {
@@ -541,8 +541,8 @@ function captionBlock(t, tm, C = ctx) {
     bottom = 205 + n * 58;
   }
   if (st.transition === 'dayzoom' && st.captionStyle !== 'bold' && B.bi > 0 && counter && tm.kind !== 'hook') {
-    const du = (t - B.t0) / 0.6;
-    if (du >= 0 && du < 1) { const sc2 = lerp(2.8, 1, easeOut(du)), y = lerp(860, 240, easeIO(du)); C.save(); C.translate(W / 2, y); C.scale(sc2, sc2); spaced(C, counter, 0, 0, '800 64px Inter', '#ffffff', 2, 1 - ss(0.6, 1, du), 24); C.restore(); }
+    const du = (t - B.t0) / 0.45;
+    if (du >= 0 && du < 1) { const sc2 = lerp(2.0, 1, easeOut(du)), y = lerp(470, 240, easeIO(du)); C.save(); C.translate(W / 2, y); C.scale(sc2, sc2); spaced(C, counter, 0, 0, '800 64px Inter', '#ffffff', 2, 1 - ss(0.6, 1, du), 24); C.restore(); }
   }
   if (q && tm.kind !== 'endcard') { const L = T.chars.map((_, k) => String.fromCharCode(65 + k)).join(' · '); spaced(C, 'COMMENT ' + L, W / 2, bottom + 34, '700 24px Inter', '#ffffff', 5, ss(B.t0 + 0.4, B.t0 + 0.8, t)); bottom += 34; }
   if (T.spec.footnote) { const ft = T.beats[Math.max(0, T.beats.length - 2)].t0; spaced(C, T.spec.footnote.toUpperCase(), W / 2, bottom + 30, '500 16px Inter', '#6b727a', 2, ss(ft + .2, ft + 1, t), 0, true); bottom += 30; }
@@ -557,6 +557,14 @@ function qaLayout(t, P) {
     if (ox > 3 && oy > 3) WARN.add(`labels overlap: ${T.chars[A.owner].name} "${String(A.text).replace(/[0-9][0-9,.]*/g, '#')}" / ${T.chars[B.owner].name} "${String(B.text).replace(/[0-9][0-9,.]*/g, '#')}"`);
   }
   P.forEach((p, i) => { if (p.x < 10 || p.x > W - 10 || p.top < 0 || p.top > H - 60) WARN.add(`character out of frame: ${T.chars[i].name}`); });
+  for (const A of RECTS) {
+    const nm = A.owner >= 200 ? T.chars[A.owner - 200].name : A.owner >= 100 ? T.chars[A.owner - 100].name : T.chars[A.owner].name;
+    if (A.y1 > 1525) WARN.add(`text in the Shorts bottom overlay: ${nm} "${String(A.text).replace(/[0-9][0-9,.]*/g, '#')}"`);
+    if (A.owner < 100) { const j = T.__joints[A.owner]; if (!j) continue;
+      const pts = [[T.__X(j.head[0]), T.__Y(j.head[1]), j.hr * (T.__z || 1)], ...j.hands.map(h => [T.__X(h[0]), T.__Y(h[1]), 6])];
+      if (pts.some(([x, y, r]) => x + r > A.x0 + 2 && x - r < A.x1 - 2 && y + r > A.y0 + 2 && y - r < A.y1 - 2)) WARN.add(`character covers its own label: ${nm} "${String(A.text).replace(/[0-9][0-9,.]*/g, '#')}"`); }
+  }
+  T.chars.forEach((ch, i) => { const j = T.__joints[i]; if (j && T.__Y(j.head[1]) > 1560) WARN.add(`character in the Shorts bottom overlay: ${ch.name}`); });
   RECTS.length = 0;
 }
 function drawLabels(t, P, boardTop) {
@@ -564,10 +572,10 @@ function drawLabels(t, P, boardTop) {
   const board = T.style.labels === 'board', fw = focusWeights(t);
   const meas = (text, font, sp) => { sc.font = font; sc.letterSpacing = sp + 'px'; return sc.measureText(text).width; };
   const L = T.chars.map((ch, i) => {
-    const p = { ...P[i], s: P[i].s * (T.style.labelScale || 1) }, s = p.s, rate = fracRate(i, t), grow = (1 + 0.16 * fw[i]) * (1 + 0.25 * clamp(Math.abs(rate) * 2.2)) * (1 + 0.3 * rollPop(i, t));
-    const numW = board ? 0 : meas(fmt(value(i, t)), `700 ${(40 * s * grow).toFixed(1)}px Inter`, 0);
-    const nameW = meas(ch.name, `${board ? 700 : 600} ${((board ? 16 : 17) * s * grow).toFixed(1)}px Inter`, 3);
-    const tg = tagAt(i, t), tagW = tg ? meas(tg.text, `700 ${(18 * s).toFixed(1)}px Inter`, 3) : 0;
+    const p = { ...P[i], s: P[i].s * (T.style.labelScale || 1) }, s = p.s, rate = fracRate(i, t), grow = (1 + 0.16 * fw[i]) * (1 + 0.25 * clamp(Math.abs(rate) * 2.2)) * (1 + 0.35 * Math.max(0, ...T.milestones.filter(m => m.i === i).map(m => bump(m.t, m.t + 0.45, t)))) * (1 + 0.3 * rollPop(i, t));
+    const numW = board ? 0 : meas(fmt(value(i, t)), `700 ${(46 * s * grow).toFixed(1)}px Inter`, 0);
+    const nameW = meas(ch.name, `${board ? 700 : 600} ${((board ? 19 : 21) * s * grow).toFixed(1)}px Inter`, 3);
+    const tg = tagAt(i, t), tagW = tg ? meas(tg.text, `700 ${(20 * s).toFixed(1)}px Inter`, 3) : 0;
     return { i, x: p.x, top: p.top, s, grow, rate, w: Math.max(numW, nameW, tagW), f: 1, lift: 0 };
   });
   const sorted = L.slice().sort((a, b) => a.x - b.x);
@@ -582,37 +590,32 @@ function drawLabels(t, P, boardTop) {
   T.__labels = L;
   T.chars.forEach((ch, i) => {
     const q = L[i], s = q.s, f = q.f * q.grow, a = Math.max(alphaAt(i, t), pickTurn(i, t)), y0 = q.top - q.lift;
-    if (T.question && t >= T.question.t0) { const pk = pickTurn(i, t), bs = (1 + 0.35 * pk) * s * q.f, by = y0 - 150 * s - 20 * pk * s, qa = ss(T.question.t0, T.question.t0 + 0.4, t); sc.save(); sc.globalAlpha = qa; sc.fillStyle = ch.color; sc.shadowColor = ch.color; sc.shadowBlur = 20 * pk; sc.beginPath(); sc.arc(q.x, by, 26 * bs, 0, 7); sc.fill(); sc.restore(); spaced(sc, String.fromCharCode(65 + i), q.x, by + 11 * bs, `800 ${(30 * bs).toFixed(1)}px Inter`, INK, 0, qa); }
+    if (T.question && t >= T.question.t0) { const tgq = tagAt(i, t), pk = pickTurn(i, t), bs = (1 + 0.35 * pk) * s * q.f, by = y0 - ((tgq ? 104 : (board ? 26 : 74)) + 36) * s - 16 * pk * s, qa = ss(T.question.t0, T.question.t0 + 0.4, t); sc.save(); sc.globalAlpha = qa; sc.fillStyle = ch.color; sc.shadowColor = ch.color; sc.shadowBlur = 20 * pk; sc.beginPath(); sc.arc(q.x, by, 26 * bs, 0, 7); sc.fill(); sc.restore(); spaced(sc, String.fromCharCode(65 + i), q.x, by + 11 * bs, `800 ${(30 * bs).toFixed(1)}px Inter`, INK, 0, qa); RECTS.push({ owner: 100 + i, text: 'badge', x0: q.x - 26 * bs, x1: q.x + 26 * bs, y0: by - 26 * bs, y1: by + 26 * bs }); }
     if (!board) {
-      spaced(sc, fmt(value(i, t)), q.x, y0 - 55 * s, `700 ${(40 * s * f).toFixed(1)}px Inter`, q.rate < -0.05 ? RED : ch.color, 0, a, q.rate > 0.1 || fw[i] > 0.5 ? 14 : 0, true);
-      spaced(sc, ch.name, q.x, y0 - 30 * s, `600 ${(17 * s * f).toFixed(1)}px Inter`, fw[i] > 0.5 ? '#e6eaee' : '#9aa3ad', 3, a, 0, true);
-      if (a > 0.3) { rectOf(i, fmt(value(i, t)), q.x, y0 - 55 * s, `700 ${(40 * s * f).toFixed(1)}px Inter`, 0); rectOf(i, ch.name, q.x, y0 - 30 * s, `600 ${(17 * s * f).toFixed(1)}px Inter`, 3); }
-    } else { spaced(sc, ch.name, q.x, y0 - 18 * s, `700 ${(16 * s * f).toFixed(1)}px Inter`, ch.color, 3, a * 0.85, 0, true); if (a > 0.3) rectOf(i, ch.name, q.x, y0 - 18 * s, `700 ${(16 * s * f).toFixed(1)}px Inter`, 3); }
-    const tg = tagAt(i, t); if (tg) { spaced(sc, tg.text, q.x, y0 - (board ? 44 : 98) * s, `700 ${(18 * s * q.f).toFixed(1)}px Inter`, tg.color || RED, 3, tg.a * Math.max(a, 0.8), 0, true); if (tg.a > 0.5) rectOf(i, tg.text, q.x, y0 - (board ? 44 : 98) * s, `700 ${(18 * s * q.f).toFixed(1)}px Inter`, 3); }
+      spaced(sc, fmt(value(i, t)), q.x, y0 - 36 * s, `700 ${(46 * s * f).toFixed(1)}px Inter`, q.rate < -0.05 ? RED : ch.color, 0, a, q.rate > 0.1 || fw[i] > 0.5 ? 14 : 0, true);
+      spaced(sc, ch.name, q.x, y0 - 8 * s, `600 ${(21 * s * f).toFixed(1)}px Inter`, fw[i] > 0.5 ? '#e6eaee' : '#a3acb6', 3, a, 0, true);
+      if (a > 0.3) { rectOf(i, fmt(value(i, t)), q.x, y0 - 36 * s, `700 ${(46 * s * f).toFixed(1)}px Inter`, 0); rectOf(i, ch.name, q.x, y0 - 8 * s, `600 ${(21 * s * f).toFixed(1)}px Inter`, 3); }
+    } else { spaced(sc, ch.name, q.x, y0 - 6 * s, `700 ${(19 * s * f).toFixed(1)}px Inter`, ch.color, 3, a * 0.9, 0, true); if (a > 0.3) rectOf(i, ch.name, q.x, y0 - 6 * s, `700 ${(19 * s * f).toFixed(1)}px Inter`, 3); }
+    const tg = tagAt(i, t), tagY = y0 - (board ? 34 : 84) * s; if (tg) { spaced(sc, tg.text, q.x, tagY, `700 ${(20 * s * q.f).toFixed(1)}px Inter`, tg.color || RED, 3, tg.a * Math.max(a, 0.8), 0, true); if (tg.a > 0.5) rectOf(i, tg.text, q.x, tagY, `700 ${(20 * s * q.f).toFixed(1)}px Inter`, 3); }
+    q.stackTop = (tg ? tagY - 20 * s : y0 - (board ? 26 : 74) * s);
   });
   if (board) {
     const rankAt = tt => { const order = T.chars.map((_, i) => i).sort((x, y) => value(y, tt) - value(x, tt)); const rk = []; order.forEach((ci, k) => { rk[ci] = k; }); return rk; };
-    const pos = T.chars.map(() => 0); for (let k = 0; k < 8; k++) { const rk = rankAt(Math.max(0, t - k * 0.04)); rk.forEach((v, ci) => { pos[ci] += v / 8; }); }
+    const pos = T.chars.map(() => 0); for (let k = 0; k < 4; k++) { const rk = rankAt(Math.max(0, t - k * 0.035)); rk.forEach((v, ci) => { pos[ci] += v / 4; }); }
     const x0 = 170, x1 = 910;
     sc.save(); sc.globalAlpha = 0.5; sc.fillStyle = 'rgba(255,255,255,0.05)'; sc.beginPath(); sc.roundRect(x0 - 24, boardTop - 34, x1 - x0 + 48, T.chars.length * 50 + 18, 18); sc.fill(); sc.restore();
     T.chars.forEach((ch, i) => {
-      const y = boardTop + pos[i] * 50, a = alphaAt(i, t);
+      const near = Math.min(1, ...pos.map((pp, j) => j === i ? 1 : Math.abs(pp - pos[i]))), y = boardTop + pos[i] * 50, a = alphaAt(i, t) * (0.25 + 0.75 * clamp(near / 0.7));
       sc.save(); sc.globalAlpha = a; sc.fillStyle = ch.color; sc.fillRect(x0, y - 22, 6, 28);
       sc.font = '700 24px Inter'; sc.letterSpacing = '2px'; sc.textAlign = 'left'; sc.fillText(ch.name, x0 + 20, y); sc.textAlign = 'right'; sc.letterSpacing = '0px'; sc.font = '800 30px Inter'; sc.fillText(fmt(value(i, t)), x1, y + 2); sc.restore();
     });
   }
-  for (const m of T.milestones) {
-    const dt = t - m.t; if (dt < 0 || dt > 1.0) continue;
-    const q = L[m.i], s = q.s, pop = lerp(1.8, 1, easeBack(clamp(dt / 0.25))), al = 1 - ss(0.65, 1.0, dt), mm = T.spec.metric;
-    const num = m.v >= 1e6 ? (m.v / 1e6) + 'M' : m.v >= 1e3 ? (m.v / 1e3) + 'K' : String(m.v), sfx = (mm.suffix || '').length <= 4 ? (mm.suffix || '') : '';
-    sc.save(); sc.translate(q.x, q.top - q.lift - (150 + 70 * dt) * s); sc.scale(pop, pop); spaced(sc, (mm.prefix || '') + num + sfx + '!', 0, 0, `800 ${(30 * s).toFixed(1)}px Inter`, GOLD, 1, al, 16); sc.restore();
-  }
   for (const bb of T.bubbles) {
     if (t < bb.t0 || t > bb.t1) continue;
     const q = L[bb.i], s = q.s, a = ss(bb.t0, bb.t0 + .2, t) * (1 - ss(bb.t1 - .25, bb.t1, t));
-    const y = q.top - q.lift - (board ? (tagAt(bb.i, t) ? 70 : 44) : (tagAt(bb.i, t) ? 128 : 102)) * s - 6 * (1 - a);
+    const y = q.top - q.lift - (board ? (tagAt(bb.i, t) ? 60 : 34) : (tagAt(bb.i, t) ? 112 : 86)) * s - 6 * (1 - a);
     let left = 24, right = (y > 860 && y < 1720) ? 972 : W - 24;
-    for (const o of L) { if (o.i === bb.i) continue; const oy0 = o.top - o.lift - 110 * o.s, oy1 = o.top - o.lift - 18 * o.s; if (y + 6 < oy0 || y - 26 * s > oy1) continue; if (o.x < q.x) left = Math.max(left, o.x + o.w * o.f / 2 + 12); else right = Math.min(right, o.x - o.w * o.f / 2 - 12); }
+    for (const o of L) { if (o.i === bb.i) continue; const oy0 = o.top - o.lift - 110 * o.s, oy1 = o.top - o.lift; if (y + 6 < oy0 || y - 26 * s > oy1) continue; if (o.x < q.x) left = Math.max(left, o.x + o.w * o.f / 2 + 12); else right = Math.min(right, o.x - o.w * o.f / 2 - 12); }
     const w0 = meas(bb.text, `italic 600 ${(25 * s).toFixed(1)}px Inter`, 0), kf = clamp((right - left) / w0, 0.6, 1), w = w0 * kf;
     const x = right - left >= w ? clamp(q.x, left + w / 2, right - w / 2) : (left + right) / 2;
     spaced(sc, bb.text.slice(0, Math.ceil(bb.text.length * clamp((t - bb.t0) / 0.45))), x, y, `italic 600 ${(25 * s * kf).toFixed(1)}px Inter`, T.chars[bb.i].color, 0, a);
@@ -620,15 +623,15 @@ function drawLabels(t, P, boardTop) {
   }
   for (const e of T.events) if (e.type === 'marker') {
     const a = ss(e.t, e.t + .3, t) * (1 - ss(e.t + (e.dur || 2) - .3, e.t + (e.dur || 2), t)); if (a <= 0) continue;
-    const p = P[e.i]; spaced(sc, e.text, p.x + (e.dx != null ? e.dx : -110) * p.s, p.top + (e.dy != null ? e.dy : 120) * p.s, `700 ${(30 * p.s).toFixed(1)}px Inter`, e.color || RED, 0, a);
+    const p = P[e.i], mf = `700 ${(30 * p.s).toFixed(1)}px Inter`, mw = (sc.font = mf, sc.letterSpacing = '0px', sc.measureText(e.text).width), mx = clamp(p.x + (e.dx != null ? e.dx : -110) * p.s, mw / 2 + 40, 950 - mw / 2), my = p.top + (e.dy != null ? e.dy : 120) * p.s; spaced(sc, e.text, mx, my, mf, e.color || RED, 0, a); if (a > 0.5) rectOf(200 + e.i, e.text, mx, my, mf, 0);
   }
 }
 function drawEndcard(u) {
   const ec = T.brand.endcard; if (!ec) return;
   const a = ss(0, 0.22, u);
   ctx.fillStyle = `rgba(6,8,14,${0.93 * a})`; ctx.fillRect(0, 0, W, H);
-  const pop = 0.75 + 0.25 * easeBack(ss(0.05, 0.35, u)), cx = 540, cy = 860 - Math.abs(Math.sin(u * Math.PI * 3)) * 40 * ss(0.3, 0.5, u), r = 150 * pop;
-  ctx.save(); ctx.globalAlpha = a;
+  const ma = ss(0.14, 0.3, u), pop = 0.75 + 0.25 * easeBack(ss(0.14, 0.4, u)), cx = 540, cy = 860 - Math.abs(Math.sin(u * Math.PI * 3)) * 40 * ss(0.3, 0.5, u), r = 150 * pop;
+  ctx.save(); ctx.globalAlpha = ma;
   ctx.strokeStyle = 'rgba(160,190,255,0.25)'; ctx.lineWidth = 1.5; ctx.beginPath();
   const pts = [...Array(18)].map((_, k) => { const an = k / 18 * 6.283 + u * 0.8; return [cx + Math.cos(an) * 250, cy + Math.sin(an) * 250]; });
   pts.forEach((q, k) => { k ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]); }); ctx.closePath(); ctx.stroke();
@@ -652,7 +655,7 @@ function renderFrame(r) {
   const safeTop = (boardOn ? capCanvasBottom + 46 + T.chars.length * 50 : capCanvasBottom) + 26;
   const [shx, shy] = shakeAt(t, tm), cam = cameraAt(t, tm, safeTop), look = lookOf(T.chars[0]);
   const X = x => 540 + cam.dx + (x - 540) * cam.z + shx, Y = y => 960 + cam.dy + (y - 960) * cam.z + shy;
-  T.__joints = {}; T.__X = X; T.__Y = Y;
+  T.__joints = {}; T.__X = X; T.__Y = Y; T.__z = cam.z;
   sc.clearRect(0, 0, W, H);
   sc.save(); sc.translate(540 + cam.dx + shx, 960 + cam.dy + shy); sc.scale(cam.z, cam.z); sc.translate(-540, -960);
   const th = THEMES[st.theme] || THEMES.void;
@@ -661,7 +664,7 @@ function renderFrame(r) {
   const P0 = T.scene.draw(sc, t);
   drawEffects(sc, t, P0);
   sc.restore();
-  const P = P0.map(p => ({ ...p, x: X(p.x), top: Y(p.top), s: p.s * cam.z, floor: p.floor != null ? Y(p.floor) : null }));
+  const P = P0.map((p, i) => { const j = T.__joints[i], top = j && !window.__disableLabelLift ? Math.min(p.top, j.minY - 16 * p.s) : p.top; return { ...p, x: X(p.x), top: Y(top), s: p.s * cam.z, floor: p.floor != null ? Y(p.floor) : null }; });
   drawConfetti(sc, t);
   const warm = T.burst ? ss(T.burst.t - 4, T.burst.t + 0.6, t) : 0;
   const FY = T.scene.floorY ? Y(T.scene.floorY(t)) : null;
@@ -695,7 +698,6 @@ function renderFrame(r) {
     ctx.fillStyle = 'rgba(255,255,255,0.06)'; for (let y = (r * 900) % 6; y < H; y += 6) ctx.fillRect(0, y, W, 2);
     spaced(ctx, '◀◀  REWIND', 540, 330, '800 40px Inter', '#ffffff', 6, 0.9, 12);
   }
-  if (tm.kind === 'hook') spaced(ctx, '▶ WATCH HOW', 540, 1860 - 60, '700 22px Inter', '#ffffff', 6, 0.5 + 0.5 * Math.sin(r * 8));
   const vg = ctx.createRadialGradient(W / 2, H * .45, 450, W / 2, H * .45, 1250); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,0.55)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
   if (tm.kind === 'endcard') drawEndcard(tm.u);
 }

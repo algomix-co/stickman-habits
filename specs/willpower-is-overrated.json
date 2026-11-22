@@ -22,24 +22,19 @@
    "accessory": "glasses"
   }
  ],
- "start": {
-  "MONDAY START": 40,
-  "GOES TOO BIG": 40,
-  "7AM = GYM": 40
- },
  "metric": {
-  "suffix": " KG",
-  "scale": 1.3,
-  "max": 110
+  "suffix": " WORKOUTS",
+  "scale": 0.8,
+  "max": 78
  },
  "counter": {
   "label": "WEEK",
   "start": 1
  },
- "footnote": "Illustrative · if-then plans (implementation intentions)",
+ "footnote": "Illustrative · workouts done in 6 months · if-then plans",
  "upload": {
   "title": "Willpower Is Overrated",
-  "description": "\"I'll start on Monday.\" Motivation comes and goes. An if-then plan (\"if it's 7am, I train\") decides for you before your mood can. Same goal, three approaches. Which one are you? (Illustrative numbers.)",
+  "description": "\"I'll start on Monday.\" Motivation comes and goes. An if-then plan (\"if it's 7am, I train\") decides for you before your mood gets a vote. Same goal, three approaches. Which one are you? (Illustrative numbers.)",
   "hashtags": [
    "psychology",
    "brainscience",
@@ -64,12 +59,12 @@
   },
   {
    "dur": 3.0,
-   "caption": "GOES TOO BIG GOES ALL OUT.",
+   "caption": "GOES TOO BIG: 2 HOURS A DAY.",
    "counter": 2,
    "values": {
-    "GOES TOO BIG": 70,
-    "MONDAY START": 40,
-    "7AM = GYM": 45
+    "GOES TOO BIG": 9,
+    "MONDAY START": 0,
+    "7AM = GYM": 3
    },
    "curves": {
     "GOES TOO BIG": "decel"
@@ -80,18 +75,36 @@
    "bubbles": [
     {
      "who": "GOES TOO BIG",
-     "text": "2 hours, every day!",
+     "text": "every single day!",
      "at": 0.4
+    }
+   ]
+  },
+  {
+   "dur": 3.2,
+   "caption": "ONE CHANGE: IF IT'S 7AM, I GO.",
+   "counter": 3,
+   "values": {
+    "7AM = GYM": 6,
+    "GOES TOO BIG": 14,
+    "MONDAY START": 1
+   },
+   "bubbles": [
+    {
+     "who": "7AM = GYM",
+     "text": "it's 7. bag's packed.",
+     "at": 0.3
     }
    ]
   },
   {
    "dur": 3.0,
    "caption": "MONDAY START MISSES MONDAY.",
-   "counter": 4,
+   "counter": 5,
    "values": {
-    "MONDAY START": 42,
-    "7AM = GYM": 52
+    "MONDAY START": 2,
+    "7AM = GYM": 12,
+    "GOES TOO BIG": 18
    },
    "bubbles": [
     {
@@ -103,11 +116,11 @@
   },
   {
    "dur": 3.0,
-   "caption": "MOTIVATION FADES BY WEEK 6.",
-   "counter": 6,
+   "caption": "MOTIVATION FADES.",
+   "counter": 7,
    "values": {
-    "GOES TOO BIG": 0,
-    "7AM = GYM": 58
+    "GOES TOO BIG": 18,
+    "7AM = GYM": 18
    },
    "events": [
     {
@@ -121,30 +134,13 @@
    }
   },
   {
-   "dur": 3.2,
-   "caption": "ONE CHANGE: IF IT'S 7AM, I GO.",
-   "counter": 10,
-   "curve": "linear",
-   "values": {
-    "7AM = GYM": 68,
-    "MONDAY START": 44
-   },
-   "bubbles": [
-    {
-     "who": "7AM = GYM",
-     "text": "it's 7. bag's packed.",
-     "at": 0.3
-    }
-   ]
-  },
-  {
    "dur": 3.0,
    "caption": "THAT'S AN IF-THEN PLAN.",
-   "counter": 16,
+   "counter": 14,
    "curve": "linear",
    "values": {
-    "7AM = GYM": 85,
-    "MONDAY START": 45
+    "7AM = GYM": 40,
+    "MONDAY START": 4
    },
    "states": {
     "MONDAY START": "sad"
@@ -163,7 +159,8 @@
    "counter": 26,
    "curve": "linear",
    "values": {
-    "7AM = GYM": 110
+    "7AM = GYM": 78,
+    "MONDAY START": 6
    },
    "states": {
     "7AM = GYM": "win"
@@ -181,7 +178,7 @@
    "bubbles": [
     {
      "who": "GOES TOO BIG",
-     "text": "I wasn't in the mood",
+     "text": "I did too much, too soon",
      "at": 0.6
     }
    ]

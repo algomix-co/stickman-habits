@@ -23,18 +23,18 @@
   }
  ],
  "metric": {
-  "suffix": " H",
-  "scale": 0.9,
-  "max": 900
+  "suffix": "%",
+  "scale": 1.0,
+  "max": 100
  },
  "counter": {
   "label": "MONTH",
   "start": 0
  },
- "footnote": "Illustrative · hours in the current path · sunk cost fallacy",
+ "footnote": "Illustrative · progress to the goal · sunk cost fallacy",
  "upload": {
   "title": "Why You Can't Quit",
-  "description": "\"I've already put two years into this.\" That's the sunk cost fallacy: past effort can't be refunded, but it keeps steering your future. The fix is one question. Which one are you? (Illustrative numbers.)",
+  "description": "\"I'm too far in to stop now.\" That's the sunk cost fallacy: time you've already spent can't come back, but it keeps steering what you do next. The fix is one honest question. Which one are you? (Illustrative numbers.)",
   "hashtags": [
    "psychology",
    "brainscience",
@@ -62,9 +62,9 @@
    "caption": "SHINY NEW GETS BORED.",
    "counter": 2,
    "values": {
-    "SHINY NEW": 60,
-    "TOO FAR IN": 120,
-    "RE-CHECKS": 100
+    "SHINY NEW": 8,
+    "TOO FAR IN": 14,
+    "RE-CHECKS": 12
    },
    "bubbles": [
     {
@@ -75,13 +75,13 @@
    ]
   },
   {
-   "dur": 3.0,
-   "caption": "ONE CHANGE: RE-ASK EVERY 3 MONTHS.",
+   "dur": 3.2,
+   "caption": "ONE CHANGE: ASK 'START IT TODAY?'",
    "counter": 4,
    "values": {
-    "RE-CHECKS": 160,
-    "SHINY NEW": 20,
-    "TOO FAR IN": 220
+    "RE-CHECKS": 18,
+    "SHINY NEW": 3,
+    "TOO FAR IN": 22
    },
    "curves": {
     "SHINY NEW": "early"
@@ -99,11 +99,11 @@
   },
   {
    "dur": 3.0,
-   "caption": "THE ANSWER IS NO. SO IT STOPS.",
+   "caption": "THE ANSWER IS NO. SO IT SWITCHES.",
    "counter": 5,
    "values": {
     "RE-CHECKS": 0,
-    "TOO FAR IN": 300
+    "TOO FAR IN": 28
    },
    "curves": {
     "RE-CHECKS": "early"
@@ -123,19 +123,19 @@
    "bubbles": [
     {
      "who": "TOO FAR IN",
-     "text": "I've put 2 years in",
+     "text": "I'm too far in now",
      "at": 0.8
     }
    ]
   },
   {
    "dur": 3.0,
-   "caption": "TOO FAR IN DIGS DEEPER.",
+   "caption": "TOO FAR IN KEEPS DIGGING.",
    "counter": 9,
    "values": {
-    "TOO FAR IN": 600,
-    "RE-CHECKS": 250,
-    "SHINY NEW": 40
+    "TOO FAR IN": 40,
+    "RE-CHECKS": 30,
+    "SHINY NEW": 5
    },
    "states": {
     "SHINY NEW": "sad"
@@ -153,8 +153,8 @@
    "caption": "THAT'S THE SUNK COST TRAP.",
    "counter": 12,
    "values": {
-    "TOO FAR IN": 600,
-    "RE-CHECKS": 420
+    "TOO FAR IN": 40,
+    "RE-CHECKS": 55
    },
    "events": [
     {
@@ -164,16 +164,16 @@
     }
    ],
    "tags": {
-    "TOO FAR IN": "600 H SUNK"
+    "TOO FAR IN": "STUCK AT 40%"
    }
   },
   {
    "dur": 3.8,
-   "caption": "RE-CHECKS STRIKES GOLD.",
+   "caption": "RE-CHECKS FINDS ITS PATH.",
    "counter": 18,
    "curve": "accel",
    "values": {
-    "RE-CHECKS": 900
+    "RE-CHECKS": 100
    },
    "states": {
     "RE-CHECKS": "win"
@@ -186,29 +186,19 @@
      "type": "burst",
      "who": "RE-CHECKS",
      "at": 3.65
-    },
-    {
-     "type": "marker",
-     "who": "RE-CHECKS",
-     "text": "GOLD",
-     "at": 3.7,
-     "dur": 6.5,
-     "color": "#ffc53d",
-     "dx": 0,
-     "dy": 250
     }
    ],
    "bubbles": [
     {
      "who": "SHINY NEW",
-     "text": "wait, it was that one?",
+     "text": "how'd you find it?",
      "at": 0.5
     }
    ]
   },
   {
    "dur": 3.4,
-   "caption": "SAME EFFORT. DIFFERENT HOLES.",
+   "caption": "SAME HOURS. DIFFERENT RESULTS.",
    "dim": [
     "TOO FAR IN",
     "SHINY NEW"

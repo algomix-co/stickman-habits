@@ -34,7 +34,7 @@
  "footnote": "Illustrative · free hours gained in a month · variable rewards",
  "upload": {
   "title": "Why You Check Your Phone",
-  "description": "\"I'll just check one thing.\" Your phone pays out like a slot machine: sometimes a like, sometimes nothing. That unpredictability (a variable reward) is what keeps you reaching for it. One small change fixes most of it. Which one are you? (Illustrative numbers.)",
+  "description": "\"I'll just check one thing.\" Your phone pays out like a slot machine: sometimes a like, sometimes nothing. That unpredictability (a variable reward) is a big part of why you keep reaching for it. One small change helps a lot. Which one are you? (Illustrative numbers.)",
   "hashtags": [
    "psychology",
    "brainscience",
@@ -63,8 +63,8 @@
    "counter": 3,
    "values": {
     "JUST 1 CHECK": 2,
-    "BED SCROLLER": 1,
-    "PHONE AWAY": 6
+    "BED SCROLLER": 1.5,
+    "PHONE AWAY": 2.2
    },
    "events": [
     {
@@ -100,11 +100,11 @@
   {
    "dur": 3.0,
    "caption": "THAT'S A VARIABLE REWARD.",
-   "counter": 7,
+   "counter": 6,
    "values": {
-    "JUST 1 CHECK": 5,
-    "BED SCROLLER": 2,
-    "PHONE AWAY": 15
+    "JUST 1 CHECK": 4,
+    "BED SCROLLER": 3,
+    "PHONE AWAY": 4.5
    },
    "events": [
     {
@@ -122,32 +122,13 @@
    ]
   },
   {
-   "dur": 3.0,
-   "caption": "BED SCROLLER HITS 2AM.",
-   "counter": 10,
-   "values": {
-    "BED SCROLLER": 3,
-    "JUST 1 CHECK": 7,
-    "PHONE AWAY": 21
-   },
-   "events": [
-    {
-     "type": "crash",
-     "who": "BED SCROLLER",
-     "at": 0.3
-    }
-   ],
-   "tags": {
-    "BED SCROLLER": "RUNNING ON 4H SLEEP"
-   }
-  },
-  {
    "dur": 3.4,
    "caption": "ONE CHANGE: PHONE IN ANOTHER ROOM.",
-   "counter": 18,
+   "counter": 10,
    "values": {
-    "PHONE AWAY": 36,
-    "JUST 1 CHECK": 10
+    "PHONE AWAY": 16,
+    "JUST 1 CHECK": 6,
+    "BED SCROLLER": 4
    },
    "bubbles": [
     {
@@ -159,12 +140,32 @@
   },
   {
    "dur": 3.0,
+   "caption": "BED SCROLLER HITS 2AM.",
+   "counter": 14,
+   "values": {
+    "BED SCROLLER": 4,
+    "JUST 1 CHECK": 8,
+    "PHONE AWAY": 25
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "BED SCROLLER",
+     "at": 0.3
+    }
+   ],
+   "tags": {
+    "BED SCROLLER": "4H SLEEP"
+   }
+  },
+  {
+   "dur": 3.0,
    "caption": "NO PING. NO PULL.",
-   "counter": 24,
+   "counter": 22,
    "curve": "linear",
    "values": {
-    "PHONE AWAY": 46,
-    "JUST 1 CHECK": 12
+    "PHONE AWAY": 42,
+    "JUST 1 CHECK": 11
    },
    "bubbles": [
     {
@@ -201,7 +202,7 @@
    "bubbles": [
     {
      "who": "JUST 1 CHECK",
-     "text": "60 hours?!",
+     "text": "wait, how?",
      "at": 1.0,
      "dur": 1.8
     }

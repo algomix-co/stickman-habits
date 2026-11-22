@@ -16,7 +16,7 @@
    "accessory": "headphones"
   },
   {
-   "name": "SAVORS IT",
+   "name": "ENJOYS IT",
    "role": "winner",
    "color": "#36e0c8",
    "accessory": "glasses"
@@ -25,12 +25,12 @@
  "start": {
   "NEXT UPGRADE": 40,
   "SCROLLS FEED": 40,
-  "SAVORS IT": 40
+  "ENJOYS IT": 40
  },
  "metric": {
   "suffix": "%",
   "scale": 1.0,
-  "max": 100
+  "max": 75
  },
  "counter": {
   "label": "MONTH",
@@ -39,7 +39,7 @@
  "footnote": "Illustrative · how good life feels · hedonic adaptation",
  "upload": {
   "title": "Why New Things Stop Working",
-  "description": "The new phone feels amazing, for about two weeks. Then your brain resets to normal (hedonic adaptation). Buying more resets it again. Noticing what you have doesn't. Which one are you? (Illustrative numbers.)",
+  "description": "The new phone feels amazing, then a few weeks later it's just a phone. Your brain resets to its usual level (hedonic adaptation). Buying more resets it again. Deliberately enjoying small things helps a little, every day. Which one are you? (Illustrative numbers.)",
   "hashtags": [
    "psychology",
    "brainscience",
@@ -67,9 +67,9 @@
    "caption": "NEXT UPGRADE GETS THE PHONE.",
    "counter": 1,
    "values": {
-    "NEXT UPGRADE": 80,
+    "NEXT UPGRADE": 70,
     "SCROLLS FEED": 38,
-    "SAVORS IT": 44
+    "ENJOYS IT": 41
    },
    "curves": {
     "NEXT UPGRADE": "decel"
@@ -89,11 +89,11 @@
   },
   {
    "dur": 3.0,
-   "caption": "TWO WEEKS LATER...",
+   "caption": "A MONTH LATER...",
    "counter": 2,
    "values": {
-    "NEXT UPGRADE": 46,
-    "SAVORS IT": 48
+    "NEXT UPGRADE": 40,
+    "ENJOYS IT": 42
    },
    "bubbles": [
     {
@@ -106,11 +106,11 @@
   {
    "dur": 3.0,
    "caption": "THAT'S HEDONIC ADAPTATION.",
-   "counter": 4,
+   "counter": 3,
    "values": {
-    "NEXT UPGRADE": 85,
-    "SCROLLS FEED": 30,
-    "SAVORS IT": 53
+    "NEXT UPGRADE": 72,
+    "SCROLLS FEED": 32,
+    "ENJOYS IT": 43
    },
    "curves": {
     "NEXT UPGRADE": "decel"
@@ -135,25 +135,25 @@
    "bubbles": [
     {
      "who": "SCROLLS FEED",
-     "text": "everyone's on holiday",
+     "text": "everyone's away but me",
      "at": 1.6
     }
    ]
   },
   {
-   "dur": 3.0,
-   "caption": "THE BRAIN RESETS. AGAIN.",
-   "counter": 6,
+   "dur": 3.2,
+   "caption": "ONE CHANGE: ENJOY 1 THING DAILY.",
+   "counter": 5,
    "values": {
-    "NEXT UPGRADE": 47,
-    "SAVORS IT": 60
+    "NEXT UPGRADE": 40,
+    "ENJOYS IT": 50
    },
    "tags": {
-    "NEXT UPGRADE": "BACK TO NORMAL"
+    "NEXT UPGRADE": "BACK TO 40%"
    },
    "bubbles": [
     {
-     "who": "SAVORS IT",
+     "who": "ENJOYS IT",
      "text": "this coffee is great",
      "at": 0.4
     }
@@ -164,8 +164,8 @@
    "caption": "SCROLLS FEED CAN'T KEEP UP.",
    "counter": 8,
    "values": {
-    "SCROLLS FEED": 15,
-    "SAVORS IT": 66
+    "SCROLLS FEED": 22,
+    "ENJOYS IT": 55
    },
    "events": [
     {
@@ -175,28 +175,28 @@
     }
    ],
    "tags": {
-    "SCROLLS FEED": "COMPARED OUT"
+    "SCROLLS FEED": "ENVY SPIRAL"
    }
   },
   {
    "dur": 3.8,
-   "caption": "ONE CHANGE: NOTICE WHAT YOU HAVE.",
+   "caption": "SMALL. DAILY. IT ADDS UP.",
    "counter": 12,
    "curve": "accel",
    "values": {
-    "SAVORS IT": 90,
-    "NEXT UPGRADE": 50
+    "ENJOYS IT": 62,
+    "NEXT UPGRADE": 41
    },
    "states": {
-    "SAVORS IT": "win"
+    "ENJOYS IT": "win"
    },
    "stateAt": {
-    "SAVORS IT": 3.6
+    "ENJOYS IT": 3.6
    },
    "events": [
     {
      "type": "burst",
-     "who": "SAVORS IT",
+     "who": "ENJOYS IT",
      "at": 3.65
     }
    ],
@@ -216,11 +216,11 @@
     "NEXT UPGRADE"
    ],
    "tags": {
-    "SAVORS IT": {
+    "ENJOYS IT": {
      "text": "TOP",
      "color": "#36e0c8"
     },
-    "NEXT UPGRADE": "BACK TO 50%"
+    "NEXT UPGRADE": "BACK TO 40%"
    }
   },
   {

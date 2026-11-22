@@ -42,17 +42,18 @@ function runPose(ph) {
 }
 SCENES.race = {
   facing: 'right',
-  setup(T) { const n = T.chars.length; this.gap = Math.min(330, 1080 / n); this.s = clamp(this.gap / 300, 0.8, 1.1); this.y0 = 1660 - (n - 1) * this.gap; this.x0 = 120; this.x1 = 850; },
-  laneY(i) { return this.y0 + i * this.gap; },
-  extent() { return { x0: this.x0 - 40, x1: this.x1 + 60, y0: this.y0 - 230, y1: this.laneY(T.chars.length - 1) + 12 }; },
+  setup(T) { const n = T.chars.length; this.gap = Math.min(330, 1080 / n); this.s = clamp(this.gap / 300, 0.8, 1.1); this.y0 = 1660 - (n - 1) * this.gap; this.x0 = 120; this.x1 = 850;
+    const fin = T.beats[T.beats.length - 1].to; this.lane = []; T.chars.map((_, i) => i).sort((a, b) => fin[b] - fin[a]).forEach((ci, k) => { this.lane[ci] = k; }); },   // leader on the top lane
+  laneY(i) { return this.y0 + this.lane[i] * this.gap; },
+  extent() { return { x0: this.x0 - 40, x1: this.x1 + 60, y0: this.y0 - 230, y1: this.y0 + (T.chars.length - 1) * this.gap + 12 }; },
   xAt(i, t) { return this.x0 + fracAt(i, t) * (this.x1 - this.x0); },
   place(i, t) { const y = this.laneY(i); return { x: this.xAt(i, t), top: y - figH() * this.s, s: this.s, floor: y, footY: y }; },
   activePose(i, t) { return blendPose(POSES.stand, runPose(this.xAt(i, t) / 15), moving(i, t, 0.003, 0.03)); },
   draw(c, t) {
     const yTop = this.y0 - 200;
-    c.save(); c.setLineDash([14, 12]); c.strokeStyle = 'rgba(255,255,255,0.55)'; c.lineWidth = 3; c.beginPath(); c.moveTo(this.x1 + 30, yTop); c.lineTo(this.x1 + 30, this.laneY(T.chars.length - 1) + 4); c.stroke(); c.restore();
+    c.save(); c.setLineDash([14, 12]); c.strokeStyle = 'rgba(255,255,255,0.55)'; c.lineWidth = 3; c.beginPath(); c.moveTo(this.x1 + 30, yTop); c.lineTo(this.x1 + 30, this.y0 + (T.chars.length - 1) * this.gap + 4); c.stroke(); c.restore();
     spaced(c, 'FINISH', this.x1 + 30, yTop - 14, '600 17px Inter', '#cfd6dd', 4, 0.9);
-    c.fillStyle = 'rgba(255,255,255,0.12)'; c.fillRect(this.x0 - 20, yTop, 2, this.laneY(T.chars.length - 1) - yTop);
+    c.fillStyle = 'rgba(255,255,255,0.12)'; c.fillRect(this.x0 - 20, yTop, 2, (T.chars.length - 1) * this.gap + this.y0 - yTop);
     return charsDo((ch, i) => { const y = this.laneY(i); floorLine(c, y, 0, W, 0.16); const p = this.place(i, t); drawChar(c, i, t, tt => ({ mode: 'feet', x: this.xAt(i, tt), y }), { s: this.s, speed: speedFx(i, t, 0.12, 0.35), sweat: speedFx(i, t, 0.08, 0.2) }); return p; });
   },
 };
@@ -130,6 +131,7 @@ SCENES.lift = {
       const big = plates.length ? plates[0] * PR : 0.4 * PR;
       let cx = (J.lhand[0] + J.rhand[0]) / 2, by = (J.lhand[1] + J.rhand[1]) / 2;
       if (down) { cx = this.xs[i] + 8 * s; by = this.F - big; } else by = Math.min(by, this.F - big);
+      if (T.__joints && T.__joints[i]) T.__joints[i].minY = Math.min(T.__joints[i].minY, by - big - 6 * s);
       c.save(); c.globalAlpha = a; c.lineCap = 'round';
       c.strokeStyle = '#d7dde4'; c.lineWidth = 5 * s; c.beginPath(); c.moveTo(cx - half, by); c.lineTo(cx + half, by); c.stroke();
       for (const side of [-1, 1]) {

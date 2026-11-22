@@ -51,14 +51,14 @@ SCENES.race = {
     const fin = T.beats[T.beats.length - 1].to; this.lane = []; T.chars.map((_, i) => i).sort((a, b) => fin[b] - fin[a]).forEach((ci, k) => { this.lane[ci] = k; });
   },
   laneY(i) { return this.y0 + this.lane[i] * this.gap; },
-  extent() { return { x0: this.x0 - 50, x1: this.x1 + 175, y0: this.y0 - figH() * this.s - 40, y1: this.y0 + (T.chars.length - 1) * this.gap + 60 }; },
+  extent() { return { x0: this.x0 - 50, x1: this.x1 + 210, y0: this.y0 - figH() * this.s - 40, y1: this.y0 + (T.chars.length - 1) * this.gap + 60 }; },
   xAt(i, t) { return this.x0 + fracAt(i, t) * (this.x1 - this.x0); },
   place(i, t) { const y = this.laneY(i); return { x: this.xAt(i, t), top: y - figH() * this.s, s: this.s, floor: y, footY: y }; },
   activePose(i, t) { return blendPose(POSES.stand, runPose(this.xAt(i, t) / (15 * this.s)), moving(i, t, 0.003, 0.03)); },
   draw(c, t) {
-    const yTop = this.y0 - figH() * this.s - 20, yBot = this.y0 + (T.chars.length - 1) * this.gap, fx = this.x1 + 115;
+    const yTop = this.y0 - figH() * this.s - 20, yBot = this.y0 + (T.chars.length - 1) * this.gap, fx = this.x1 + 150;
     c.save(); c.setLineDash([14, 12]); c.strokeStyle = 'rgba(255,255,255,0.4)'; c.lineWidth = 3; c.beginPath(); c.moveTo(fx, yTop); c.lineTo(fx, yBot + 4); c.stroke(); c.restore();
-    spaced(c, 'FINISH', fx, yBot + 46, '800 30px Inter', '#cfd6dd', 3, 0.85);
+    spaced(c, 'FINISH', fx - 20, yBot + 56, '800 44px Inter', '#dfe4e9', 3, 0.9);
     c.fillStyle = 'rgba(255,255,255,0.12)'; c.fillRect(this.x0 - 30, yTop, 2, yBot - yTop);
     return charsDo((ch, i) => { const y = this.laneY(i); floorLine(c, y, -200, W + 200, 0.16); const p = this.place(i, t); drawChar(c, i, t, tt => ({ mode: 'feet', x: this.xAt(i, tt), y }), { s: this.s, speed: speedFx(i, t, 0.12, 0.35), sweat: speedFx(i, t, 0.08, 0.2) }); return p; });
   },
@@ -119,7 +119,7 @@ const LIFT_DOWN = { la: [-0.16, -0.02], ra: [0.16, 0.02], ll: [-0.95, 0.3], rl: 
 const LIFT_UP = { la: [-0.16, -0.06], ra: [0.16, 0.06], ll: [-0.12, -0.04], rl: [0.12, 0.04], lean: 0, drop: -0.1 };
 const LIFT_OVER = { la: [-2.6, -2.95], ra: [2.6, 2.95], ll: [-0.2, -0.1], rl: [0.2, 0.1], lean: 0, drop: -0.35 };
 SCENES.lift = {
-  facing: 'front',
+  facing: 'front', upperBodyFree: false,   // hands stay on the bar: reactions and fidgets use the legs
   setup(T) { const n = T.chars.length; this.sp = Math.min(300, 920 / n); this.xs = colsX(n, 300); this.s = clamp(this.sp / 165, 0.9, 1.8); this.F = 1450; },
   floorY() { return this.F; },
   extent() { const h = 90 * this.s; return { x0: this.xs[0] - h, x1: this.xs[this.xs.length - 1] + h, y0: this.F - 300 * this.s, y1: this.F + 12 }; },
@@ -137,6 +137,8 @@ SCENES.lift = {
       const half = collar + Math.max(3, plates.length) * sleeve + 6 * s, big = plates.length ? plates[0] * PR : 0.4 * PR;
       let cx = (J.lhand[0] + J.rhand[0]) / 2, by = (J.lhand[1] + J.rhand[1]) / 2;
       if (down) { cx = this.xs[i] + 8 * s; by = this.F - big; } else by = Math.min(by, this.F - big);
+      if ((st === 'win' || st === 'boast') && !window.__noOverheadFix) { const j = T.__joints && T.__joints[i]; if (j) by = Math.min(by, j.head[1] - j.hr - big - 10 * s); }   // overhead: above the head, not across the face
+      if (T.__props && !down) T.__props.push({ i, x0: cx - half, y0: by, x1: cx + half, y1: by });
       if (T.__joints && T.__joints[i]) T.__joints[i].minY = Math.min(T.__joints[i].minY, by - big - 6 * s);
       c.save(); c.globalAlpha = a; c.lineCap = 'round';
       c.strokeStyle = '#d7dde4'; c.lineWidth = 5 * s; c.beginPath(); c.moveTo(cx - half, by); c.lineTo(cx + half, by); c.stroke();

@@ -339,7 +339,7 @@ function poseOf(state, i, t) {
 function cheerAnim(t, i) { const k = Math.sin(t * 7 + i * 1.3), up = Math.max(0, k); return { la: [-2.45 + 0.4 * k, -2.85 + 0.35 * k], ra: [2.45 - 0.4 * k, 2.85 - 0.35 * k], ll: [-0.3, -0.1 - 0.5 * up], rl: [0.3, 0.1 + 0.5 * up], lean: 0, drop: -0.35 }; }
 function poseAt(i, t) { const tl = T.stateTL[i]; let p = poseOf(tl[0][1], i, t); for (let k = 1; k < tl.length; k++) { const [tk, st] = tl[k]; if (t < tk) break; p = blendPose(p, poseOf(st, i, t), ss(tk, tk + (st === 'fall' ? 0.15 : 0.35), t)); } return gestureLayer(i, t, p); }
 const moving = (i, t, lo = 0.002, hi = 0.02) => ss(lo, hi, Math.abs(fracRate(i, t)));
-const alphaAt = (i, t) => 1 - 0.62 * ss(T.dimTL[i], T.dimTL[i] + 1, t);
+const alphaAt = (i, t) => (T.question && t >= T.question.t0 + 0.2) ? 1 : 1 - 0.62 * ss(T.dimTL[i], T.dimTL[i] + 1, t);
 function tagAt(i, t) { let cur = null; for (const [tk, v] of T.tagTL[i]) if (tk <= t) cur = { v, tk }; return cur && cur.v ? { ...cur.v, a: ss(cur.tk, cur.tk + 0.4, t) } : null; }
 function fmt(v) { const m = T.spec.metric, d = m.decimals || 0, crowded = T.chars.length >= 5 && m.compact !== false; v = Math.max(0, v); let s; if ((m.compact || crowded) && v >= 1e6) s = (v / 1e6).toFixed(2) + 'M'; else if ((m.compact || crowded) && v >= 1e4) s = Math.round(v / 1000) + 'K'; else if (crowded && v >= 1000) s = (v / 1000).toFixed(1) + 'K'; else s = d ? v.toFixed(d) : Math.round(v).toLocaleString('en-US'); return (m.prefix || '') + s + (m.suffix || ''); }
 // columns stay left of the Shorts like/comment button strip on the right edge
@@ -406,7 +406,7 @@ function charBox(i, t) {
   const p = T.scene.place(i, Math.max(0, t)), s = p.s, ch = T.chars[i];
   const half = Math.max(80 * s, fmt(value(i, t)).length * 19, ch.name.length * 13.5 + 10);
   const bottom = Math.max(p.floor != null ? p.floor : 0, p.top + figH() * s) + 14;
-  return { x0: p.x - half, x1: p.x + half, y0: p.top - 340, y1: bottom, cx: p.x, cy: p.top + 85 * s };
+  return { x0: p.x - half, x1: p.x + half, y0: p.top - 420, y1: bottom, cx: p.x, cy: p.top + 85 * s };
 }
 function frameFor(t, safeTop, focus, zWant) {
   const b = T.scene.extent ? { ...T.scene.extent(t) } : { x0: 1e9, x1: -1e9, y0: 1e9, y1: -1e9 };
@@ -422,7 +422,7 @@ function frameFor(t, safeTop, focus, zWant) {
   return { z, dx, dy };
 }
 function directorAt(t, safeTop) {
-  if (T.scene.steadyCam) { if (!T.__steady || T.__steady.top !== safeTop) { let best = null; for (let tt = 0; tt <= T.dur; tt += 0.5) { const q = frameFor(tt, safeTop, -1, 1.12); if (!best || q.z < best.z) best = q; } T.__steady = { ...best, top: safeTop }; } return T.__steady; }
+  if (T.scene.steadyCam) { let z = 0, dx = 0, dy = 0, ws = 0; for (let k = 0; k < 12; k++) { const q = frameFor(Math.max(0, t - k * 0.17), safeTop, -1, 1.3), w = 12 - k; z += q.z * w; dx += q.dx * w; dy += q.dy * w; ws += w; } return { z: z / ws, dx: dx / ws, dy: dy / ws }; }   // steady: no focus jumps, slow 2s reframe
   let z = 0, dx = 0, dy = 0, wsum = 0;
   for (let k = 0; k < 10; k++) { const tt = Math.max(0, t - k * 0.055), sh = shotAt(tt), q = frameFor(tt, safeTop, sh.i, sh.i >= 0 ? 1.35 : 1.12), w = 10 - k; z += q.z * w; dx += q.dx * w; dy += q.dy * w; wsum += w; }
   return { z: z / wsum, dx: dx / wsum, dy: dy / wsum };
@@ -491,8 +491,10 @@ function drawConfetti(c, t) {
 }
 
 // =====================================================================================  captions / labels
+const CAPRECTS = [];
 function drawWords(C, line, cx, y, font, spacing, color, a, glow, tStart, t, wordBase, box) {
   C.save(); C.font = font; C.letterSpacing = spacing + 'px'; C.textAlign = 'center';
+  if (C === scratchC) { const px = parseFloat(font.match(/([0-9.]+)px/)[1]), w = C.measureText(line).width; CAPRECTS.push({ x0: cx - w / 2, x1: cx + w / 2, y0: y - px * 0.8, y1: y + px * 0.2, text: line }); }
   const words = line.split(' '), sp = C.measureText(' ').width, ws = words.map(w => C.measureText(w).width);
   let x = cx - (ws.reduce((m, n) => m + n, 0) + sp * (words.length - 1)) / 2;
   const up = line.toUpperCase(), names = T.chars.filter(c => up.includes(c.name)).map(c => ({ parts: c.name.split(' '), color: c.color }));
@@ -510,6 +512,7 @@ function drawWords(C, line, cx, y, font, spacing, color, a, glow, tStart, t, wor
   C.restore(); return words.length;
 }
 function captionBlock(t, tm, C = ctx) {
+  if (C === scratchC) CAPRECTS.length = 0;
   const st = T.style, B = beatAt(t), last = B.bi === T.beats.length - 1, q = B.b.style === 'question';
   let text = B.b.caption || '';
   if (tm.kind === 'hook') text = T.spec.hook || 'HOW DID THIS HAPPEN?';
@@ -548,8 +551,8 @@ function captionBlock(t, tm, C = ctx) {
     const du = (t - B.t0) / 0.45;
     if (du >= 0 && du < 1) { const sc2 = lerp(2.0, 1, easeOut(du)), y = lerp(470, 240, easeIO(du)); C.save(); C.translate(W / 2, y); C.scale(sc2, sc2); spaced(C, counter, 0, 0, '800 64px Inter', '#ffffff', 2, 1 - ss(0.6, 1, du), 24); C.restore(); }
   }
-  if (q && tm.kind !== 'endcard') { const L = T.chars.map((_, k) => String.fromCharCode(65 + k)).join(' · '); spaced(C, 'COMMENT ' + L, W / 2, bottom + 42, '800 32px Inter', '#ffffff', 4, ss(B.t0 + 0.4, B.t0 + 0.8, t)); bottom += 42; }
-  if (T.spec.footnote) { const ft = T.beats[Math.max(0, T.beats.length - 2)].t0; const fl = wrapText(T.spec.footnote.toUpperCase(), '700 28px Inter', 1, 940); fl.forEach((ln, k) => spaced(C, ln, W / 2, bottom + 40 + k * 34, '700 28px Inter', '#9aa3ad', 1, ss(ft + .2, ft + 1, t), 0, true)); bottom += 40 + (fl.length - 1) * 34; }
+  if (q && tm.kind !== 'endcard') { const L = T.chars.map((_, k) => String.fromCharCode(65 + k)).join(' · '); spaced(C, 'COMMENT ' + L, W / 2, bottom + 42, '800 32px Inter', '#ffffff', 4, ss(B.t0 + 0.4, B.t0 + 0.8, t)); if (C === scratchC) CAPRECTS.push({ x0: 300, x1: 780, y0: bottom + 42 - 26, y1: bottom + 48, text: 'COMMENT' }); bottom += 42; }
+  if (T.spec.footnote) { const ft = T.beats[Math.max(0, T.beats.length - 2)].t0; const fl = wrapText(T.spec.footnote.toUpperCase(), '700 28px Inter', 1, 860); fl.forEach((ln, k) => { spaced(C, ln, W / 2, bottom + 40 + k * 34, '700 28px Inter', '#9aa3ad', 1, ss(ft + .2, ft + 1, t), 0, true); if (C === scratchC && t > ft + .4) { C.font = '700 28px Inter'; const w = C.measureText(ln).width; CAPRECTS.push({ x0: 540 - w / 2, x1: 540 + w / 2, y0: bottom + 40 + k * 34 - 22, y1: bottom + 40 + k * 34 + 6, text: ln }); } }); bottom += 40 + (fl.length - 1) * 34; }
   return bottom;
 }
 const RECTS = [];
@@ -572,6 +575,8 @@ function qaLayout(t, P) {
       if (pts.some(([x, y, r]) => x + r > A.x0 + 2 && x - r < A.x1 - 2 && y + r > A.y0 + 2 && y - r < A.y1 - 2)) WARN.add(`character covers its own label: ${nm} "${String(A.text).replace(/[0-9][0-9,.]*/g, '#')}"`); }
   }
   T.chars.forEach((ch, i) => { const j = T.__joints[i]; if (j && T.__Y(j.head[1]) > 1560) WARN.add(`character in the Shorts bottom overlay: ${ch.name}`); });
+  for (const A of RECTS) { if (A.owner === 300) continue; for (const C of CAPRECTS) if (Math.min(A.x1, C.x1) - Math.max(A.x0, C.x0) > 2 && Math.min(A.y1, C.y1) - Math.max(A.y0, C.y0) > 2) WARN.add(`label overlaps the caption block: ${ownerName(A.owner)} "${String(A.text).replace(/[0-9][0-9,.]*/g, '#')}" / "${String(C.text).slice(0, 24)}"`); }
+  for (const pr of (T.__props || [])) { const j = T.__joints[pr.i]; if (!j) continue; const hx = j.head[0], hy = j.head[1], r = j.hr * 0.95, dx = pr.x1 - pr.x0, dy = pr.y1 - pr.y0, L2 = dx * dx + dy * dy || 1, u = clamp(((hx - pr.x0) * dx + (hy - pr.y0) * dy) / L2), px = pr.x0 + u * dx, py = pr.y0 + u * dy; if (Math.hypot(hx - px, hy - py) < r) WARN.add(`prop crosses a face: ${T.chars[pr.i].name}`); }
   RECTS.length = 0;
 }
 const tagY0 = (y0, board, s) => y0 - (board ? 50 : 108) * s;
@@ -583,7 +588,7 @@ function drawLabels(t, P, boardTop) {
     const p = { ...P[i], s: clamp(T.__z || 1, 0.92, 1.08) * (T.style.labelScale || 1) }, s = p.s, rate = fracRate(i, t), grow = (1 + 0.16 * fw[i]) * (1 + 0.25 * clamp(Math.abs(rate) * 2.2)) * (1 + 0.35 * Math.max(0, ...T.milestones.filter(m => m.i === i).map(m => bump(m.t, m.t + 0.45, t)))) * (1 + 0.3 * rollPop(i, t));
     const numW = board ? 0 : meas(fmt(value(i, t)), `800 ${(60 * s * grow).toFixed(1)}px Inter`, 0);
     const nf0 = `800 ${(34 * s * grow).toFixed(1)}px Inter`, nameW = meas(ch.name, nf0, 2), words = ch.name.split(' ');
-    let split = null; if (words.length > 1) { let best = null; for (let k = 1; k < words.length; k++) { const l1 = words.slice(0, k).join(' '), l2 = words.slice(k).join(' '), w2 = Math.max(meas(l1, nf0, 2), meas(l2, nf0, 2)); if (!best || w2 < best[0]) best = [w2, l1, l2]; } split = best; }
+    let split = null; if (words.length > 1) { let best = null; for (let k = 1; k < words.length; k++) { if (/^[=&+]$/.test(words[k]) || /^[=&+]$/.test(words[k - 1])) continue; const l1 = words.slice(0, k).join(' '), l2 = words.slice(k).join(' '), w2 = Math.max(meas(l1, nf0, 2), meas(l2, nf0, 2)) + (Math.min(l1.length, l2.length) <= 2 ? 999 : 0); if (!best || w2 < best[0]) best = [w2, l1, l2]; } split = best && best[0] < 900 ? best : null; }
     const tg = tagAt(i, t), tagW = tg ? meas(tg.text, `800 ${(34 * s).toFixed(1)}px Inter`, 2) : 0;
     return { i, x: p.x, top: p.top, s, grow, rate, w: Math.max(numW, nameW, tagW), numW, tagW, split, lines: [ch.name], f: 1, lift: 0 };
   });
@@ -675,7 +680,7 @@ function renderFrame(r) {
   const safeTop = (boardOn ? capCanvasBottom + 56 + T.chars.length * 60 : capCanvasBottom) + 30;
   const [shx, shy] = shakeAt(t, tm), cam = cameraAt(t, tm, safeTop), look = lookOf(T.chars[0]);
   const X = x => 540 + cam.dx + (x - 540) * cam.z + shx, Y = y => 960 + cam.dy + (y - 960) * cam.z + shy;
-  T.__joints = {}; T.__X = X; T.__Y = Y; T.__z = cam.z; T.__kind = tm.kind;
+  T.__joints = {}; T.__props = []; T.__X = X; T.__Y = Y; T.__z = cam.z; T.__kind = tm.kind;
   sc.clearRect(0, 0, W, H);
   sc.save(); sc.translate(540 + cam.dx + shx, 960 + cam.dy + shy); sc.scale(cam.z, cam.z); sc.translate(-540, -960);
   const th = THEMES[st.theme] || THEMES.void;

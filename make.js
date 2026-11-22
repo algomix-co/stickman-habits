@@ -4,13 +4,15 @@
 //   node make.js specs/a.json [more.json]          full render -> out/<id>/<id>.mp4, records style in brand history
 //   node make.js --sheet brands/x.json             character model sheet for a brand
 //   node make.js --check specs/a.json              run every frame (15 fps) through the layout checks, no video
+//   node make.js --review specs/a.json             reviewer: measure + auto-fix in a loop, writes review.json + review-strip.jpg
+//                                                  (a full render always runs the reviewer first and stops if it fails; --skip-review / --force to override)
 //   flags: --brand brands/x.json (default: spec.brand or brands/default.json)  --restyle  --keep-frames  --workers N  --fps 30|60 (default 60)
 const { chromium } = require('playwright');
 const fs = require('fs'), path = require('path'), crypto = require('crypto'), { execFileSync } = require('child_process');
 
 const args = process.argv.slice(2);
 const flag = f => args.includes(f), opt = f => (args.indexOf(f) >= 0 ? args[args.indexOf(f) + 1] : null);
-const CHECK = flag('--check'), PREVIEW = flag('--preview') || CHECK, KEEP = flag('--keep-frames'), RESTYLE = flag('--restyle'), SHEET = opt('--sheet');
+const CHECK = flag('--check'), REVIEW = flag('--review'), SKIP_REVIEW = flag('--skip-review'), FORCE = flag('--force'), PREVIEW = flag('--preview') || CHECK || REVIEW, KEEP = flag('--keep-frames'), RESTYLE = flag('--restyle'), SHEET = opt('--sheet');
 const WORKERS = +(opt('--workers') || 4) || 4;
 const specs = args.filter(a => a.endsWith('.json') && a !== opt('--brand') && a !== SHEET);
 const FPS = +(opt('--fps') || 60) || 60, ROOT = __dirname, PAGE = 'file://' + path.join(ROOT, 'engine', 'page.html');
@@ -88,9 +90,63 @@ function validate(s, brand = {}) {
   if (last && last.style !== 'question') Wn.push('last beat is not style:"question"');
   need(s.upload && s.upload.title && s.upload.title.length <= 100, 'upload.title required (<= 100 chars)');
   if (s.upload && s.upload.title && brand.titleMaxWords) { const words = s.upload.title.split(/\s+/).filter(w => /[A-Za-z0-9]/.test(w)).length; need(words <= brand.titleMaxWords, `title "${s.upload.title}" has ${words} words; the ${brand.name} brand allows ${brand.titleMaxWords}`); }
+  // brand story rules ("mirror cast"): who viewers can see themselves in
+  const R = brand.storyRules || {};
+  if (R.roles) {
+    const roles = (s.characters || []).map(c => c.role), ROLES = ['default', 'extreme', 'alternative', 'winner'];
+    (s.characters || []).forEach(c => need(ROLES.includes(c.role), `character ${c.name}: role must be one of ${ROLES.join(', ')}`));
+    need(roles.filter(r => r === 'winner').length === 1, 'cast needs exactly one winner (the one-change character)');
+    need(roles[0] === 'default', 'the Default (what most viewers do today) must be listed first, so it is option A');
+    const burst = (s.beats || []).flatMap(b => b.events || []).find(e => e.type === 'burst'), win = (s.characters || []).find(c => c.role === 'winner');
+    need(burst && win && burst.who === win.name, 'the climax (burst) must belong to the winner');
+  }
+  const caps = (s.beats || []).map(b => (b.caption || '').toUpperCase());
+  if (R.nameEffect) need(caps.some(c => c.startsWith("THAT'S ")), 'one caption must name the effect ("THAT\'S ANCHORING.")');
+  if (R.oneChange) need(caps.some(c => c.startsWith('ONE CHANGE:')), 'one caption must state the single change ("ONE CHANGE: ...")');
   return { errors: E, warnings: Wn };
 }
 const readJSON = p => JSON.parse(fs.readFileSync(p, 'utf8'));
+// story pacing: beats where nothing happens in the first second (no event, bubble, value change or state change)
+function paceLint(spec) {
+  const out = []; let t = 0, prev = Object.fromEntries(spec.characters.map(c => [c.name, (spec.start || {})[c.name] || 0]));
+  const mx = Math.max(1, ...spec.beats.flatMap(b => Object.values(b.values || {})), ...Object.values(prev));
+  spec.beats.forEach((b, k) => {
+    const early = (b.events || []).some(e => (e.at != null ? e.at : (e.type === 'burst' ? 0 : 0.07 * b.dur)) <= 1.0)
+      || (b.bubbles || []).some((bb, j) => (bb.at != null ? bb.at : 0.4 + j * (b.dur - 0.4) / b.bubbles.length) <= 1.0)
+      || Object.entries(b.values || {}).some(([n, v]) => Math.abs(v - prev[n]) > 0.03 * mx)
+      || Object.keys(b.states || {}).some(n => ((b.stateAt || {})[n] || 0) <= 1.0);
+    if (k > 0 && b.style !== 'question' && !early) out.push({ beat: k + 1, t0: t });
+    Object.assign(prev, b.values || {}); t += b.dur;
+  });
+  return out;
+}
+// reviewer: render every frame in memory, measure defects, apply automatic fixes, repeat
+async function reviewLoop(page, spec, brand, style0, out) {
+  const style = { ...style0, boost: [...(style0.boost || [])] }, log = []; let pass = false, last = null;
+  for (const p of paceLint(spec)) { style.boost.push([p.t0, p.t0 + 1.2]); log.push({ iteration: 0, issues: [`beat ${p.beat}: nothing happens in its first second`], fixes: ['energy boost'] }); console.log(`  review 0: beat ${p.beat} has nothing in its first second -> fix: energy boost`); }
+  for (let it = 1; it <= 5; it++) {
+    await page.evaluate(([s, b, st]) => window.loadSpec(s, b, st), [spec, brand, style]);
+    const st = await page.evaluate(() => window.reviewRun(15)); last = st;
+    const issues = [], fixes = [];
+    const early = st.motion.map((m, k) => [k, m]).filter(([k, m]) => m < 0.35 && k < st.realDur * 0.6);
+    if (early.length) { issues.push(`quiet seconds ${early.map(e => e[0] + 's').join(',')}`); for (const [k] of early) { const a = await page.evaluate(r => window.__storyAt(r), Math.max(0, k - 0.3)), b = await page.evaluate(r => window.__storyAt(r), k + 1.3); style.boost.push([Math.min(a, b), Math.max(a, b)]); } fixes.push('energy boost'); }
+    const crowd = st.warnings.filter(w => /overlap|out of frame/.test(w)), edge = st.warnings.filter(w => /off-screen|Shorts like/.test(w));
+    if (crowd.length || edge.length) {
+      issues.push(...crowd.concat(edge).slice(0, 3));
+      if (crowd.length && style.labels !== 'board' && compatible('labels', 'board', spec, brand)) { style.labels = 'board'; fixes.push('leaderboard labels'); }
+      else if ((style.labelScale || 1) > 0.72) { style.labelScale = +((style.labelScale || 1) * 0.9).toFixed(3); fixes.push('labels -10%'); }
+    }
+    const washed = st.washed.filter(w => w.frac > 0.3);
+    if (washed.length) { issues.push('washed out: ' + washed.map(w => `${w.name} ${(w.frac * 100).toFixed(0)}%`).join(', ')); if ((style.glow != null ? style.glow : 1) > 0.3) { style.glow = +((style.glow != null ? style.glow : 1) * 0.7).toFixed(3); fixes.push('glow -30%'); } }
+    if (st.bgLum > 28) { issues.push(`background too bright (${st.bgLum.toFixed(1)})`); if (style.theme !== 'void') { style.theme = 'void'; fixes.push('darker theme'); } else if ((style.glow != null ? style.glow : 1) > 0.3) { style.glow = +((style.glow != null ? style.glow : 1) * 0.8).toFixed(3); fixes.push('glow -20%'); } }
+    log.push({ iteration: it, issues, fixes, quietEarly: early.length, bgLum: +st.bgLum.toFixed(1) });
+    console.log(`  review ${it}: ${issues.length ? issues.join('; ') : 'clean'}${fixes.length ? ' -> fix: ' + fixes.join(', ') : ''}`);
+    if (!issues.length) { pass = true; break; }
+    if (!fixes.length) break;
+  }
+  fs.writeFileSync(path.join(out, 'review.json'), JSON.stringify({ pass, style, log, final: last && { motion: last.motion.map(v => +v.toFixed(2)), washed: last.washed, bgLum: last.bgLum, warnings: last.warnings } }, null, 1));
+  return { style, pass };
+}
 const hashOf = (...objs) => crypto.createHash('sha1').update(JSON.stringify(objs)).digest('hex').slice(0, 12);
 
 async function sheet(page, times, cols) {
@@ -133,6 +189,14 @@ async function sheet(page, times, cols) {
     [...v.warnings].forEach(w => console.log('  warn:', w));
     if (info.tail > 7.5) console.log(`  warn: ${info.tail.toFixed(1)}s of story after the climax; viewers drop off on a long static ending (aim <= 7s)`);
     if (info.realDur > 59.5) { console.log('  ERROR: video longer than 59.5s after hook/slow-motion/end card; trim beats'); failed++; continue; }
+    if (REVIEW || (!PREVIEW && !SKIP_REVIEW)) {
+      const rv = await reviewLoop(pages[0], spec, brand, style, out);
+      style = rv.style; fs.writeFileSync(stylePath, JSON.stringify({ key, style }, null, 1)); session[session.length - 1].style = style;
+      for (const p of pages) info = await p.evaluate(([s, b, st]) => window.loadSpec(s, b, st), [spec, brand, style]);
+      console.log(`  review: ${rv.pass ? 'PASS' : 'FAIL'} -> ${path.relative(ROOT, path.join(out, 'review.json'))}`);
+      if (REVIEW) { const step = info.realDur / 32, times = [...Array(32)].map((_, k) => [k * step + step / 2, `${(k * step + step / 2).toFixed(1)}s`]); fs.writeFileSync(path.join(out, 'review-strip.jpg'), Buffer.from((await sheet(pages[0], times, 8)).split(',')[1], 'base64')); }
+      if (!rv.pass && !FORCE && !REVIEW) { console.log('  STOP: review failed; fix the spec (or --force)'); failed++; await Promise.all(pages.map(p => p.close())); continue; }
+    }
     // one still per beat (mid-beat, in real time) + hook/endcard if present
     const marks = await pages[0].evaluate(() => { const T2 = window.__T(); const m = T2.beats.map(B => [window.__realOf(B.t0 + (B.t1 - B.t0) * 0.72), `beat ${B.bi + 1}`]); for (const g of T2.segs) { if (g.kind === 'hook') m.unshift([0.7, 'hook']); if (g.kind === 'rewind') m.splice(1, 0, [g.r0 + 0.3, 'rewind']); if (g.kind === 'endcard') m.push([g.r1 - 0.3, 'end card']); } return m; });
     fs.writeFileSync(path.join(out, 'sheet.jpg'), Buffer.from((await sheet(pages[0], marks.map(([r, l]) => [r, `${l} · ${r.toFixed(1)}s`]), 6)).split(',')[1], 'base64'));

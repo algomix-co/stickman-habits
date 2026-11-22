@@ -4,17 +4,20 @@
  "scene": "race",
  "characters": [
   {
-   "name": "PINGED",
+   "name": "JUST 1 CHECK",
+   "role": "default",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  },
+  {
+   "name": "BED SCROLLER",
+   "role": "extreme",
    "color": "#ff5a6e",
    "accessory": "headphones"
   },
   {
-   "name": "SCROLLER",
-   "color": "#b98cff",
-   "accessory": "cap"
-  },
-  {
-   "name": "BATCHER",
+   "name": "PHONE AWAY",
+   "role": "winner",
    "color": "#36e0c8",
    "accessory": "glasses"
   }
@@ -22,16 +25,16 @@
  "metric": {
   "suffix": " H",
   "scale": 0.85,
-  "max": 90
+  "max": 60
  },
  "counter": {
   "label": "DAY",
   "start": 1
  },
- "footnote": "Illustrative · deep-work hours · variable rewards",
+ "footnote": "Illustrative · free hours gained in a month · variable rewards",
  "upload": {
   "title": "Why You Check Your Phone",
-  "description": "Every ping is a tiny slot machine. Your brain craves the maybe (variable rewards), and it costs you more than you think. Which one are you? (Illustrative numbers.)",
+  "description": "\"I'll just check one thing.\" Your phone pays out like a slot machine: sometimes a like, sometimes nothing. That unpredictability (a variable reward) is what keeps you reaching for it. One small change fixes most of it. Which one are you? (Illustrative numbers.)",
   "hashtags": [
    "psychology",
    "brainscience",
@@ -48,181 +51,178 @@
    "counter": 1,
    "bubbles": [
     {
-     "who": "PINGED",
-     "text": "just checking...",
+     "who": "JUST 1 CHECK",
+     "text": "just checking one thing",
      "at": 0.5
     }
    ]
   },
   {
    "dur": 3.0,
-   "caption": "EVERY PING IS A SLOT MACHINE.",
+   "caption": "ONE CHECK BECOMES TWENTY.",
    "counter": 3,
    "values": {
-    "PINGED": 2,
-    "SCROLLER": 1.5,
-    "BATCHER": 8
+    "JUST 1 CHECK": 2,
+    "BED SCROLLER": 1,
+    "PHONE AWAY": 6
    },
    "events": [
     {
      "type": "marker",
-     "who": "PINGED",
+     "who": "JUST 1 CHECK",
      "text": "PING!",
      "at": 0.2,
-     "dur": 0.8,
-     "color": "#ff5a6e"
+     "dur": 0.8
     },
     {
      "type": "marker",
-     "who": "PINGED",
+     "who": "JUST 1 CHECK",
      "text": "PING!",
      "at": 1.3,
-     "dur": 0.8,
-     "color": "#ff5a6e"
+     "dur": 0.8
     },
     {
      "type": "marker",
-     "who": "PINGED",
+     "who": "JUST 1 CHECK",
      "text": "PING!",
      "at": 2.2,
-     "dur": 0.7,
-     "color": "#ff5a6e"
+     "dur": 0.7
     }
    ],
    "bubbles": [
     {
-     "who": "SCROLLER",
-     "text": "one more swipe...",
-     "at": 0.7
+     "who": "BED SCROLLER",
+     "text": "one more video...",
+     "at": 0.8
     }
    ]
   },
   {
    "dur": 3.0,
-   "caption": "YOUR BRAIN CRAVES THE MAYBE.",
+   "caption": "THAT'S A VARIABLE REWARD.",
    "counter": 7,
    "values": {
-    "PINGED": 6,
-    "SCROLLER": 4,
-    "BATCHER": 21
+    "JUST 1 CHECK": 5,
+    "BED SCROLLER": 2,
+    "PHONE AWAY": 15
    },
    "events": [
     {
      "type": "shake",
-     "who": "PINGED",
+     "who": "JUST 1 CHECK",
      "at": 0.3
     }
    ],
    "bubbles": [
     {
-     "who": "BATCHER",
-     "text": "phone's in the drawer.",
+     "who": "JUST 1 CHECK",
+     "text": "maybe someone liked it?",
      "at": 0.6
     }
    ]
   },
   {
    "dur": 3.0,
-   "caption": "SCROLLER LOSES A WHOLE DAY.",
+   "caption": "BED SCROLLER HITS 2AM.",
    "counter": 10,
    "values": {
-    "SCROLLER": 5,
-    "PINGED": 8,
-    "BATCHER": 30
+    "BED SCROLLER": 3,
+    "JUST 1 CHECK": 7,
+    "PHONE AWAY": 21
    },
    "events": [
     {
      "type": "crash",
-     "who": "SCROLLER",
+     "who": "BED SCROLLER",
      "at": 0.3
     }
    ],
    "tags": {
-    "SCROLLER": "DOOMSCROLLING"
+    "BED SCROLLER": "RUNNING ON 4H SLEEP"
    }
   },
   {
    "dur": 3.4,
-   "caption": "PINGED NEVER FINISHES ANYTHING.",
+   "caption": "ONE CHANGE: PHONE IN ANOTHER ROOM.",
    "counter": 18,
    "values": {
-    "PINGED": 12,
-    "BATCHER": 50
+    "PHONE AWAY": 36,
+    "JUST 1 CHECK": 10
    },
    "bubbles": [
     {
-     "who": "PINGED",
-     "text": "wait, where was I?",
-     "at": 0.4
+     "who": "PHONE AWAY",
+     "text": "out of sight...",
+     "at": 0.3
     }
    ]
   },
   {
    "dur": 3.0,
-   "caption": "BATCHER CHECKS 3 TIMES A DAY.",
+   "caption": "NO PING. NO PULL.",
    "counter": 24,
    "curve": "linear",
    "values": {
-    "BATCHER": 68,
-    "PINGED": 14
+    "PHONE AWAY": 46,
+    "JUST 1 CHECK": 12
    },
    "bubbles": [
     {
-     "who": "BATCHER",
-     "text": "notifications: off.",
-     "at": 0.3
+     "who": "JUST 1 CHECK",
+     "text": "where did my evening go?",
+     "at": 0.4
     }
    ]
   },
   {
    "dur": 3.8,
-   "caption": "FOCUS COMPOUNDS.",
+   "caption": "FREE HOURS ADD UP.",
    "counter": 30,
    "curve": "accel",
    "values": {
-    "BATCHER": 90,
-    "PINGED": 15
+    "PHONE AWAY": 60,
+    "JUST 1 CHECK": 13
    },
    "states": {
-    "PINGED": "shock",
-    "BATCHER": "win"
+    "JUST 1 CHECK": "shock",
+    "PHONE AWAY": "win"
    },
    "stateAt": {
-    "PINGED": 1.2,
-    "BATCHER": 3.6
+    "JUST 1 CHECK": 0.9,
+    "PHONE AWAY": 3.6
    },
    "events": [
     {
      "type": "burst",
-     "who": "BATCHER",
+     "who": "PHONE AWAY",
      "at": 3.65
     }
    ],
    "bubbles": [
     {
-     "who": "PINGED",
-     "text": "how?!",
-     "at": 1.3,
-     "dur": 1.6
+     "who": "JUST 1 CHECK",
+     "text": "60 hours?!",
+     "at": 1.0,
+     "dur": 1.8
     }
    ]
   },
   {
    "dur": 3.4,
-   "caption": "SAME PHONE. DIFFERENT MONTHS.",
+   "caption": "SAME PHONE. DIFFERENT MONTH.",
    "states": {
-    "PINGED": "sad"
+    "JUST 1 CHECK": "sad"
    },
    "dim": [
-    "PINGED",
-    "SCROLLER"
+    "JUST 1 CHECK",
+    "BED SCROLLER"
    ],
    "tags": {
-    "BATCHER": {
+    "PHONE AWAY": {
      "text": "TOP",
      "color": "#36e0c8"
     },
-    "PINGED": "ALWAYS ON"
+    "JUST 1 CHECK": "13 H"
    }
   },
   {

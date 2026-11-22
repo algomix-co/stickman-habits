@@ -124,9 +124,17 @@ function drawFigure(c, ch, anchor, p, t, alpha, s = 1, opt = {}) {
   const poly = (pts, lw, color) => { c.strokeStyle = color; c.lineWidth = lw * s; c.beginPath(); pts.forEach((q, k) => { const [a, b] = P(q); k ? c.lineTo(a, b) : c.moveTo(a, b); }); c.stroke(); };
   const head = (rad, color) => { const [hx, hy] = P(r.head); c.fillStyle = color; c.beginPath(); if (L.shape === 'square') c.roundRect(hx - rad * s, hy - rad * s, 2 * rad * s, 2 * rad * s, rad * 0.45 * s); else c.arc(hx, hy, rad * s, 0, 7); c.fill(); };
   const body = (dl, col) => { poly(r.ll, L.limb + dl, col); poly(r.rl, L.limb + dl, col); poly([r.hip, r.neck], L.torso + dl, col); poly(r.la, L.limb + dl, col); poly(r.ra, L.limb + dl, col); };
-  if (!neon) { body(5, 'rgba(0,0,0,0.6)'); head(hr + 2.5, 'rgba(0,0,0,0.6)'); }
-  body(0, ch.color); head(hr, ch.color);
-  if (neon && !opt.ghost) { body(-(L.limb * 0.62), ch.core); if (!L.face) head(hr * 0.55, ch.core); else head(hr * 0.8, ch.core); }
+  if (!opt.ghost) { body(neon ? 4 : 5, 'rgba(0,0,0,0.6)'); head(hr + (neon ? 2 : 2.5), 'rgba(0,0,0,0.6)'); }
+  body(0, ch.color);
+  if (neon && !opt.ghost) {   // thin bright centre line instead of a white core, so the character keeps its colour
+    const cw = Math.max(2, L.limb * 0.28); poly(r.ll, cw, ch.core); poly(r.rl, cw, ch.core); poly([[r.hip[0] + (r.neck[0] - r.hip[0]) * 0.1, r.hip[1] + (r.neck[1] - r.hip[1]) * 0.1], [r.hip[0] + (r.neck[0] - r.hip[0]) * 0.72, r.hip[1] + (r.neck[1] - r.hip[1]) * 0.72]], Math.max(2, L.torso * 0.22), ch.core); poly(r.la, cw, ch.core); poly(r.ra, cw, ch.core);
+  }
+  if (!opt.ghost) head(hr + (neon ? 2 : 2.5), 'rgba(0,0,0,0.6)');   // head outline over the limbs that pass behind it
+  head(hr, ch.color);
+  if (neon && !opt.ghost) {
+    if (!L.face) head(hr * 0.5, ch.core);
+    else { const [hx0, hy0] = P(r.head); c.fillStyle = 'rgba(255,255,255,0.55)'; c.beginPath(); c.ellipse(hx0 - hr * 0.42 * s, hy0 - hr * 0.45 * s, hr * 0.22 * s, hr * 0.14 * s, -0.6, 0, 7); c.fill(); }
+  }
   const [hx, hy] = P(r.head), fx = (opt.facing || (T && T.scene && T.scene.facing)) === 'right' ? 1 : 0;
   if (L.face && !opt.ghost) drawFace(c, hx, hy, hr * s, opt.expr || EXPR[stateAt(ch.i, t).state] || 'neutral', fx);
   if (!opt.ghost) {
@@ -134,6 +142,7 @@ function drawFigure(c, ch, anchor, p, t, alpha, s = 1, opt = {}) {
     drawAccessory(c, acc, hx, hy, hr * s, fx, t, L.accent);
   }
   c.restore();
+  if (!opt.ghost && T && T.__joints && ch.i != null) { const hp = P(r.hip), nk = P(r.neck); T.__joints[ch.i] = { x: (hp[0] + nk[0]) / 2, y: (hp[1] + nk[1]) / 2, off: L.torso * 0.32 * s, torso: L.torso }; }
   return { head: [hx, hy], hr: hr * s, hip: P(r.hip), lhand: P(r.la[2]), rhand: P(r.ra[2]), lelbow: P(r.la[1]), relbow: P(r.ra[1]), top: hy - hr * s };
 }
 // character with optional motion trail + sweat; anchorFn(tt) -> anchor
@@ -176,6 +185,7 @@ function gestureLayer(i, t, p) {
 }
 // 1 when nothing is happening on screen (no one moving, nobody speaking, no event close by)
 function deadAir(t) {
+  if ((T.style.boost || []).some(([a, b]) => t >= a && t <= b)) return 1;   // reviewer-requested energy
   if (T.chars.some((_, i) => Math.abs(fracRate(i, t)) > 0.012)) return 0;
   if (T.bubbles.some(b => t > b.t0 - 0.2 && t < b.t1)) return 0;
   if (T.events.some(e => Math.abs(e.t - t) < 0.8) || T.milestones.some(m => t > m.t && t < m.t + 0.8)) return 0;
@@ -239,7 +249,7 @@ function wrapText(text, font, spacing, maxW) {
 
 // =====================================================================================  compile
 const CURVES = { ease: easeIO, linear: u => u, accel: u => Math.pow(u, 1.8), decel: u => 1 - (1 - u) * (1 - u), snap: u => u > 0 ? 1 : 0, late: u => ss(0.55, 1, u), early: u => ss(0, 0.35, u) };
-const DEFAULT_STYLE = { theme: 'void', captionStyle: 'tracked', transition: 'fade', camera: 'static', labels: 'above', hook: 'straight', speed: 'none', outro: 'question', instrument: 'piano', impact: 'boom', root: 57, bpm: 80 };
+const DEFAULT_STYLE = { glow: 1, labelScale: 1, boost: [], theme: 'void', captionStyle: 'tracked', transition: 'fade', camera: 'static', labels: 'above', hook: 'straight', speed: 'none', outro: 'question', instrument: 'piano', impact: 'boom', root: 57, bpm: 80 };
 function compile(spec, brand, style) {
   const chars = spec.characters.map((c, i) => { const color = c.color || PALETTE[i % PALETTE.length]; return { ...c, i, color, core: mixWhite(color, 0.72) }; });
   const idx = name => { const i = chars.findIndex(c => c.name === name); if (i < 0) throw new Error(`unknown character "${name}"`); return i; };
@@ -339,12 +349,12 @@ const STARS = (() => { const r = rng(17); return [...Array(140)].map(() => ({ x:
 function particlesFor(seed, n) { const r = rng(seed); return [...Array(n)].map(() => ({ a: r(), b: r(), c: r(), d: r(), e: r() })); }
 const DEBRIS = particlesFor(11, 34), FLING = particlesFor(7, 16), SPARK = particlesFor(9, 80);
 const THEMES = {
-  void: { top: '#07080a', bot: '#0b0d10', dust: '#cfd8e3' },
-  dusk: { top: '#1a0e0a', bot: '#0b0809', dust: '#ffd2b0', spot: 'rgba(255,140,70,0.13)' },
-  navy: { top: '#0d1636', bot: '#05070f', dust: null, stars: true, spot: 'rgba(90,130,255,0.10)' },
-  grid: { top: '#06080b', bot: '#0a0d12', dust: '#bcd0ff', grid: true },
+  void: { top: '#060709', bot: '#0a0b0e', dust: '#cfd8e3' },
+  dusk: { top: '#120a08', bot: '#080607', dust: '#ffd2b0', spot: 'rgba(255,140,70,0.06)' },
+  navy: { top: '#080d1f', bot: '#04050a', dust: null, stars: true, spot: 'rgba(90,130,255,0.05)' },
+  grid: { top: '#05070a', bot: '#080a0e', dust: '#bcd0ff', grid: true },
 };
-const MOODTINT = { crash: [255, 40, 60, 0.07], tense: [70, 120, 255, 0.06], build: [255, 170, 60, 0.04], climax: [255, 185, 60, 0.05], normal: [0, 0, 0, 0], end: [0, 0, 0, 0] };
+const MOODTINT = { crash: [255, 40, 60, 0.05], tense: [70, 120, 255, 0.035], build: [255, 170, 60, 0.025], climax: [255, 185, 60, 0.03], normal: [0, 0, 0, 0], end: [0, 0, 0, 0] };
 function moodTint(t) {
   const B = beatAt(t), prevB = T.beats[Math.max(0, B.bi - 1)], k = ss(B.t0, B.t0 + 0.6, t);
   const a = MOODTINT[prevB.mood] || MOODTINT.normal, b = MOODTINT[B.mood] || MOODTINT.normal;
@@ -354,7 +364,7 @@ function drawBackground(t, FY, warm, wx) {
   const th = THEMES[T.style.theme] || THEMES.void;
   const bg = ctx.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, th.top); bg.addColorStop(1, th.bot); ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
   if (th.spot) { const rg = ctx.createRadialGradient(540, 420, 0, 540, 420, 1000); rg.addColorStop(0, th.spot); rg.addColorStop(1, 'rgba(0,0,0,0)'); ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H); }
-  if (th.stars) for (const s of STARS) { ctx.globalAlpha = 0.25 + 0.25 * Math.sin(t * 1.3 + s.p); ctx.fillStyle = '#dfe8ff'; ctx.beginPath(); ctx.arc(s.x, s.y, s.s, 0, 7); ctx.fill(); }
+  if (th.stars) for (const s of STARS) { ctx.globalAlpha = 0.12 + 0.12 * Math.sin(t * 1.3 + s.p); ctx.fillStyle = '#dfe8ff'; ctx.beginPath(); ctx.arc(s.x, s.y, s.s, 0, 7); ctx.fill(); }
   ctx.globalAlpha = 1;
   if (th.grid) {
     ctx.strokeStyle = 'rgba(120,160,255,0.07)'; ctx.lineWidth = 1.5; ctx.beginPath();
@@ -365,7 +375,7 @@ function drawBackground(t, FY, warm, wx) {
     ctx.stroke();
   }
   const mt = moodTint(t); if (mt[3] > 0.001) { ctx.fillStyle = `rgba(${mt[0]},${mt[1]},${mt[2]},${mt[3]})`; ctx.fillRect(0, 0, W, H); }
-  if (warm > 0) { const rg = ctx.createRadialGradient(wx, 700, 0, wx, 700, 950); rg.addColorStop(0, `rgba(255,185,60,${0.13 * warm})`); rg.addColorStop(1, 'rgba(255,185,60,0)'); ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H); }
+  if (warm > 0) { const rg = ctx.createRadialGradient(wx, 700, 0, wx, 700, 950); rg.addColorStop(0, `rgba(255,185,60,${0.07 * warm})`); rg.addColorStop(1, 'rgba(255,185,60,0)'); ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H); }
 }
 // ---- camera director: every beat gets "shots" (who to frame, how tight); highest priority wins, then smoothed
 function buildShots() {
@@ -554,7 +564,7 @@ function drawLabels(t, P, boardTop) {
   const board = T.style.labels === 'board', fw = focusWeights(t);
   const meas = (text, font, sp) => { sc.font = font; sc.letterSpacing = sp + 'px'; return sc.measureText(text).width; };
   const L = T.chars.map((ch, i) => {
-    const p = P[i], s = p.s, rate = fracRate(i, t), grow = (1 + 0.16 * fw[i]) * (1 + 0.25 * clamp(Math.abs(rate) * 2.2)) * (1 + 0.3 * rollPop(i, t));
+    const p = { ...P[i], s: P[i].s * (T.style.labelScale || 1) }, s = p.s, rate = fracRate(i, t), grow = (1 + 0.16 * fw[i]) * (1 + 0.25 * clamp(Math.abs(rate) * 2.2)) * (1 + 0.3 * rollPop(i, t));
     const numW = board ? 0 : meas(fmt(value(i, t)), `700 ${(40 * s * grow).toFixed(1)}px Inter`, 0);
     const nameW = meas(ch.name, `${board ? 700 : 600} ${((board ? 16 : 17) * s * grow).toFixed(1)}px Inter`, 3);
     const tg = tagAt(i, t), tagW = tg ? meas(tg.text, `700 ${(18 * s).toFixed(1)}px Inter`, 3) : 0;
@@ -642,6 +652,7 @@ function renderFrame(r) {
   const safeTop = (boardOn ? capCanvasBottom + 46 + T.chars.length * 50 : capCanvasBottom) + 26;
   const [shx, shy] = shakeAt(t, tm), cam = cameraAt(t, tm, safeTop), look = lookOf(T.chars[0]);
   const X = x => 540 + cam.dx + (x - 540) * cam.z + shx, Y = y => 960 + cam.dy + (y - 960) * cam.z + shy;
+  T.__joints = {}; T.__X = X; T.__Y = Y;
   sc.clearRect(0, 0, W, H);
   sc.save(); sc.translate(540 + cam.dx + shx, 960 + cam.dy + shy); sc.scale(cam.z, cam.z); sc.translate(-540, -960);
   const th = THEMES[st.theme] || THEMES.void;
@@ -662,14 +673,18 @@ function renderFrame(r) {
     fade.addColorStop(0, th2.bot + '00'); fade.addColorStop(1, th2.bot); ctx.fillStyle = fade; ctx.fillRect(0, FY + 2, W, H - FY);
   }
   const fw = focusWeights(t);
-  P.forEach((p, i) => { if (fw[i] < 0.05) return; const g = ctx.createRadialGradient(p.x, p.top + 90 * p.s, 0, p.x, p.top + 90 * p.s, 300 * p.s); g.addColorStop(0, T.chars[i].color + Math.round(40 * fw[i]).toString(16).padStart(2, '0')); g.addColorStop(1, T.chars[i].color + '00'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); });
+  P.forEach((p, i) => { if (fw[i] < 0.05) return; const g = ctx.createRadialGradient(p.x, p.top + 90 * p.s, 0, p.x, p.top + 90 * p.s, 300 * p.s); g.addColorStop(0, T.chars[i].color + Math.round(20 * fw[i]).toString(16).padStart(2, '0')); g.addColorStop(1, T.chars[i].color + '00'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); });
+  ctx.drawImage(scene, 0, 0);
+  const bloom = (look.lineStyle === 'flat' ? 0.35 : 1) * (T.style.glow != null ? T.style.glow : 1);
+  g1c.imageSmoothingQuality = 'high'; g2c.imageSmoothingQuality = 'high';
+  g1c.clearRect(0, 0, W / 4, H / 4); g1c.filter = 'blur(2px)'; g1c.drawImage(scene, 0, 0, W / 4, H / 4); g1c.filter = 'none';
+  g2c.clearRect(0, 0, W / 8, H / 8); g2c.filter = 'blur(4px)'; g2c.drawImage(scene, 0, 0, W / 8, H / 8); g2c.filter = 'none';
+  ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 0.32 * bloom; ctx.drawImage(g1, 0, 0, W, H); ctx.globalAlpha = (0.22 + 0.2 * warm) * bloom; ctx.drawImage(g2, 0, 0, W, H); ctx.restore();
+  // UI layer (numbers, names, tags, bubbles) drawn after the glow so text stays sharp
+  sc.clearRect(0, 0, W, H);
   drawLabels(t, P, capCanvasBottom + 46);
   if (tm.kind === 'play' || tm.kind === 'slow') qaLayout(t, P); else RECTS.length = 0;
   ctx.drawImage(scene, 0, 0);
-  const bloom = look.lineStyle === 'flat' ? 0.35 : 1;
-  g1c.clearRect(0, 0, W / 4, H / 4); g1c.filter = 'blur(3px)'; g1c.drawImage(scene, 0, 0, W / 4, H / 4); g1c.filter = 'none';
-  g2c.clearRect(0, 0, W / 8, H / 8); g2c.filter = 'blur(5px)'; g2c.drawImage(scene, 0, 0, W / 8, H / 8); g2c.filter = 'none';
-  ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 0.85 * bloom; ctx.drawImage(g1, 0, 0, W, H); ctx.globalAlpha = (0.7 + 0.5 * warm) * bloom; ctx.drawImage(g2, 0, 0, W, H); ctx.restore();
   captionBlock(t, tm);
   // crash flash / cut flash
   for (const e of T.events) if (e.type === 'crash' || e.type === 'flash') { const f = t > e.t ? 1 - ss(e.t, e.t + 0.8, t) : 0; if (f <= 0) continue; const rf = ctx.createRadialGradient(W / 2, H / 2, 300, W / 2, H / 2, 1100); rf.addColorStop(0, 'rgba(255,40,60,0)'); rf.addColorStop(1, `rgba(255,40,60,${0.28 * f})`); ctx.fillStyle = rf; ctx.fillRect(0, 0, W, H); }
@@ -726,5 +741,32 @@ window.cues = () => buildCues();
 window.warnings = () => [...WARN];
 window.brandSheet = b => drawBrandSheet(b);
 window.__T = () => T;
+window.__storyAt = r => storyAt(r).s;
+function hsl(r, g, b) { r /= 255; g /= 255; b /= 255; const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, d = mx - mn; return { l, s: d === 0 ? 0 : d / (1 - Math.abs(2 * l - 1)) }; }
+window.reviewRun = (fps = 15) => {
+  WARN.clear();
+  const n = Math.floor(T.realDur * fps), [, smc] = mk(108, 192), diffs = [], wash = T.chars.map(() => [0, 0]), bg = [], haze = [], meanL = [];
+  let prev = null;
+  for (let f = 0; f < n; f++) {
+    const r = f / fps; renderFrame(r);
+    smc.drawImage(cv, 0, 0, 108, 192); const d = smc.getImageData(0, 0, 108, 192).data, g = new Float32Array(108 * 192);
+    for (let k = 0; k < g.length; k++) g[k] = 0.299 * d[4 * k] + 0.587 * d[4 * k + 1] + 0.114 * d[4 * k + 2];
+    if (prev) { let sm = 0; for (let k = 0; k < g.length; k++) sm += Math.abs(g[k] - prev[k]); diffs.push(sm / g.length); }
+    prev = g;
+    if (f % 5 === 0) {
+      const sorted = Array.from(g).sort((a, b) => a - b); bg.push(sorted[Math.floor(sorted.length * 0.2)]); haze.push(sorted[Math.floor(sorted.length * 0.6)]); meanL.push(g.reduce((x, y) => x + y, 0) / g.length);
+      const tm = storyAt(r);
+      if (tm.kind === 'play' || tm.kind === 'slow') T.chars.forEach((ch, i) => {
+        const j = T.__joints[i], want = hsl(...[1, 3, 5].map(o => parseInt(ch.color.slice(o, o + 2), 16)));
+        if (!j || j.torso < 14 || want.s < 0.35 || alphaAt(i, tm.s) < 0.9) return;
+        const x = Math.round(T.__X(j.x + j.off)), y = Math.round(T.__Y(j.y)); if (x < 3 || y < 3 || x > W - 4 || y > H - 4) return;
+        const px = ctx.getImageData(x - 2, y - 2, 5, 5).data; let R2 = 0, G2 = 0, B2 = 0; for (let k = 0; k < px.length; k += 4) { R2 += px[k]; G2 += px[k + 1]; B2 += px[k + 2]; }
+        const got = hsl(R2 / 25, G2 / 25, B2 / 25); wash[i][1]++; if (got.s < 0.25 && got.l > 0.8) wash[i][0]++;
+      });
+    }
+  }
+  const perSecond = []; diffs.forEach((v, k) => { const sec = Math.floor((k + 1) / fps); (perSecond[sec] = perSecond[sec] || []).push(v); });
+  return { motion: perSecond.map(a => a.reduce((x, y) => x + y, 0) / a.length), washed: T.chars.map((ch, i) => ({ name: ch.name, frac: wash[i][1] ? wash[i][0] / wash[i][1] : 0 })), bgLum: bg.reduce((x, y) => x + y, 0) / Math.max(1, bg.length), haze: haze.reduce((x, y) => x + y, 0) / Math.max(1, haze.length), meanLum: meanL.reduce((x, y) => x + y, 0) / Math.max(1, meanL.length), warnings: [...WARN], realDur: T.realDur };
+};
 window.__realOf = s => realOf(s);
 window.ready = Promise.all(['300 44px Inter', '700 40px Inter', '600 17px Inter', 'italic 600 25px Inter', '500 20px Inter', '800 92px Inter', '600 34px Inter'].map(f => document.fonts.load(f)));

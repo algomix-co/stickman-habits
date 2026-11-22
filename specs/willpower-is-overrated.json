@@ -4,25 +4,28 @@
  "scene": "lift",
  "characters": [
   {
-   "name": "MOTIVATED",
+   "name": "MONDAY START",
+   "role": "default",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  },
+  {
+   "name": "GOES TOO BIG",
+   "role": "extreme",
    "color": "#ff5a6e",
    "accessory": "headband"
   },
   {
-   "name": "OVERTHINKER",
-   "color": "#b98cff",
-   "accessory": "headphones"
-  },
-  {
-   "name": "IF-THEN",
-   "color": "#ffc53d",
-   "accessory": "cap"
+   "name": "7AM = GYM",
+   "role": "winner",
+   "color": "#36e0c8",
+   "accessory": "glasses"
   }
  ],
  "start": {
-  "MOTIVATED": 40,
-  "OVERTHINKER": 40,
-  "IF-THEN": 40
+  "MONDAY START": 40,
+  "GOES TOO BIG": 40,
+  "7AM = GYM": 40
  },
  "metric": {
   "suffix": " KG",
@@ -36,7 +39,7 @@
  "footnote": "Illustrative · if-then plans (implementation intentions)",
  "upload": {
   "title": "Willpower Is Overrated",
-  "description": "Motivation fades. An if-then plan (\"if it's 7am, then I train\") doesn't need you to feel like it. Same goal, three approaches. Which one are you? (Illustrative numbers.)",
+  "description": "\"I'll start on Monday.\" Motivation comes and goes. An if-then plan (\"if it's 7am, I train\") decides for you before your mood can. Same goal, three approaches. Which one are you? (Illustrative numbers.)",
   "hashtags": [
    "psychology",
    "brainscience",
@@ -49,51 +52,51 @@
  "beats": [
   {
    "dur": 2.6,
-   "caption": "SAME GOAL: GET STRONG.",
+   "caption": "SAME GOAL. SAME GYM.",
    "counter": 1,
    "bubbles": [
     {
-     "who": "MOTIVATED",
-     "text": "new year, new me!",
+     "who": "MONDAY START",
+     "text": "I'll start Monday",
      "at": 0.5
     }
    ]
   },
   {
    "dur": 3.0,
-   "caption": "MOTIVATED GOES ALL OUT.",
+   "caption": "GOES TOO BIG GOES ALL OUT.",
    "counter": 2,
    "values": {
-    "MOTIVATED": 70,
-    "OVERTHINKER": 40,
-    "IF-THEN": 45
+    "GOES TOO BIG": 70,
+    "MONDAY START": 40,
+    "7AM = GYM": 45
    },
    "curves": {
-    "MOTIVATED": "decel"
+    "GOES TOO BIG": "decel"
    },
    "states": {
-    "OVERTHINKER": "idle"
+    "MONDAY START": "idle"
    },
    "bubbles": [
     {
-     "who": "MOTIVATED",
-     "text": "feeling unstoppable!",
+     "who": "GOES TOO BIG",
+     "text": "2 hours, every day!",
      "at": 0.4
     }
    ]
   },
   {
    "dur": 3.0,
-   "caption": "OVERTHINKER RESEARCHES.",
+   "caption": "MONDAY START MISSES MONDAY.",
    "counter": 4,
    "values": {
-    "OVERTHINKER": 42,
-    "IF-THEN": 52
+    "MONDAY START": 42,
+    "7AM = GYM": 52
    },
    "bubbles": [
     {
-     "who": "OVERTHINKER",
-     "text": "which program is best?",
+     "who": "MONDAY START",
+     "text": "not feeling it today",
      "at": 0.3
     }
    ]
@@ -103,81 +106,82 @@
    "caption": "MOTIVATION FADES BY WEEK 6.",
    "counter": 6,
    "values": {
-    "MOTIVATED": 0,
-    "IF-THEN": 58
+    "GOES TOO BIG": 0,
+    "7AM = GYM": 58
    },
    "events": [
     {
      "type": "crash",
-     "who": "MOTIVATED",
+     "who": "GOES TOO BIG",
      "at": 0.4
     }
    ],
    "tags": {
-    "MOTIVATED": "QUIT"
+    "GOES TOO BIG": "BURNT OUT"
    }
   },
   {
    "dur": 3.2,
-   "caption": "IF 7AM, THEN GYM.",
+   "caption": "ONE CHANGE: IF IT'S 7AM, I GO.",
    "counter": 10,
    "curve": "linear",
    "values": {
-    "IF-THEN": 68
+    "7AM = GYM": 68,
+    "MONDAY START": 44
    },
    "bubbles": [
     {
-     "who": "IF-THEN",
-     "text": "it's 7am. bag's packed.",
+     "who": "7AM = GYM",
+     "text": "it's 7. bag's packed.",
      "at": 0.3
     }
    ]
   },
   {
    "dur": 3.0,
-   "caption": "NO FEELINGS REQUIRED.",
+   "caption": "THAT'S AN IF-THEN PLAN.",
    "counter": 16,
    "curve": "linear",
    "values": {
-    "IF-THEN": 85,
-    "OVERTHINKER": 45
+    "7AM = GYM": 85,
+    "MONDAY START": 45
    },
    "states": {
-    "OVERTHINKER": "sad"
+    "MONDAY START": "sad"
    },
    "bubbles": [
     {
-     "who": "OVERTHINKER",
-     "text": "maybe next month...",
+     "who": "MONDAY START",
+     "text": "next Monday, for real",
      "at": 0.4
     }
    ]
   },
   {
    "dur": 3.8,
-   "caption": "PLANS BEAT MOOD.",
+   "caption": "NO MOOD REQUIRED.",
    "counter": 26,
    "curve": "linear",
    "values": {
-    "IF-THEN": 110
+    "7AM = GYM": 110
    },
    "states": {
-    "IF-THEN": "win"
+    "7AM = GYM": "win"
    },
    "stateAt": {
-    "IF-THEN": 3.6
+    "7AM = GYM": 3.6
    },
    "events": [
     {
      "type": "burst",
-     "who": "IF-THEN",
+     "who": "7AM = GYM",
      "at": 3.65
     }
    ],
    "bubbles": [
     {
-     "who": "MOTIVATED",
-     "text": "I wasn't in the mood.",
+     "who": "GOES TOO BIG",
+     "text": "I wasn't in the mood",
      "at": 0.6
     }
    ]
@@ -186,15 +190,15 @@
    "dur": 3.4,
    "caption": "SAME GYM. DIFFERENT SYSTEMS.",
    "dim": [
-    "MOTIVATED",
-    "OVERTHINKER"
+    "MONDAY START",
+    "GOES TOO BIG"
    ],
    "tags": {
-    "IF-THEN": {
+    "7AM = GYM": {
      "text": "TOP",
-     "color": "#ffc53d"
+     "color": "#36e0c8"
     },
-    "OVERTHINKER": "STILL PLANNING"
+    "MONDAY START": "STILL MONDAY"
    }
   },
   {

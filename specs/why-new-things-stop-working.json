@@ -4,25 +4,28 @@
  "scene": "climb",
  "characters": [
   {
-   "name": "UPGRADER",
-   "color": "#ff9e7a",
+   "name": "NEXT UPGRADE",
+   "role": "default",
+   "color": "#ffc53d",
    "accessory": "cap"
   },
   {
-   "name": "COMPARER",
+   "name": "SCROLLS FEED",
+   "role": "extreme",
    "color": "#b98cff",
    "accessory": "headphones"
   },
   {
-   "name": "SAVORER",
+   "name": "SAVORS IT",
+   "role": "winner",
    "color": "#36e0c8",
    "accessory": "glasses"
   }
  ],
  "start": {
-  "UPGRADER": 40,
-  "COMPARER": 40,
-  "SAVORER": 40
+  "NEXT UPGRADE": 40,
+  "SCROLLS FEED": 40,
+  "SAVORS IT": 40
  },
  "metric": {
   "suffix": "%",
@@ -33,10 +36,10 @@
   "label": "MONTH",
   "start": 0
  },
- "footnote": "Illustrative · happiness score · hedonic adaptation",
+ "footnote": "Illustrative · how good life feels · hedonic adaptation",
  "upload": {
   "title": "Why New Things Stop Working",
-  "description": "The new phone feels amazing, for about two weeks. Then your brain resets to normal (hedonic adaptation). Three ways to chase happiness. Which one are you? (Illustrative numbers.)",
+  "description": "The new phone feels amazing, for about two weeks. Then your brain resets to normal (hedonic adaptation). Buying more resets it again. Noticing what you have doesn't. Which one are you? (Illustrative numbers.)",
   "hashtags": [
    "psychology",
    "brainscience",
@@ -49,32 +52,32 @@
  "beats": [
   {
    "dur": 2.6,
-   "caption": "EVERYONE WANTS TO BE HAPPIER.",
+   "caption": "SAME LIFE. SAME PAY.",
    "counter": 0,
    "bubbles": [
     {
-     "who": "UPGRADER",
-     "text": "new phone = happy.",
+     "who": "NEXT UPGRADE",
+     "text": "new phone = happy",
      "at": 0.5
     }
    ]
   },
   {
    "dur": 3.0,
-   "caption": "UPGRADER BUYS THE NEW PHONE.",
+   "caption": "NEXT UPGRADE GETS THE PHONE.",
    "counter": 1,
    "values": {
-    "UPGRADER": 80,
-    "COMPARER": 38,
-    "SAVORER": 44
+    "NEXT UPGRADE": 80,
+    "SCROLLS FEED": 38,
+    "SAVORS IT": 44
    },
    "curves": {
-    "UPGRADER": "decel"
+    "NEXT UPGRADE": "decel"
    },
    "events": [
     {
      "type": "marker",
-     "who": "UPGRADER",
+     "who": "NEXT UPGRADE",
      "text": "+ NEW PHONE",
      "at": 0.3,
      "dur": 1.6,
@@ -89,33 +92,33 @@
    "caption": "TWO WEEKS LATER...",
    "counter": 2,
    "values": {
-    "UPGRADER": 46,
-    "SAVORER": 48
+    "NEXT UPGRADE": 46,
+    "SAVORS IT": 48
    },
    "bubbles": [
     {
-     "who": "UPGRADER",
-     "text": "huh. it's just a phone.",
+     "who": "NEXT UPGRADE",
+     "text": "huh. it's just a phone",
      "at": 0.5
     }
    ]
   },
   {
    "dur": 3.0,
-   "caption": "SO UPGRADER BUYS A CAR.",
+   "caption": "THAT'S HEDONIC ADAPTATION.",
    "counter": 4,
    "values": {
-    "UPGRADER": 85,
-    "COMPARER": 30,
-    "SAVORER": 53
+    "NEXT UPGRADE": 85,
+    "SCROLLS FEED": 30,
+    "SAVORS IT": 53
    },
    "curves": {
-    "UPGRADER": "decel"
+    "NEXT UPGRADE": "decel"
    },
    "events": [
     {
      "type": "marker",
-     "who": "UPGRADER",
+     "who": "NEXT UPGRADE",
      "text": "+ NEW CAR",
      "at": 0.3,
      "dur": 1.5,
@@ -125,81 +128,81 @@
     },
     {
      "type": "shake",
-     "who": "COMPARER",
+     "who": "SCROLLS FEED",
      "at": 1.4
     }
    ],
    "bubbles": [
     {
-     "who": "COMPARER",
-     "text": "everyone's richer.",
+     "who": "SCROLLS FEED",
+     "text": "everyone's on holiday",
      "at": 1.6
     }
    ]
   },
   {
    "dur": 3.0,
-   "caption": "YOUR BRAIN RESETS. AGAIN.",
+   "caption": "THE BRAIN RESETS. AGAIN.",
    "counter": 6,
    "values": {
-    "UPGRADER": 47,
-    "SAVORER": 60
+    "NEXT UPGRADE": 47,
+    "SAVORS IT": 60
    },
    "tags": {
-    "UPGRADER": "TREADMILL"
+    "NEXT UPGRADE": "BACK TO NORMAL"
    },
    "bubbles": [
     {
-     "who": "SAVORER",
-     "text": "this coffee is great.",
+     "who": "SAVORS IT",
+     "text": "this coffee is great",
      "at": 0.4
     }
    ]
   },
   {
    "dur": 3.0,
-   "caption": "COMPARER CAN'T KEEP UP.",
+   "caption": "SCROLLS FEED CAN'T KEEP UP.",
    "counter": 8,
    "values": {
-    "COMPARER": 15,
-    "SAVORER": 66
+    "SCROLLS FEED": 15,
+    "SAVORS IT": 66
    },
    "events": [
     {
      "type": "crash",
-     "who": "COMPARER",
+     "who": "SCROLLS FEED",
      "at": 0.3
     }
    ],
    "tags": {
-    "COMPARER": "BURNED OUT"
+    "SCROLLS FEED": "COMPARED OUT"
    }
   },
   {
    "dur": 3.8,
-   "caption": "SMALL JOYS, SAVORED, ADD UP.",
+   "caption": "ONE CHANGE: NOTICE WHAT YOU HAVE.",
    "counter": 12,
    "curve": "accel",
    "values": {
-    "SAVORER": 90,
-    "UPGRADER": 50
+    "SAVORS IT": 90,
+    "NEXT UPGRADE": 50
    },
    "states": {
-    "SAVORER": "win"
+    "SAVORS IT": "win"
    },
    "stateAt": {
-    "SAVORER": 3.6
+    "SAVORS IT": 3.6
    },
    "events": [
     {
      "type": "burst",
-     "who": "SAVORER",
+     "who": "SAVORS IT",
      "at": 3.65
     }
    ],
    "bubbles": [
     {
-     "who": "UPGRADER",
+     "who": "NEXT UPGRADE",
      "text": "what's the secret?",
      "at": 0.6
     }
@@ -207,17 +210,17 @@
   },
   {
    "dur": 3.4,
-   "caption": "SAME YEAR. DIFFERENT HAPPY.",
+   "caption": "SAME LIFE. DIFFERENT HAPPY.",
    "dim": [
-    "COMPARER",
-    "UPGRADER"
+    "SCROLLS FEED",
+    "NEXT UPGRADE"
    ],
    "tags": {
-    "SAVORER": {
+    "SAVORS IT": {
      "text": "TOP",
      "color": "#36e0c8"
     },
-    "UPGRADER": "BACK TO 50%"
+    "NEXT UPGRADE": "BACK TO 50%"
    }
   },
   {

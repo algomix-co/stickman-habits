@@ -4,17 +4,20 @@
  "scene": "dig",
  "characters": [
   {
-   "name": "QUITTER",
-   "color": "#5ec8ff",
-   "accessory": "cap"
-  },
-  {
-   "name": "STUBBORN",
-   "color": "#ff5a6e",
+   "name": "TOO FAR IN",
+   "role": "default",
+   "color": "#ffc53d",
    "accessory": "headband"
   },
   {
-   "name": "PIVOTER",
+   "name": "SHINY NEW",
+   "role": "alternative",
+   "color": "#b98cff",
+   "accessory": "cap"
+  },
+  {
+   "name": "RE-CHECKS",
+   "role": "winner",
    "color": "#36e0c8",
    "accessory": "glasses"
   }
@@ -28,89 +31,89 @@
   "label": "MONTH",
   "start": 0
  },
- "footnote": "Illustrative · hours in the current idea · sunk cost fallacy",
+ "footnote": "Illustrative · hours in the current path · sunk cost fallacy",
  "upload": {
   "title": "Why You Can't Quit",
-  "description": "\"I've come too far to stop now.\" That's the sunk cost fallacy talking. Three people, three holes, one gold mine. Which one are you? (Illustrative numbers.)",
+  "description": "\"I've already put two years into this.\" That's the sunk cost fallacy: past effort can't be refunded, but it keeps steering your future. The fix is one question. Which one are you? (Illustrative numbers.)",
   "hashtags": [
    "psychology",
    "brainscience",
    "mindset",
    "shorts",
    "sunkcost",
-   "decisions"
+   "career"
   ]
  },
  "beats": [
   {
    "dur": 2.6,
-   "caption": "THREE IDEAS. ONE GOLD MINE.",
+   "caption": "SAME START. THREE PATHS.",
    "counter": 0,
    "bubbles": [
     {
-     "who": "QUITTER",
-     "text": "this'll be easy.",
+     "who": "SHINY NEW",
+     "text": "this one's the one!",
      "at": 0.5
     }
    ]
   },
   {
    "dur": 3.0,
-   "caption": "QUITTER DIGS. GETS BORED.",
+   "caption": "SHINY NEW GETS BORED.",
    "counter": 2,
    "values": {
-    "QUITTER": 60,
-    "STUBBORN": 120,
-    "PIVOTER": 100
+    "SHINY NEW": 60,
+    "TOO FAR IN": 120,
+    "RE-CHECKS": 100
    },
    "bubbles": [
     {
-     "who": "QUITTER",
-     "text": "next idea!",
-     "at": 1.4
-    }
-   ]
-  },
-  {
-   "dur": 3.0,
-   "caption": "PIVOTER TESTS. NO GOLD.",
-   "counter": 4,
-   "values": {
-    "PIVOTER": 160,
-    "QUITTER": 20,
-    "STUBBORN": 220
-   },
-   "curves": {
-    "QUITTER": "early"
-   },
-   "states": {
-    "QUITTER": "idle"
-   },
-   "bubbles": [
-    {
-     "who": "PIVOTER",
-     "text": "data says no.",
+     "who": "SHINY NEW",
+     "text": "ooh, a new idea!",
      "at": 0.4
     }
    ]
   },
   {
    "dur": 3.0,
-   "caption": "SO PIVOTER MOVES ON.",
-   "counter": 5,
+   "caption": "ONE CHANGE: RE-ASK EVERY 3 MONTHS.",
+   "counter": 4,
    "values": {
-    "PIVOTER": 0,
-    "STUBBORN": 300
+    "RE-CHECKS": 160,
+    "SHINY NEW": 20,
+    "TOO FAR IN": 220
    },
    "curves": {
-    "PIVOTER": "early"
+    "SHINY NEW": "early"
+   },
+   "states": {
+    "SHINY NEW": "idle"
+   },
+   "bubbles": [
+    {
+     "who": "RE-CHECKS",
+     "text": "would I start this now?",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THE ANSWER IS NO. SO IT STOPS.",
+   "counter": 5,
+   "values": {
+    "RE-CHECKS": 0,
+    "TOO FAR IN": 300
+   },
+   "curves": {
+    "RE-CHECKS": "early"
    },
    "events": [
     {
      "type": "marker",
-     "who": "PIVOTER",
-     "text": "NEW HOLE",
-     "at": 1.0,
+     "who": "RE-CHECKS",
+     "text": "NEW PATH",
+     "at": 0.9,
      "dur": 1.8,
      "color": "#36e0c8",
      "dx": 0,
@@ -119,74 +122,74 @@
    ],
    "bubbles": [
     {
-     "who": "STUBBORN",
-     "text": "I've come too far.",
+     "who": "TOO FAR IN",
+     "text": "I've put 2 years in",
      "at": 0.8
     }
    ]
   },
   {
    "dur": 3.0,
-   "caption": "STUBBORN DIGS DEEPER.",
+   "caption": "TOO FAR IN DIGS DEEPER.",
    "counter": 9,
    "values": {
-    "STUBBORN": 600,
-    "PIVOTER": 250,
-    "QUITTER": 40
+    "TOO FAR IN": 600,
+    "RE-CHECKS": 250,
+    "SHINY NEW": 40
    },
    "states": {
-    "QUITTER": "sad"
+    "SHINY NEW": "sad"
    },
    "bubbles": [
     {
-     "who": "STUBBORN",
-     "text": "can't stop now.",
+     "who": "TOO FAR IN",
+     "text": "can't waste it now",
      "at": 0.3
     }
    ]
   },
   {
    "dur": 3.0,
-   "caption": "BUT THERE WAS NO GOLD.",
+   "caption": "THAT'S THE SUNK COST TRAP.",
    "counter": 12,
    "values": {
-    "STUBBORN": 600,
-    "PIVOTER": 420
+    "TOO FAR IN": 600,
+    "RE-CHECKS": 420
    },
    "events": [
     {
      "type": "crash",
-     "who": "STUBBORN",
+     "who": "TOO FAR IN",
      "at": 0.3
     }
    ],
    "tags": {
-    "STUBBORN": "600 H SUNK"
+    "TOO FAR IN": "600 H SUNK"
    }
   },
   {
    "dur": 3.8,
-   "caption": "PIVOTER HITS GOLD.",
+   "caption": "RE-CHECKS STRIKES GOLD.",
    "counter": 18,
    "curve": "accel",
    "values": {
-    "PIVOTER": 900
+    "RE-CHECKS": 900
    },
    "states": {
-    "PIVOTER": "win"
+    "RE-CHECKS": "win"
    },
    "stateAt": {
-    "PIVOTER": 3.6
+    "RE-CHECKS": 3.6
    },
    "events": [
     {
      "type": "burst",
-     "who": "PIVOTER",
+     "who": "RE-CHECKS",
      "at": 3.65
     },
     {
      "type": "marker",
-     "who": "PIVOTER",
+     "who": "RE-CHECKS",
      "text": "GOLD",
      "at": 3.7,
      "dur": 6.5,
@@ -197,8 +200,8 @@
    ],
    "bubbles": [
     {
-     "who": "QUITTER",
-     "text": "wait, that was easy?",
+     "who": "SHINY NEW",
+     "text": "wait, it was that one?",
      "at": 0.5
     }
    ]
@@ -207,15 +210,15 @@
    "dur": 3.4,
    "caption": "SAME EFFORT. DIFFERENT HOLES.",
    "dim": [
-    "STUBBORN",
-    "QUITTER"
+    "TOO FAR IN",
+    "SHINY NEW"
    ],
    "tags": {
-    "PIVOTER": {
+    "RE-CHECKS": {
      "text": "TOP",
      "color": "#36e0c8"
     },
-    "QUITTER": "6 HOLES. NO DEPTH."
+    "SHINY NEW": "6 IDEAS. 0 DONE."
    }
   },
   {

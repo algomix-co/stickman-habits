@@ -43,5 +43,10 @@
    "color": "#ffc53d",
    "accessory": "cap"
   }
- ]
+ ],
+ "storyRules": {
+  "roles": true,
+  "nameEffect": true,
+  "oneChange": true
+ }
 }

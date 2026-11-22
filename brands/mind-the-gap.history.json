@@ -1,88 +1,85 @@
 [
  {
-  "id": "why-you-check-your-phone",
-  "scene": "race",
-  "date": "2026-11-22T22:02:24.728Z",
-  "style": {
-   "theme": "navy",
-   "captionStyle": "bold",
-   "transition": "dayzoom",
-   "camera": "static",
-   "labels": "board",
-   "hook": "straight",
-   "speed": "slowmo",
-   "outro": "endcard",
-   "instrument": "pluck",
-   "impact": "snap",
-   "root": 59,
-   "bpm": 84
-  }
- },
- {
   "id": "that-sale-price-fooled-you",
   "scene": "towers",
-  "date": "2026-11-22T22:05:19.605Z",
+  "date": "2026-11-22T23:40:54.569Z",
   "style": {
    "theme": "grid",
-   "captionStyle": "boxed",
+   "captionStyle": "tracked",
    "transition": "fade",
-   "camera": "push",
+   "camera": "drift",
    "labels": "above",
    "hook": "flashforward",
    "speed": "none",
-   "outro": "question",
+   "outro": "loop",
    "instrument": "epiano",
    "impact": "tapestop",
-   "root": 52,
-   "bpm": 72
-  }
- },
- {
-  "id": "why-you-cant-quit",
-  "scene": "dig",
-  "date": "2026-11-22T22:08:06.718Z",
-  "style": {
-   "theme": "dusk",
-   "captionStyle": "tracked",
-   "transition": "cut",
-   "camera": "drift",
-   "labels": "board",
-   "hook": "straight",
-   "speed": "slowmo",
-   "outro": "loop",
-   "instrument": "musicbox",
-   "impact": "glitch",
-   "root": 54,
-   "bpm": 76
-  }
- },
- {
-  "id": "willpower-is-overrated",
-  "scene": "lift",
-  "date": "2026-11-22T22:10:41.653Z",
-  "style": {
-   "theme": "void",
-   "captionStyle": "bold",
-   "transition": "slide",
-   "camera": "static",
-   "labels": "above",
-   "hook": "flashforward",
-   "speed": "none",
-   "outro": "endcard",
-   "instrument": "piano",
-   "impact": "sub",
-   "root": 53,
-   "bpm": 80
+   "root": 55,
+   "bpm": 72,
+   "boost": [
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ]
+   ]
   }
  },
  {
   "id": "why-new-things-stop-working",
   "scene": "climb",
-  "date": "2026-11-22T22:13:37.329Z",
+  "date": "2026-11-22T23:43:43.066Z",
   "style": {
    "theme": "navy",
    "captionStyle": "boxed",
-   "transition": "dayzoom",
+   "transition": "cut",
    "camera": "push",
    "labels": "board",
    "hook": "straight",
@@ -90,8 +87,261 @@
    "outro": "question",
    "instrument": "lofi",
    "impact": "boom",
-   "root": 50,
-   "bpm": 90
+   "root": 57,
+   "bpm": 90,
+   "boost": [
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     16.5578947368421,
+     18.157894736842103
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     3.7,
+     5.3
+    ],
+    [
+     16.5578947368421,
+     18.157894736842103
+    ],
+    [
+     16.5578947368421,
+     18.157894736842103
+    ],
+    [
+     16.5578947368421,
+     18.157894736842103
+    ],
+    [
+     16.5578947368421,
+     18.157894736842103
+    ],
+    [
+     16.5578947368421,
+     18.157894736842103
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ]
+   ]
+  }
+ },
+ {
+  "id": "why-you-cant-quit",
+  "scene": "dig",
+  "date": "2026-11-22T23:46:38.557Z",
+  "style": {
+   "theme": "dusk",
+   "captionStyle": "bold",
+   "transition": "slide",
+   "camera": "static",
+   "labels": "above",
+   "hook": "flashforward",
+   "speed": "none",
+   "outro": "endcard",
+   "instrument": "musicbox",
+   "impact": "glitch",
+   "root": 59,
+   "bpm": 76,
+   "boost": [
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ]
+   ]
+  }
+ },
+ {
+  "id": "willpower-is-overrated",
+  "scene": "lift",
+  "date": "2026-11-22T23:52:02.134Z",
+  "style": {
+   "theme": "grid",
+   "captionStyle": "bold",
+   "transition": "cut",
+   "camera": "static",
+   "labels": "board",
+   "hook": "flashforward",
+   "speed": "none",
+   "outro": "endcard",
+   "instrument": "piano",
+   "impact": "sub",
+   "root": 54,
+   "bpm": 80,
+   "boost": [
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ]
+   ]
+  }
+ },
+ {
+  "id": "why-you-check-your-phone",
+  "scene": "race",
+  "date": "2026-11-22T23:55:01.597Z",
+  "style": {
+   "theme": "void",
+   "captionStyle": "tracked",
+   "transition": "cut",
+   "camera": "drift",
+   "labels": "board",
+   "hook": "straight",
+   "speed": "slowmo",
+   "outro": "loop",
+   "instrument": "pluck",
+   "impact": "snap",
+   "root": 52,
+   "bpm": 84,
+   "boost": [
+    [
+     13.557894736842103,
+     15.157894736842104
+    ]
+   ]
   }
  }
 ]

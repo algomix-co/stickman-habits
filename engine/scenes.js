@@ -51,14 +51,14 @@ SCENES.race = {
     const fin = T.beats[T.beats.length - 1].to; this.lane = []; T.chars.map((_, i) => i).sort((a, b) => fin[b] - fin[a]).forEach((ci, k) => { this.lane[ci] = k; });
   },
   laneY(i) { return this.y0 + this.lane[i] * this.gap; },
-  extent() { return { x0: this.x0 - 50, x1: this.x1 + 90, y0: this.y0 - figH() * this.s - 40, y1: this.y0 + (T.chars.length - 1) * this.gap + 60 }; },
+  extent() { return { x0: this.x0 - 50, x1: this.x1 + 175, y0: this.y0 - figH() * this.s - 40, y1: this.y0 + (T.chars.length - 1) * this.gap + 60 }; },
   xAt(i, t) { return this.x0 + fracAt(i, t) * (this.x1 - this.x0); },
   place(i, t) { const y = this.laneY(i); return { x: this.xAt(i, t), top: y - figH() * this.s, s: this.s, floor: y, footY: y }; },
   activePose(i, t) { return blendPose(POSES.stand, runPose(this.xAt(i, t) / (15 * this.s)), moving(i, t, 0.003, 0.03)); },
   draw(c, t) {
-    const yTop = this.y0 - figH() * this.s - 20, yBot = this.y0 + (T.chars.length - 1) * this.gap, fx = this.x1 + 70;
+    const yTop = this.y0 - figH() * this.s - 20, yBot = this.y0 + (T.chars.length - 1) * this.gap, fx = this.x1 + 115;
     c.save(); c.setLineDash([14, 12]); c.strokeStyle = 'rgba(255,255,255,0.4)'; c.lineWidth = 3; c.beginPath(); c.moveTo(fx, yTop); c.lineTo(fx, yBot + 4); c.stroke(); c.restore();
-    spaced(c, 'FINISH', fx, yBot + 40, '700 22px Inter', '#cfd6dd', 4, 0.8);
+    spaced(c, 'FINISH', fx, yBot + 46, '800 30px Inter', '#cfd6dd', 3, 0.85);
     c.fillStyle = 'rgba(255,255,255,0.12)'; c.fillRect(this.x0 - 30, yTop, 2, yBot - yTop);
     return charsDo((ch, i) => { const y = this.laneY(i); floorLine(c, y, -200, W + 200, 0.16); const p = this.place(i, t); drawChar(c, i, t, tt => ({ mode: 'feet', x: this.xAt(i, tt), y }), { s: this.s, speed: speedFx(i, t, 0.12, 0.35), sweat: speedFx(i, t, 0.08, 0.2) }); return p; });
   },
@@ -71,6 +71,7 @@ SCENES.climb = {
   freeUpper(i, t) { return this.hip(i, t) > this.stand - 8; },
   setup(T) { this.xs = colsX(T.chars.length, 270); this.BAR = T.style.labels === 'board' ? 660 : 560; this.F = FLOOR_MAX; this.stand = this.F - 72.5 * this.K; this.high = this.BAR + 115 * this.K; },
   floorY() { return this.F; },
+  labelTop(i, top) { const B = this.BAR; return (top > B - 30 && top - 210 < B) ? B - 30 : top; },   // world units: lift the whole stack above the crossbar
   extent() { return { x0: this.xs[0] - 130, x1: this.xs[this.xs.length - 1] + 130, y0: this.BAR - 40, y1: this.F + 12 }; },
   hipAt(i, t) { return lerp(this.stand, this.high, fracAt(i, t)); },
   hip(i, t) { const since = fallStart(i, t); if (since != null) { const y0 = this.hipAt(i, since), u = clamp((t - since) / 0.6); return lerp(y0, this.F - 14 * this.K, u * u); } return this.hipAt(i, t); },
@@ -126,13 +127,13 @@ SCENES.lift = {
   activePose(i, t) { const p = 0.5 - 0.5 * Math.cos(2 * Math.PI * phaseInt(i, t, 3.2, 0.45, 1.6)); return blendPose(LIFT_UP, blendPose(LIFT_DOWN, LIFT_UP, p), Math.max(moving(i, t), 0.8 * energyAt(t))); },
   idlePose() { return LIFT_UP; },
   winPose() { return LIFT_OVER; },
-  plates(i, t) { const f = clamp(value(i, t) / T.maxV), n = Math.round(f * 6), out = []; for (let k = 0; k < n; k++) out.push([1, 0.92, 0.8, 0.68, 0.52, 0.42][k]); return out; },
+  plates(i, t) { const f = clamp(value(i, t) / T.maxV), n = Math.round(f * 4), out = []; for (let k = 0; k < n; k++) out.push([1, 0.92, 0.8, 0.68, 0.52, 0.42][k]); return out; },
   draw(c, t) {
     floorLine(c, this.F);
     return charsDo((ch, i) => {
       const s = this.s, a = alphaAt(i, t), st = stateAt(i, t).state, down = st === 'quit' || st === 'fall';
       const J = drawChar(c, i, t, () => ({ mode: 'feet', x: this.xs[i], y: this.F }), { s, sweat: moving(i, t) * clamp(value(i, t) / T.maxV) });
-      const plates = this.plates(i, t), PR = 32 * s, sleeve = 7 * s, collar = 30 * s;
+      const plates = this.plates(i, t), PR = 30 * s, sleeve = 6 * s, collar = 26 * s;
       const half = collar + Math.max(3, plates.length) * sleeve + 6 * s, big = plates.length ? plates[0] * PR : 0.4 * PR;
       let cx = (J.lhand[0] + J.rhand[0]) / 2, by = (J.lhand[1] + J.rhand[1]) / 2;
       if (down) { cx = this.xs[i] + 8 * s; by = this.F - big; } else by = Math.min(by, this.F - big);

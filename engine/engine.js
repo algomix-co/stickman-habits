@@ -225,15 +225,16 @@ function drawChar(c, i, t, anchorFn0, opt = {}) {
 }
 
 // =====================================================================================  text
-function spaced(c, text, x, y, font, color, spacing, alpha, glow, check) {
+function spaced(c, text, x, y, font, color, spacing, alpha, glow, check, outline = true) {
   if (!text || alpha <= 0) return;
   c.save(); c.font = font; c.letterSpacing = spacing + 'px'; c.textAlign = 'center';
   c.globalAlpha = Math.min(1, alpha); c.fillStyle = color;
-  if (c === sc) { const px = parseFloat((font.match(/([0-9.]+)px/) || [0, 20])[1]); c.lineJoin = 'round'; c.strokeStyle = 'rgba(4,6,9,0.85)'; c.lineWidth = Math.max(3, px * 0.2); c.strokeText(text, x + spacing / 2, y); }
+  if (c === sc && outline) { const px = parseFloat((font.match(/([0-9.]+)px/) || [0, 20])[1]); c.lineJoin = 'round'; c.strokeStyle = 'rgba(4,6,9,0.85)'; c.lineWidth = Math.max(3, px * 0.2); c.strokeText(text, x + spacing / 2, y); }
   if (glow) { c.shadowColor = color; c.shadowBlur = glow; }
   c.fillText(text, x + spacing / 2, y);
   if (check && alpha > 0.5) {
-    const w = c.measureText(text).width;
+    const w = c.measureText(text).width, fpx = parseFloat((font.match(/([0-9.]+)px/) || [0, 99])[1]);
+    if (fpx < 26) WARN.add(`text too small: "${String(text).replace(/[0-9][0-9,.]*/g, '#').slice(0, 40)}" (${fpx.toFixed(0)}px)`);
     const shape = String(text).replace(/[0-9][0-9,.]*/g, '#');   // group "$5,678" / "$6,225" into one warning
     if (x - w / 2 < 12 || x + w / 2 > W - 12) WARN.add(`text off-screen: "${shape}"`);
     else if (x + w / 2 > 985 && y > 900 && y < 1650) WARN.add(`text under the Shorts like/comment buttons: "${shape}"`);
@@ -405,7 +406,7 @@ function charBox(i, t) {
   const p = T.scene.place(i, Math.max(0, t)), s = p.s, ch = T.chars[i];
   const half = Math.max(80 * s, fmt(value(i, t)).length * 19, ch.name.length * 13.5 + 10);
   const bottom = Math.max(p.floor != null ? p.floor : 0, p.top + figH() * s) + 14;
-  return { x0: p.x - half, x1: p.x + half, y0: p.top - 300, y1: bottom, cx: p.x, cy: p.top + 85 * s };
+  return { x0: p.x - half, x1: p.x + half, y0: p.top - 340, y1: bottom, cx: p.x, cy: p.top + 85 * s };
 }
 function frameFor(t, safeTop, focus, zWant) {
   const b = T.scene.extent ? { ...T.scene.extent(t) } : { x0: 1e9, x1: -1e9, y0: 1e9, y1: -1e9 };
@@ -421,6 +422,7 @@ function frameFor(t, safeTop, focus, zWant) {
   return { z, dx, dy };
 }
 function directorAt(t, safeTop) {
+  if (T.scene.steadyCam) { if (!T.__steady || T.__steady.top !== safeTop) { let best = null; for (let tt = 0; tt <= T.dur; tt += 0.5) { const q = frameFor(tt, safeTop, -1, 1.12); if (!best || q.z < best.z) best = q; } T.__steady = { ...best, top: safeTop }; } return T.__steady; }
   let z = 0, dx = 0, dy = 0, wsum = 0;
   for (let k = 0; k < 10; k++) { const tt = Math.max(0, t - k * 0.055), sh = shotAt(tt), q = frameFor(tt, safeTop, sh.i, sh.i >= 0 ? 1.35 : 1.12), w = 10 - k; z += q.z * w; dx += q.dx * w; dy += q.dy * w; wsum += w; }
   return { z: z / wsum, dx: dx / wsum, dy: dy / wsum };
@@ -464,7 +466,7 @@ function drawEffects(c, t, P) {
         else { const an = landed ? 0 : tt * (6 + 14 * d.d), L = 8 + 14 * d.c; c.save(); c.globalAlpha = al; c.strokeStyle = T.chars[e.i].color; c.lineWidth = 3; c.lineCap = 'round'; c.beginPath(); c.moveTo(x - Math.cos(an) * L / 2, y - Math.sin(an) * L / 2); c.lineTo(x + Math.cos(an) * L / 2, y + Math.sin(an) * L / 2); c.stroke(); c.restore(); }
       }
     }
-    if (e.type === 'fling' && dt < 2.6) { const p = P[e.i]; FLING.forEach((f, k) => { const tt = dt - k * 0.07; if (tt < 0 || tt > 2) return; flyingCoin(c, T.chars[e.i].color, p.x + (k % 2 ? 1 : -1) * (10 + 60 * f.a) * tt, p.top + 20 * p.s - (800 + f.b * 500) * tt + 900 * tt * tt, tt * (6 + 10 * f.c), 1 - ss(1.0, 1.8, tt), p.s); }); }
+    if (e.type === 'fling' && dt < 2.6) { const p = P[e.i]; FLING.forEach((f, k) => { const tt = dt - k * 0.07; if (tt < 0 || tt > 2) return; flyingCoin(c, T.chars[e.i].color, p.x + (k % 2 ? 1 : -1) * (30 + 90 * f.a) * tt * p.s, Math.min((p.floor || 1500) - 10, p.top + 120 * p.s - (200 + f.b * 180) * tt + 1400 * tt * tt), tt * (6 + 10 * f.c), 1 - ss(1.0, 1.8, tt), p.s); }); }
     if (e.type === 'burst') { const p = P[e.i], bu = clamp(dt / 0.9); if (bu < 1) for (const k of [0, 0.18]) { const u = clamp(bu - k); if (u <= 0) continue; c.strokeStyle = `rgba(255,205,90,${(1 - u) * 0.9})`; c.lineWidth = 3; c.beginPath(); c.arc(p.x, p.top + 70 * p.s, 40 + 300 * u, 0, 7); c.stroke(); } }
   }
   if (T.burst) {
@@ -498,7 +500,7 @@ function drawWords(C, line, cx, y, font, spacing, color, a, glow, tStart, t, wor
     const key = w.replace(/[^A-Za-z0-9$%]/g, '').toUpperCase(), hit = names.find(n => n.parts.includes(key));
     const dt = t - (tStart + (wordBase + k) * 0.075), u = clamp(dt / 0.28);
     if (u > 0) {
-      C.save(); C.translate(x + ws[k] / 2, y); const sc2 = lerp(1.7, 1, easeBack(u)); C.scale(sc2, sc2); C.globalAlpha = a * clamp(dt / 0.1);
+      C.save(); C.translate(x + ws[k] / 2, y); const sc2 = lerp(1.22, 1, easeBack(u)); C.scale(sc2, sc2); C.globalAlpha = a * clamp(dt / 0.1);
       if (box && hit) { C.fillStyle = hit.color; C.beginPath(); C.roundRect(-ws[k] / 2 - 8, -box * 0.8, ws[k] + 16, box * 1.06, 8); C.fill(); }
       C.fillStyle = hit && !box ? hit.color : color; if (glow) { C.shadowColor = C.fillStyle; C.shadowBlur = glow; }
       C.fillText(w, spacing / 2, 0); C.restore();
@@ -521,7 +523,7 @@ function captionBlock(t, tm, C = ctx) {
   let bottom, wb = 0;
   if (st.captionStyle === 'bold') {
     const pz = (st.transition === 'dayzoom' || st.transition === 'cut') && B.bi > 0 ? 1 + 0.35 * (1 - easeOut(clamp((t - B.t0) / 0.4))) : 1;
-    if (counter) { C.save(); C.translate(W / 2, 150); C.scale(pz, pz); spaced(C, counter, 0, 0, '700 40px Inter', '#9aa6b2', 6, 1, 0, false); C.restore(); }
+    if (counter && tm.kind !== 'rewind') { C.save(); C.translate(W / 2, 150); C.scale(pz, pz); spaced(C, counter, 0, 0, '700 40px Inter', '#9aa6b2', 6, 1, 0, false); C.restore(); }
     const lines = text ? wrapText(text, '800 54px Inter', 1, 960) : [];
     lines.forEach((ln, k) => { wb += drawWords(C, ln, W / 2 + xoff, 228 + k * 62, '800 54px Inter', 3, gold ? GOLD : '#c9d0d8', a, gold ? 14 : 0, tStart, clock, wb); });
     bottom = 228 + Math.max(0, lines.length - 1) * 62 + 18;
@@ -533,13 +535,13 @@ function captionBlock(t, tm, C = ctx) {
       lines.forEach((ln, k) => { wb += drawWords(C, ln, W / 2 + xoff, 160 + 60 + k * 60, '800 46px Inter', 1, INK, a, 0, tStart, clock, wb, 46); });
     }
     const by = 160 + Math.max(1, lines.length) * 60 + 30;
-    if (counter && tm.kind !== 'hook') spaced(C, counter, W / 2, by + 46, '700 30px Inter', '#9aa3ad', 5, 1);
+    if (counter && tm.kind !== 'hook' && tm.kind !== 'rewind') spaced(C, counter, W / 2, by + 46, '700 32px Inter', '#9aa3ad', 5, 1, 0, true);
     bottom = by + 46;
   } else {
     const lines = text ? wrapText(text, '700 50px Inter', 4, 960) : [];
     lines.forEach((ln, k) => { wb += drawWords(C, ln, W / 2 + xoff, 210 + k * 62, '700 50px Inter', 4, color, a, gold ? 16 : 4, tStart, clock, wb); });
     const n = Math.max(1, lines.length);
-    if (counter) spaced(C, counter, W / 2, 210 + n * 62 - 6, '700 28px Inter', '#8b939b', 6, tm.kind === 'rewind' ? 1 : a);
+    if (counter && tm.kind !== 'rewind') spaced(C, counter, W / 2, 210 + n * 62 - 2, '700 32px Inter', '#9aa3ad', 6, a, 0, true);
     bottom = 210 + n * 62;
   }
   if (st.transition === 'dayzoom' && st.captionStyle !== 'bold' && B.bi > 0 && counter && tm.kind !== 'hook') {
@@ -547,7 +549,7 @@ function captionBlock(t, tm, C = ctx) {
     if (du >= 0 && du < 1) { const sc2 = lerp(2.0, 1, easeOut(du)), y = lerp(470, 240, easeIO(du)); C.save(); C.translate(W / 2, y); C.scale(sc2, sc2); spaced(C, counter, 0, 0, '800 64px Inter', '#ffffff', 2, 1 - ss(0.6, 1, du), 24); C.restore(); }
   }
   if (q && tm.kind !== 'endcard') { const L = T.chars.map((_, k) => String.fromCharCode(65 + k)).join(' · '); spaced(C, 'COMMENT ' + L, W / 2, bottom + 42, '800 32px Inter', '#ffffff', 4, ss(B.t0 + 0.4, B.t0 + 0.8, t)); bottom += 42; }
-  if (T.spec.footnote) { const ft = T.beats[Math.max(0, T.beats.length - 2)].t0; spaced(C, T.spec.footnote.toUpperCase(), W / 2, bottom + 34, '600 20px Inter', '#7a828a', 1, ss(ft + .2, ft + 1, t), 0, true); bottom += 34; }
+  if (T.spec.footnote) { const ft = T.beats[Math.max(0, T.beats.length - 2)].t0; const fl = wrapText(T.spec.footnote.toUpperCase(), '700 28px Inter', 1, 940); fl.forEach((ln, k) => spaced(C, ln, W / 2, bottom + 40 + k * 34, '700 28px Inter', '#9aa3ad', 1, ss(ft + .2, ft + 1, t), 0, true)); bottom += 40 + (fl.length - 1) * 34; }
   return bottom;
 }
 const RECTS = [];
@@ -580,34 +582,38 @@ function drawLabels(t, P, boardTop) {
   const L = T.chars.map((ch, i) => {
     const p = { ...P[i], s: clamp(T.__z || 1, 0.92, 1.08) * (T.style.labelScale || 1) }, s = p.s, rate = fracRate(i, t), grow = (1 + 0.16 * fw[i]) * (1 + 0.25 * clamp(Math.abs(rate) * 2.2)) * (1 + 0.35 * Math.max(0, ...T.milestones.filter(m => m.i === i).map(m => bump(m.t, m.t + 0.45, t)))) * (1 + 0.3 * rollPop(i, t));
     const numW = board ? 0 : meas(fmt(value(i, t)), `800 ${(60 * s * grow).toFixed(1)}px Inter`, 0);
-    const nameW = meas(ch.name, `800 ${(34 * s * grow).toFixed(1)}px Inter`, 2);
+    const nf0 = `800 ${(34 * s * grow).toFixed(1)}px Inter`, nameW = meas(ch.name, nf0, 2), words = ch.name.split(' ');
+    let split = null; if (words.length > 1) { let best = null; for (let k = 1; k < words.length; k++) { const l1 = words.slice(0, k).join(' '), l2 = words.slice(k).join(' '), w2 = Math.max(meas(l1, nf0, 2), meas(l2, nf0, 2)); if (!best || w2 < best[0]) best = [w2, l1, l2]; } split = best; }
     const tg = tagAt(i, t), tagW = tg ? meas(tg.text, `800 ${(34 * s).toFixed(1)}px Inter`, 2) : 0;
-    return { i, x: p.x, top: p.top, s, grow, rate, w: Math.max(numW, nameW, tagW), f: 1, lift: 0 };
+    return { i, x: p.x, top: p.top, s, grow, rate, w: Math.max(numW, nameW, tagW), numW, tagW, split, lines: [ch.name], f: 1, lift: 0 };
   });
   const sorted = L.slice().sort((a, b) => a.x - b.x);
   if (!window.__disableSolver) for (let pass = 0; pass < 3; pass++) for (let k = 0; k < sorted.length - 1; k++) {
     const A = sorted[k], Bq = sorted[k + 1];
     if (Math.abs((A.top - A.lift) - (Bq.top - Bq.lift)) > 110 * Math.max(A.s, Bq.s)) continue;
-    const dx = Bq.x - A.x; if ((A.w * A.f + Bq.w * Bq.f) / 2 + 16 <= dx) continue;
-    const kf = clamp((dx - 16) / ((A.w + Bq.w) / 2), 0.9, 1); A.f = Math.min(A.f, kf); Bq.f = Math.min(Bq.f, kf);   // shrink a little, then stagger
-    if ((A.w * A.f + Bq.w * Bq.f) / 2 + 16 > dx) { const hi = (A.top - A.lift) <= (Bq.top - Bq.lift) ? A : Bq; hi.lift += 100 * hi.s; }
+    const dx = Bq.x - A.x, GAP = 44; if ((A.w * A.f + Bq.w * Bq.f) / 2 + GAP <= dx) continue;
+    for (const Z of [A, Bq]) if (Z.split && Z.lines.length === 1) { Z.lines = [Z.split[1], Z.split[2]]; Z.w = Math.max(Z.numW, Z.split[0], Z.tagW); }   // 1) wrap long names
+    if ((A.w * A.f + Bq.w * Bq.f) / 2 + GAP <= dx) continue;
+    const kf = clamp((dx - GAP) / ((A.w + Bq.w) / 2), 0.9, 1); A.f = Math.min(A.f, kf); Bq.f = Math.min(Bq.f, kf);   // 2) shrink a little
+    if ((A.w * A.f + Bq.w * Bq.f) / 2 + GAP > dx) { const hi = (A.top - A.lift) <= (Bq.top - Bq.lift) ? A : Bq; hi.lift += 110 * hi.s; }   // 3) stagger
   }
-  for (const q of L) { const half = q.w * q.f / 2, right = (q.top > 860 && q.top < 1720) ? 972 : W - 20; q.x = clamp(q.x, half + 20, right - half); }
+  for (const q of L) { const half = q.w * q.f / 2; q.x = clamp(q.x, half + 40, 950 - half); }
   T.__labels = L;
   T.chars.forEach((ch, i) => {
-    const q = L[i], s = q.s, f = q.f * q.grow, a = Math.max(alphaAt(i, t), pickTurn(i, t)), y0 = q.top - q.lift, CAP = 0.73;
-    const namePx = 34 * s * f, nameBase = y0 - 6 * s, nameTop = nameBase - CAP * namePx, mf = `800 ${namePx.toFixed(1)}px Inter`;
-    spaced(sc, ch.name, q.x, nameBase, mf, board ? ch.color : '#eef1f4', 2, a, 0, true); if (a > 0.3) rectOf(i, ch.name, q.x, nameBase, mf, 2);
+    const q = L[i], s = q.s, f = q.f * q.grow, a = Math.max(alphaAt(i, t), pickTurn(i, t), 0.75, T.question && t >= T.question.t0 ? 1 : 0), y0 = q.top - q.lift, CAP = 0.73;   // options stay readable even when the character is dimmed
+    const namePx = 34 * s * f, nameBase = y0 - 6 * s, mf = `800 ${namePx.toFixed(1)}px Inter`, lineH = namePx * 1.02;
+    q.lines.slice().reverse().forEach((ln, k) => { spaced(sc, ln, q.x, nameBase - k * lineH, mf, board ? ch.color : '#eef1f4', 2, a, 0, true); if (a > 0.3) rectOf(i, ln, q.x, nameBase - k * lineH, mf, 2); });
+    const nameTop = nameBase - (q.lines.length - 1) * lineH - CAP * namePx;
     let top = nameTop;
     if (!board) {
-      const numPx = 60 * s * f, numBase = nameTop - 8 * s, nf = `800 ${numPx.toFixed(1)}px Inter`;
+      const numPx = 60 * s * f, numBase = nameTop - 16 * s, nf = `800 ${numPx.toFixed(1)}px Inter`;
       spaced(sc, fmt(value(i, t)), q.x, numBase, nf, q.rate < -0.05 ? RED : ch.color, 0, a, q.rate > 0.1 || fw[i] > 0.5 ? 12 : 0, true); if (a > 0.3) rectOf(i, fmt(value(i, t)), q.x, numBase, nf, 0);
       top = numBase - CAP * numPx;
     }
     const tg = tagAt(i, t);
     if (tg) { const tagPx = 34 * s * q.f, tagBase = top - 10 * s, tf = `800 ${tagPx.toFixed(1)}px Inter`; spaced(sc, tg.text, q.x, tagBase, tf, tg.color || RED, 2, tg.a * Math.max(a, 0.8), 0, true); if (tg.a > 0.5) rectOf(i, tg.text, q.x, tagBase, tf, 2); top = tagBase - CAP * tagPx; }
     q.stackTop = top;
-    if (T.question && t >= T.question.t0) { const pk = pickTurn(i, t), bs = (1 + 0.35 * pk) * s * q.f, by = top - 12 * s - 34 * bs - 10 * pk * s, qa = ss(T.question.t0, T.question.t0 + 0.4, t); sc.save(); sc.globalAlpha = qa; sc.fillStyle = ch.color; sc.shadowColor = ch.color; sc.shadowBlur = 20 * pk; sc.beginPath(); sc.arc(q.x, by, 34 * bs, 0, 7); sc.fill(); sc.restore(); spaced(sc, String.fromCharCode(65 + i), q.x, by + 14 * bs, `800 ${(40 * bs).toFixed(1)}px Inter`, INK, 0, qa); RECTS.push({ owner: 100 + i, text: 'badge', x0: q.x - 34 * bs, x1: q.x + 34 * bs, y0: by - 34 * bs, y1: by + 34 * bs }); }
+    if (T.question && t >= T.question.t0) { const pk = pickTurn(i, t), bs = (1 + 0.35 * pk) * s * q.f, by = top - 12 * s - 34 * bs - 10 * pk * s, qa = ss(T.question.t0, T.question.t0 + 0.4, t); sc.save(); sc.globalAlpha = qa; sc.fillStyle = ch.color; sc.shadowColor = ch.color; sc.shadowBlur = 20 * pk; sc.beginPath(); sc.arc(q.x, by, 34 * bs, 0, 7); sc.fill(); sc.restore(); spaced(sc, String.fromCharCode(65 + i), q.x, by + 14 * bs, `800 ${(40 * bs).toFixed(1)}px Inter`, INK, 0, qa, 0, false, false); RECTS.push({ owner: 100 + i, text: 'badge', x0: q.x - 34 * bs, x1: q.x + 34 * bs, y0: by - 34 * bs, y1: by + 34 * bs }); }
   });
   if (board && T.__kind !== 'rewind') {
     const rankAt = tt => { const order = T.chars.map((_, i) => i).sort((x, y) => value(y, tt) - value(x, tt)); const rk = []; order.forEach((ci, k) => { rk[ci] = k; }); return rk; };
@@ -615,7 +621,7 @@ function drawLabels(t, P, boardTop) {
     const x0 = 170, x1 = 910;
     sc.save(); sc.globalAlpha = 0.5; sc.fillStyle = 'rgba(255,255,255,0.05)'; sc.beginPath(); sc.roundRect(x0 - 24, boardTop - 42, x1 - x0 + 48, T.chars.length * 60 + 20, 18); sc.fill(); sc.restore();
     T.chars.forEach((ch, i) => {
-      const near = Math.min(1, ...pos.map((pp, j) => j === i ? 1 : Math.abs(pp - pos[i]))), y = boardTop + pos[i] * 60, a = alphaAt(i, t) * (0.25 + 0.75 * clamp(near / 0.7));
+      const near = Math.min(1, ...pos.map((pp, j) => j === i ? 1 : Math.abs(pp - pos[i]))), y = boardTop + pos[i] * 60, a = Math.max(alphaAt(i, t), 0.8) * (0.25 + 0.75 * clamp(near / 0.7));
       sc.save(); sc.globalAlpha = a; sc.fillStyle = ch.color; sc.fillRect(x0, y - 28, 8, 34);
       sc.font = '800 32px Inter'; sc.letterSpacing = '1px'; sc.textAlign = 'left'; sc.fillText(ch.name, x0 + 24, y); sc.textAlign = 'right'; sc.letterSpacing = '0px'; sc.font = '800 38px Inter'; sc.fillText(fmt(value(i, t)), x1, y + 2); RECTS.push({ owner: 300, text: 'board', x0: 0, x1: 0, y0: 0, y1: 0 }); sc.restore();
     });
@@ -625,11 +631,15 @@ function drawLabels(t, P, boardTop) {
     const q = L[bb.i], s = q.s, a = ss(bb.t0, bb.t0 + .2, t) * (1 - ss(bb.t1 - .25, bb.t1, t));
     const y = q.stackTop - 14 * s - 6 * (1 - a);
     let left = 24, right = (y > 860 && y < 1720) ? 972 : W - 24;
-    for (const o of L) { if (o.i === bb.i) continue; const oy0 = o.stackTop - 4, oy1 = o.top - o.lift; if (y + 6 < oy0 || y - 28 * s > oy1) continue; if (o.x < q.x) left = Math.max(left, o.x + o.w * o.f / 2 + 12); else right = Math.min(right, o.x - o.w * o.f / 2 - 12); }
-    const w0 = meas(bb.text, `italic 700 ${(36 * s).toFixed(1)}px Inter`, 0), kf = clamp((right - left) / w0, 0.85, 1), w = w0 * kf;
+    for (const o of L) { if (o.i === bb.i) continue; const jj = T.__joints[o.i]; if (jj) { const hx = T.__X(jj.head[0]), hy = T.__Y(jj.head[1]), hr = jj.hr * (T.__z || 1) + 10; if (!(y + 6 < hy - hr || y - 28 * s > hy + hr)) { if (hx < q.x) left = Math.max(left, hx + hr); else right = Math.min(right, hx - hr); } }
+      const oy0 = o.stackTop - 4, oy1 = o.top - o.lift; if (y + 6 < oy0 || y - 28 * s > oy1) continue; if (o.x < q.x) left = Math.max(left, o.x + o.w * o.f / 2 + 12); else right = Math.min(right, o.x - o.w * o.f / 2 - 12); }
+    const bf0 = `italic 700 ${(36 * s).toFixed(1)}px Inter`, w0 = meas(bb.text, bf0, 0);
+    let lines = [bb.text], wl = w0;
+    if (w0 * 0.85 > right - left && bb.text.includes(' ')) { const ws = bb.text.split(' '); let best = null; for (let k = 1; k < ws.length; k++) { const a1 = ws.slice(0, k).join(' '), a2 = ws.slice(k).join(' '), m = Math.max(meas(a1, bf0, 0), meas(a2, bf0, 0)); if (!best || m < best[0]) best = [m, a1, a2]; } lines = [best[1], best[2]]; wl = best[0]; }   // too wide for the gap: two lines
+    const kf = clamp((right - left) / wl, 0.85, 1), w = wl * kf, bf = `italic 700 ${(36 * s * kf).toFixed(1)}px Inter`, lh = 36 * s * kf * 1.05;
     const x = right - left >= w ? clamp(q.x, left + w / 2, right - w / 2) : (left + right) / 2;
-    spaced(sc, bb.text.slice(0, Math.ceil(bb.text.length * clamp((t - bb.t0) / 0.45))), x, y, `italic 700 ${(36 * s * kf).toFixed(1)}px Inter`, T.chars[bb.i].color, 0, a);
-    if (a > 0.5) rectOf(bb.i, bb.text, x, y, `italic 700 ${(36 * s * kf).toFixed(1)}px Inter`, 0);
+    let shown = Math.ceil(bb.text.length * clamp((t - bb.t0) / 0.45));
+    lines.forEach((ln, k) => { const yy = y - (lines.length - 1 - k) * lh, part = ln.slice(0, Math.max(0, shown)); shown -= ln.length + 1; spaced(sc, part, x, yy, bf, T.chars[bb.i].color, 0, a); if (a > 0.5) rectOf(bb.i, ln, x, yy, bf, 0); });
   }
   for (const e of T.events) if (e.type === 'marker') {
     const a = ss(e.t, e.t + .3, t) * (1 - ss(e.t + (e.dur || 2) - .3, e.t + (e.dur || 2), t)); if (a <= 0) continue;
@@ -674,7 +684,7 @@ function renderFrame(r) {
   const P0 = T.scene.draw(sc, t);
   drawEffects(sc, t, P0);
   sc.restore();
-  const P = P0.map((p, i) => { const j = T.__joints[i], top = j && !window.__disableLabelLift ? Math.min(p.top, j.minY - 16 * p.s) : p.top; return { ...p, x: X(p.x), top: Y(top), s: p.s * cam.z, floor: p.floor != null ? Y(p.floor) : null }; });
+  const P = P0.map((p, i) => { const j = T.__joints[i], top0 = j && !window.__disableLabelLift ? Math.min(p.top, j.minY - 24 * p.s) : p.top, top = T.scene.labelTop ? T.scene.labelTop(i, top0) : top0; return { ...p, x: X(p.x), top: Y(top), s: p.s * cam.z, floor: p.floor != null ? Y(p.floor) : null }; });
   drawConfetti(sc, t);
   const warm = T.burst ? ss(T.burst.t - 4, T.burst.t + 0.6, t) : 0;
   const FY = T.scene.floorY ? Y(T.scene.floorY(t)) : null;

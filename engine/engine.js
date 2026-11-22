@@ -228,7 +228,9 @@ function drawChar(c, i, t, anchorFn0, opt = {}) {
 function spaced(c, text, x, y, font, color, spacing, alpha, glow, check) {
   if (!text || alpha <= 0) return;
   c.save(); c.font = font; c.letterSpacing = spacing + 'px'; c.textAlign = 'center';
-  c.globalAlpha = Math.min(1, alpha); c.fillStyle = color; if (glow) { c.shadowColor = color; c.shadowBlur = glow; }
+  c.globalAlpha = Math.min(1, alpha); c.fillStyle = color;
+  if (c === sc) { const px = parseFloat((font.match(/([0-9.]+)px/) || [0, 20])[1]); c.lineJoin = 'round'; c.strokeStyle = 'rgba(4,6,9,0.85)'; c.lineWidth = Math.max(3, px * 0.2); c.strokeText(text, x + spacing / 2, y); }
+  if (glow) { c.shadowColor = color; c.shadowBlur = glow; }
   c.fillText(text, x + spacing / 2, y);
   if (check && alpha > 0.5) {
     const w = c.measureText(text).width;
@@ -401,9 +403,9 @@ function shotAt(t) { let best = null; for (const s of T.shots) if (t >= s.t0 && 
 // bounding box of one character incl. its labels, in world coords
 function charBox(i, t) {
   const p = T.scene.place(i, Math.max(0, t)), s = p.s, ch = T.chars[i];
-  const half = Math.max(80 * s, fmt(value(i, t)).length * 15 * s, ch.name.length * 11.5 * s);
+  const half = Math.max(80 * s, fmt(value(i, t)).length * 19, ch.name.length * 13.5 + 10);
   const bottom = Math.max(p.floor != null ? p.floor : 0, p.top + figH() * s) + 14;
-  return { x0: p.x - half, x1: p.x + half, y0: p.top - 235 * s, y1: bottom, cx: p.x, cy: p.top + 85 * s };
+  return { x0: p.x - half, x1: p.x + half, y0: p.top - 300, y1: bottom, cx: p.x, cy: p.top + 85 * s };
 }
 function frameFor(t, safeTop, focus, zWant) {
   const b = T.scene.extent ? { ...T.scene.extent(t) } : { x0: 1e9, x1: -1e9, y0: 1e9, y1: -1e9 };
@@ -428,9 +430,10 @@ function focusWeights(t) { const w = T.chars.map(() => 0); for (let k = 0; k < 8
 function cameraAt(t, tm, safeTop) {
   const st = T.style, B = beatAt(t), dir = tm.kind === 'hook' && T.burst ? frameFor(t, safeTop, T.burst.i, 1.35) : directorAt(t, safeTop); let z = dir.z, dx = dir.dx, dy = dir.dy;
   const fz = z;   // style flavours stay small so they can never push anyone out of frame
-  if (st.camera === 'push') z *= 1 + 0.025 * easeIO(clamp((t - B.t0) / (B.t1 - B.t0)));
-  else z *= 1 + 0.028 * energyAt(t) * ss(0.65, 0.6, t / T.dur) * easeIO(clamp((t - B.t0) / (B.t1 - B.t0)));
-  if (st.camera === 'drift') { dx += 8 * Math.sin(t * 0.35); dy += 6 * Math.cos(t * 0.27); }
+  const steady = !!T.scene.steadyCam;
+  if (st.camera === 'push' && !steady) z *= 1 + 0.025 * easeIO(clamp((t - B.t0) / (B.t1 - B.t0)));
+  else if (!steady) z *= 1 + 0.028 * energyAt(t) * ss(0.65, 0.6, t / T.dur) * easeIO(clamp((t - B.t0) / (B.t1 - B.t0)));
+  if (st.camera === 'drift' && !steady) { dx += 8 * Math.sin(t * 0.35); dy += 6 * Math.cos(t * 0.27); }
   if ((st.transition === 'cut' || st.transition === 'dayzoom') && B.bi > 0) z *= 1 + 0.03 * (1 - ss(B.t0, B.t0 + 0.32, t));
   if (tm.kind === 'hook') z *= 1 + 0.03 * tm.u;
   for (const e of T.events) if (e.type === 'burst' && t > e.t) z *= 1 + 0.03 * (1 - ss(e.t, e.t + 0.5, t));
@@ -461,7 +464,7 @@ function drawEffects(c, t, P) {
         else { const an = landed ? 0 : tt * (6 + 14 * d.d), L = 8 + 14 * d.c; c.save(); c.globalAlpha = al; c.strokeStyle = T.chars[e.i].color; c.lineWidth = 3; c.lineCap = 'round'; c.beginPath(); c.moveTo(x - Math.cos(an) * L / 2, y - Math.sin(an) * L / 2); c.lineTo(x + Math.cos(an) * L / 2, y + Math.sin(an) * L / 2); c.stroke(); c.restore(); }
       }
     }
-    if (e.type === 'fling' && dt < 2.6) { const p = P[e.i]; FLING.forEach((f, k) => { const tt = dt - k * 0.07; if (tt < 0 || tt > 2) return; flyingCoin(c, T.chars[e.i].color, p.x + (p.x < 540 ? -1 : 1) * (40 * p.s + (120 + f.a * 420) * tt), p.top + 20 * p.s - (700 + f.b * 500) * tt + 900 * tt * tt, tt * (6 + 10 * f.c), 1 - ss(1.0, 1.8, tt), p.s); }); }
+    if (e.type === 'fling' && dt < 2.6) { const p = P[e.i]; FLING.forEach((f, k) => { const tt = dt - k * 0.07; if (tt < 0 || tt > 2) return; flyingCoin(c, T.chars[e.i].color, p.x + (k % 2 ? 1 : -1) * (10 + 60 * f.a) * tt, p.top + 20 * p.s - (800 + f.b * 500) * tt + 900 * tt * tt, tt * (6 + 10 * f.c), 1 - ss(1.0, 1.8, tt), p.s); }); }
     if (e.type === 'burst') { const p = P[e.i], bu = clamp(dt / 0.9); if (bu < 1) for (const k of [0, 0.18]) { const u = clamp(bu - k); if (u <= 0) continue; c.strokeStyle = `rgba(255,205,90,${(1 - u) * 0.9})`; c.lineWidth = 3; c.beginPath(); c.arc(p.x, p.top + 70 * p.s, 40 + 300 * u, 0, 7); c.stroke(); } }
   }
   if (T.burst) {
@@ -509,8 +512,7 @@ function captionBlock(t, tm, C = ctx) {
   let text = B.b.caption || '';
   if (tm.kind === 'hook') text = T.spec.hook || 'HOW DID THIS HAPPEN?';
   if (tm.kind === 'rewind') text = '';
-  let a = (B.bi === 0 || tm.kind !== 'play' && tm.kind !== 'slow') ? 1 : ss(B.t0, B.t0 + .2, t);
-  if (!last && tm.kind !== 'hook') a *= 1 - ss(B.t1 - .12, B.t1, t);
+  let a = (B.bi === 0 || tm.kind !== 'play' && tm.kind !== 'slow') ? 1 : ss(B.t0, B.t0 + .12, t);
   if (st.transition === 'cut') a = 1;
   let xoff = 0; if (st.transition === 'slide' && tm.kind !== 'hook') xoff = (1 - ss(B.t0, B.t0 + .35, t)) * 160 * (B.bi ? 1 : 0) - (last ? 0 : ss(B.t1 - .22, B.t1, t) * 160);
   const gold = q || tm.kind === 'hook', color = gold ? GOLD : '#dfe4e9';
@@ -519,45 +521,48 @@ function captionBlock(t, tm, C = ctx) {
   let bottom, wb = 0;
   if (st.captionStyle === 'bold') {
     const pz = (st.transition === 'dayzoom' || st.transition === 'cut') && B.bi > 0 ? 1 + 0.35 * (1 - easeOut(clamp((t - B.t0) / 0.4))) : 1;
-    if (counter) { C.save(); C.translate(W / 2, 160); C.scale(pz, pz); spaced(C, counter, 0, 0, '800 72px Inter', '#ffffff', 2, 1, 18, false); C.restore(); }
-    const lines = text ? wrapText(text, '700 40px Inter', 2, 940) : [];
-    lines.forEach((ln, k) => { wb += drawWords(C, ln, W / 2 + xoff, 236 + k * 50, '700 40px Inter', 3, gold ? GOLD : '#c9d0d8', a, gold ? 14 : 0, tStart, clock, wb); });
-    bottom = 236 + Math.max(0, lines.length - 1) * 50 + 16;
+    if (counter) { C.save(); C.translate(W / 2, 150); C.scale(pz, pz); spaced(C, counter, 0, 0, '700 40px Inter', '#9aa6b2', 6, 1, 0, false); C.restore(); }
+    const lines = text ? wrapText(text, '800 54px Inter', 1, 960) : [];
+    lines.forEach((ln, k) => { wb += drawWords(C, ln, W / 2 + xoff, 228 + k * 62, '800 54px Inter', 3, gold ? GOLD : '#c9d0d8', a, gold ? 14 : 0, tStart, clock, wb); });
+    bottom = 228 + Math.max(0, lines.length - 1) * 62 + 18;
   } else if (st.captionStyle === 'boxed') {
-    const lines = text ? wrapText(text, '700 40px Inter', 1, 900) : [];
+    const lines = text ? wrapText(text, '800 46px Inter', 1, 920) : [];
     if (lines.length && a > 0) {
-      C.save(); C.font = '700 40px Inter'; C.letterSpacing = '1px'; const w = Math.max(...lines.map(l => C.measureText(l).width)) + 56, h = lines.length * 52 + 28;
+      C.save(); C.font = '800 46px Inter'; C.letterSpacing = '1px'; const w = Math.max(...lines.map(l => C.measureText(l).width)) + 60, h = lines.length * 60 + 30;
       C.globalAlpha = a; C.fillStyle = gold ? GOLD : '#f4f6f8'; C.beginPath(); C.roundRect(W / 2 - w / 2 + xoff, 160, w, h, 22); C.fill(); C.restore();
-      lines.forEach((ln, k) => { wb += drawWords(C, ln, W / 2 + xoff, 160 + 52 + k * 52, '700 40px Inter', 1, INK, a, 0, tStart, clock, wb, 40); });
+      lines.forEach((ln, k) => { wb += drawWords(C, ln, W / 2 + xoff, 160 + 60 + k * 60, '800 46px Inter', 1, INK, a, 0, tStart, clock, wb, 46); });
     }
-    const by = 160 + Math.max(1, lines.length) * 52 + 28;
-    if (counter && tm.kind !== 'hook') spaced(C, counter, W / 2, by + 44, '700 26px Inter', '#9aa3ad', 5, 1);
-    bottom = by + 44;
+    const by = 160 + Math.max(1, lines.length) * 60 + 30;
+    if (counter && tm.kind !== 'hook') spaced(C, counter, W / 2, by + 46, '700 30px Inter', '#9aa3ad', 5, 1);
+    bottom = by + 46;
   } else {
-    const lines = text ? wrapText(text, '300 44px Inter', 7, 940) : [];
-    lines.forEach((ln, k) => { wb += drawWords(C, ln, W / 2 + xoff, 205 + k * 58, (gold ? '600' : '400') + ' 44px Inter', 7, color, a, gold ? 18 : 6, tStart, clock, wb); });
+    const lines = text ? wrapText(text, '700 50px Inter', 4, 960) : [];
+    lines.forEach((ln, k) => { wb += drawWords(C, ln, W / 2 + xoff, 210 + k * 62, '700 50px Inter', 4, color, a, gold ? 16 : 4, tStart, clock, wb); });
     const n = Math.max(1, lines.length);
-    if (counter) spaced(C, counter, W / 2, 205 + n * 58 - 12, '500 20px Inter', '#7d858d', 6, tm.kind === 'rewind' ? 1 : a);
-    bottom = 205 + n * 58;
+    if (counter) spaced(C, counter, W / 2, 210 + n * 62 - 6, '700 28px Inter', '#8b939b', 6, tm.kind === 'rewind' ? 1 : a);
+    bottom = 210 + n * 62;
   }
   if (st.transition === 'dayzoom' && st.captionStyle !== 'bold' && B.bi > 0 && counter && tm.kind !== 'hook') {
     const du = (t - B.t0) / 0.45;
     if (du >= 0 && du < 1) { const sc2 = lerp(2.0, 1, easeOut(du)), y = lerp(470, 240, easeIO(du)); C.save(); C.translate(W / 2, y); C.scale(sc2, sc2); spaced(C, counter, 0, 0, '800 64px Inter', '#ffffff', 2, 1 - ss(0.6, 1, du), 24); C.restore(); }
   }
-  if (q && tm.kind !== 'endcard') { const L = T.chars.map((_, k) => String.fromCharCode(65 + k)).join(' · '); spaced(C, 'COMMENT ' + L, W / 2, bottom + 34, '700 24px Inter', '#ffffff', 5, ss(B.t0 + 0.4, B.t0 + 0.8, t)); bottom += 34; }
-  if (T.spec.footnote) { const ft = T.beats[Math.max(0, T.beats.length - 2)].t0; spaced(C, T.spec.footnote.toUpperCase(), W / 2, bottom + 30, '500 16px Inter', '#6b727a', 2, ss(ft + .2, ft + 1, t), 0, true); bottom += 30; }
+  if (q && tm.kind !== 'endcard') { const L = T.chars.map((_, k) => String.fromCharCode(65 + k)).join(' · '); spaced(C, 'COMMENT ' + L, W / 2, bottom + 42, '800 32px Inter', '#ffffff', 4, ss(B.t0 + 0.4, B.t0 + 0.8, t)); bottom += 42; }
+  if (T.spec.footnote) { const ft = T.beats[Math.max(0, T.beats.length - 2)].t0; spaced(C, T.spec.footnote.toUpperCase(), W / 2, bottom + 34, '600 20px Inter', '#7a828a', 1, ss(ft + .2, ft + 1, t), 0, true); bottom += 34; }
   return bottom;
 }
 const RECTS = [];
 function rectOf(owner, text, x, y, font, sp) { sc.font = font; sc.letterSpacing = sp + 'px'; const w = sc.measureText(text).width, h = parseFloat(font.match(/([0-9.]+)px/)[1]); RECTS.push({ owner, text, x0: x - w / 2, x1: x + w / 2, y0: y - h * 0.78, y1: y + h * 0.1 }); }
+const ownerName = o => o >= 300 ? 'LEADERBOARD' : (T.chars[o % 100] || { name: '?' }).name + (o >= 200 ? ' marker' : o >= 100 ? ' badge' : '');
 function qaLayout(t, P) {
   for (let a = 0; a < RECTS.length; a++) for (let b = a + 1; b < RECTS.length; b++) {
-    const A = RECTS[a], B = RECTS[b]; if (A.owner === B.owner) continue;
+    const A = RECTS[a], B = RECTS[b]; if (A.owner === B.owner || A.owner === 300 || B.owner === 300) continue;
     const ox = Math.min(A.x1, B.x1) - Math.max(A.x0, B.x0), oy = Math.min(A.y1, B.y1) - Math.max(A.y0, B.y0);
-    if (ox > 3 && oy > 3) WARN.add(`labels overlap: ${T.chars[A.owner].name} "${String(A.text).replace(/[0-9][0-9,.]*/g, '#')}" / ${T.chars[B.owner].name} "${String(B.text).replace(/[0-9][0-9,.]*/g, '#')}"`);
+    if (ox > 3 && oy > 3) WARN.add(`labels overlap: ${ownerName(A.owner)} "${String(A.text).replace(/[0-9][0-9,.]*/g, '#')}" / ${ownerName(B.owner)} "${String(B.text).replace(/[0-9][0-9,.]*/g, '#')}"`);
   }
   P.forEach((p, i) => { if (p.x < 10 || p.x > W - 10 || p.top < 0 || p.top > H - 60) WARN.add(`character out of frame: ${T.chars[i].name}`); });
   for (const A of RECTS) {
+    if (A.owner === 300) continue;
+    if ((A.y1 - A.y0) / 0.88 < 27) WARN.add(`text too small: "${String(A.text).replace(/[0-9][0-9,.]*/g, '#')}"`);
     const nm = A.owner >= 200 ? T.chars[A.owner - 200].name : A.owner >= 100 ? T.chars[A.owner - 100].name : T.chars[A.owner].name;
     if (A.y1 > 1525) WARN.add(`text in the Shorts bottom overlay: ${nm} "${String(A.text).replace(/[0-9][0-9,.]*/g, '#')}"`);
     if (A.owner < 100) { const j = T.__joints[A.owner]; if (!j) continue;
@@ -567,63 +572,68 @@ function qaLayout(t, P) {
   T.chars.forEach((ch, i) => { const j = T.__joints[i]; if (j && T.__Y(j.head[1]) > 1560) WARN.add(`character in the Shorts bottom overlay: ${ch.name}`); });
   RECTS.length = 0;
 }
+const tagY0 = (y0, board, s) => y0 - (board ? 50 : 108) * s;
 function drawLabels(t, P, boardTop) {
   RECTS.length = 0;
   const board = T.style.labels === 'board', fw = focusWeights(t);
   const meas = (text, font, sp) => { sc.font = font; sc.letterSpacing = sp + 'px'; return sc.measureText(text).width; };
   const L = T.chars.map((ch, i) => {
-    const p = { ...P[i], s: P[i].s * (T.style.labelScale || 1) }, s = p.s, rate = fracRate(i, t), grow = (1 + 0.16 * fw[i]) * (1 + 0.25 * clamp(Math.abs(rate) * 2.2)) * (1 + 0.35 * Math.max(0, ...T.milestones.filter(m => m.i === i).map(m => bump(m.t, m.t + 0.45, t)))) * (1 + 0.3 * rollPop(i, t));
-    const numW = board ? 0 : meas(fmt(value(i, t)), `700 ${(46 * s * grow).toFixed(1)}px Inter`, 0);
-    const nameW = meas(ch.name, `${board ? 700 : 600} ${((board ? 19 : 21) * s * grow).toFixed(1)}px Inter`, 3);
-    const tg = tagAt(i, t), tagW = tg ? meas(tg.text, `700 ${(20 * s).toFixed(1)}px Inter`, 3) : 0;
+    const p = { ...P[i], s: clamp(T.__z || 1, 0.92, 1.08) * (T.style.labelScale || 1) }, s = p.s, rate = fracRate(i, t), grow = (1 + 0.16 * fw[i]) * (1 + 0.25 * clamp(Math.abs(rate) * 2.2)) * (1 + 0.35 * Math.max(0, ...T.milestones.filter(m => m.i === i).map(m => bump(m.t, m.t + 0.45, t)))) * (1 + 0.3 * rollPop(i, t));
+    const numW = board ? 0 : meas(fmt(value(i, t)), `800 ${(60 * s * grow).toFixed(1)}px Inter`, 0);
+    const nameW = meas(ch.name, `800 ${(34 * s * grow).toFixed(1)}px Inter`, 2);
+    const tg = tagAt(i, t), tagW = tg ? meas(tg.text, `800 ${(34 * s).toFixed(1)}px Inter`, 2) : 0;
     return { i, x: p.x, top: p.top, s, grow, rate, w: Math.max(numW, nameW, tagW), f: 1, lift: 0 };
   });
   const sorted = L.slice().sort((a, b) => a.x - b.x);
   if (!window.__disableSolver) for (let pass = 0; pass < 3; pass++) for (let k = 0; k < sorted.length - 1; k++) {
     const A = sorted[k], Bq = sorted[k + 1];
-    if (Math.abs((A.top - A.lift) - (Bq.top - Bq.lift)) > 80 * Math.max(A.s, Bq.s)) continue;
+    if (Math.abs((A.top - A.lift) - (Bq.top - Bq.lift)) > 110 * Math.max(A.s, Bq.s)) continue;
     const dx = Bq.x - A.x; if ((A.w * A.f + Bq.w * Bq.f) / 2 + 16 <= dx) continue;
-    const kf = clamp((dx - 16) / ((A.w + Bq.w) / 2), 0.58, 1); A.f = Math.min(A.f, kf); Bq.f = Math.min(Bq.f, kf);
-    if ((A.w * A.f + Bq.w * Bq.f) / 2 + 16 > dx) { const hi = (A.top - A.lift) <= (Bq.top - Bq.lift) ? A : Bq; hi.lift += 52 * hi.s; }
+    const kf = clamp((dx - 16) / ((A.w + Bq.w) / 2), 0.9, 1); A.f = Math.min(A.f, kf); Bq.f = Math.min(Bq.f, kf);   // shrink a little, then stagger
+    if ((A.w * A.f + Bq.w * Bq.f) / 2 + 16 > dx) { const hi = (A.top - A.lift) <= (Bq.top - Bq.lift) ? A : Bq; hi.lift += 100 * hi.s; }
   }
   for (const q of L) { const half = q.w * q.f / 2, right = (q.top > 860 && q.top < 1720) ? 972 : W - 20; q.x = clamp(q.x, half + 20, right - half); }
   T.__labels = L;
   T.chars.forEach((ch, i) => {
-    const q = L[i], s = q.s, f = q.f * q.grow, a = Math.max(alphaAt(i, t), pickTurn(i, t)), y0 = q.top - q.lift;
-    if (T.question && t >= T.question.t0) { const tgq = tagAt(i, t), pk = pickTurn(i, t), bs = (1 + 0.35 * pk) * s * q.f, by = y0 - ((tgq ? 104 : (board ? 26 : 74)) + 36) * s - 16 * pk * s, qa = ss(T.question.t0, T.question.t0 + 0.4, t); sc.save(); sc.globalAlpha = qa; sc.fillStyle = ch.color; sc.shadowColor = ch.color; sc.shadowBlur = 20 * pk; sc.beginPath(); sc.arc(q.x, by, 26 * bs, 0, 7); sc.fill(); sc.restore(); spaced(sc, String.fromCharCode(65 + i), q.x, by + 11 * bs, `800 ${(30 * bs).toFixed(1)}px Inter`, INK, 0, qa); RECTS.push({ owner: 100 + i, text: 'badge', x0: q.x - 26 * bs, x1: q.x + 26 * bs, y0: by - 26 * bs, y1: by + 26 * bs }); }
+    const q = L[i], s = q.s, f = q.f * q.grow, a = Math.max(alphaAt(i, t), pickTurn(i, t)), y0 = q.top - q.lift, CAP = 0.73;
+    const namePx = 34 * s * f, nameBase = y0 - 6 * s, nameTop = nameBase - CAP * namePx, mf = `800 ${namePx.toFixed(1)}px Inter`;
+    spaced(sc, ch.name, q.x, nameBase, mf, board ? ch.color : '#eef1f4', 2, a, 0, true); if (a > 0.3) rectOf(i, ch.name, q.x, nameBase, mf, 2);
+    let top = nameTop;
     if (!board) {
-      spaced(sc, fmt(value(i, t)), q.x, y0 - 36 * s, `700 ${(46 * s * f).toFixed(1)}px Inter`, q.rate < -0.05 ? RED : ch.color, 0, a, q.rate > 0.1 || fw[i] > 0.5 ? 14 : 0, true);
-      spaced(sc, ch.name, q.x, y0 - 8 * s, `600 ${(21 * s * f).toFixed(1)}px Inter`, fw[i] > 0.5 ? '#e6eaee' : '#a3acb6', 3, a, 0, true);
-      if (a > 0.3) { rectOf(i, fmt(value(i, t)), q.x, y0 - 36 * s, `700 ${(46 * s * f).toFixed(1)}px Inter`, 0); rectOf(i, ch.name, q.x, y0 - 8 * s, `600 ${(21 * s * f).toFixed(1)}px Inter`, 3); }
-    } else { spaced(sc, ch.name, q.x, y0 - 6 * s, `700 ${(19 * s * f).toFixed(1)}px Inter`, ch.color, 3, a * 0.9, 0, true); if (a > 0.3) rectOf(i, ch.name, q.x, y0 - 6 * s, `700 ${(19 * s * f).toFixed(1)}px Inter`, 3); }
-    const tg = tagAt(i, t), tagY = y0 - (board ? 34 : 84) * s; if (tg) { spaced(sc, tg.text, q.x, tagY, `700 ${(20 * s * q.f).toFixed(1)}px Inter`, tg.color || RED, 3, tg.a * Math.max(a, 0.8), 0, true); if (tg.a > 0.5) rectOf(i, tg.text, q.x, tagY, `700 ${(20 * s * q.f).toFixed(1)}px Inter`, 3); }
-    q.stackTop = (tg ? tagY - 20 * s : y0 - (board ? 26 : 74) * s);
+      const numPx = 60 * s * f, numBase = nameTop - 8 * s, nf = `800 ${numPx.toFixed(1)}px Inter`;
+      spaced(sc, fmt(value(i, t)), q.x, numBase, nf, q.rate < -0.05 ? RED : ch.color, 0, a, q.rate > 0.1 || fw[i] > 0.5 ? 12 : 0, true); if (a > 0.3) rectOf(i, fmt(value(i, t)), q.x, numBase, nf, 0);
+      top = numBase - CAP * numPx;
+    }
+    const tg = tagAt(i, t);
+    if (tg) { const tagPx = 34 * s * q.f, tagBase = top - 10 * s, tf = `800 ${tagPx.toFixed(1)}px Inter`; spaced(sc, tg.text, q.x, tagBase, tf, tg.color || RED, 2, tg.a * Math.max(a, 0.8), 0, true); if (tg.a > 0.5) rectOf(i, tg.text, q.x, tagBase, tf, 2); top = tagBase - CAP * tagPx; }
+    q.stackTop = top;
+    if (T.question && t >= T.question.t0) { const pk = pickTurn(i, t), bs = (1 + 0.35 * pk) * s * q.f, by = top - 12 * s - 34 * bs - 10 * pk * s, qa = ss(T.question.t0, T.question.t0 + 0.4, t); sc.save(); sc.globalAlpha = qa; sc.fillStyle = ch.color; sc.shadowColor = ch.color; sc.shadowBlur = 20 * pk; sc.beginPath(); sc.arc(q.x, by, 34 * bs, 0, 7); sc.fill(); sc.restore(); spaced(sc, String.fromCharCode(65 + i), q.x, by + 14 * bs, `800 ${(40 * bs).toFixed(1)}px Inter`, INK, 0, qa); RECTS.push({ owner: 100 + i, text: 'badge', x0: q.x - 34 * bs, x1: q.x + 34 * bs, y0: by - 34 * bs, y1: by + 34 * bs }); }
   });
-  if (board) {
+  if (board && T.__kind !== 'rewind') {
     const rankAt = tt => { const order = T.chars.map((_, i) => i).sort((x, y) => value(y, tt) - value(x, tt)); const rk = []; order.forEach((ci, k) => { rk[ci] = k; }); return rk; };
     const pos = T.chars.map(() => 0); for (let k = 0; k < 4; k++) { const rk = rankAt(Math.max(0, t - k * 0.035)); rk.forEach((v, ci) => { pos[ci] += v / 4; }); }
     const x0 = 170, x1 = 910;
-    sc.save(); sc.globalAlpha = 0.5; sc.fillStyle = 'rgba(255,255,255,0.05)'; sc.beginPath(); sc.roundRect(x0 - 24, boardTop - 34, x1 - x0 + 48, T.chars.length * 50 + 18, 18); sc.fill(); sc.restore();
+    sc.save(); sc.globalAlpha = 0.5; sc.fillStyle = 'rgba(255,255,255,0.05)'; sc.beginPath(); sc.roundRect(x0 - 24, boardTop - 42, x1 - x0 + 48, T.chars.length * 60 + 20, 18); sc.fill(); sc.restore();
     T.chars.forEach((ch, i) => {
-      const near = Math.min(1, ...pos.map((pp, j) => j === i ? 1 : Math.abs(pp - pos[i]))), y = boardTop + pos[i] * 50, a = alphaAt(i, t) * (0.25 + 0.75 * clamp(near / 0.7));
-      sc.save(); sc.globalAlpha = a; sc.fillStyle = ch.color; sc.fillRect(x0, y - 22, 6, 28);
-      sc.font = '700 24px Inter'; sc.letterSpacing = '2px'; sc.textAlign = 'left'; sc.fillText(ch.name, x0 + 20, y); sc.textAlign = 'right'; sc.letterSpacing = '0px'; sc.font = '800 30px Inter'; sc.fillText(fmt(value(i, t)), x1, y + 2); sc.restore();
+      const near = Math.min(1, ...pos.map((pp, j) => j === i ? 1 : Math.abs(pp - pos[i]))), y = boardTop + pos[i] * 60, a = alphaAt(i, t) * (0.25 + 0.75 * clamp(near / 0.7));
+      sc.save(); sc.globalAlpha = a; sc.fillStyle = ch.color; sc.fillRect(x0, y - 28, 8, 34);
+      sc.font = '800 32px Inter'; sc.letterSpacing = '1px'; sc.textAlign = 'left'; sc.fillText(ch.name, x0 + 24, y); sc.textAlign = 'right'; sc.letterSpacing = '0px'; sc.font = '800 38px Inter'; sc.fillText(fmt(value(i, t)), x1, y + 2); RECTS.push({ owner: 300, text: 'board', x0: 0, x1: 0, y0: 0, y1: 0 }); sc.restore();
     });
   }
   for (const bb of T.bubbles) {
     if (t < bb.t0 || t > bb.t1) continue;
     const q = L[bb.i], s = q.s, a = ss(bb.t0, bb.t0 + .2, t) * (1 - ss(bb.t1 - .25, bb.t1, t));
-    const y = q.top - q.lift - (board ? (tagAt(bb.i, t) ? 60 : 34) : (tagAt(bb.i, t) ? 112 : 86)) * s - 6 * (1 - a);
+    const y = q.stackTop - 14 * s - 6 * (1 - a);
     let left = 24, right = (y > 860 && y < 1720) ? 972 : W - 24;
-    for (const o of L) { if (o.i === bb.i) continue; const oy0 = o.top - o.lift - 110 * o.s, oy1 = o.top - o.lift; if (y + 6 < oy0 || y - 26 * s > oy1) continue; if (o.x < q.x) left = Math.max(left, o.x + o.w * o.f / 2 + 12); else right = Math.min(right, o.x - o.w * o.f / 2 - 12); }
-    const w0 = meas(bb.text, `italic 600 ${(25 * s).toFixed(1)}px Inter`, 0), kf = clamp((right - left) / w0, 0.6, 1), w = w0 * kf;
+    for (const o of L) { if (o.i === bb.i) continue; const oy0 = o.stackTop - 4, oy1 = o.top - o.lift; if (y + 6 < oy0 || y - 28 * s > oy1) continue; if (o.x < q.x) left = Math.max(left, o.x + o.w * o.f / 2 + 12); else right = Math.min(right, o.x - o.w * o.f / 2 - 12); }
+    const w0 = meas(bb.text, `italic 700 ${(36 * s).toFixed(1)}px Inter`, 0), kf = clamp((right - left) / w0, 0.85, 1), w = w0 * kf;
     const x = right - left >= w ? clamp(q.x, left + w / 2, right - w / 2) : (left + right) / 2;
-    spaced(sc, bb.text.slice(0, Math.ceil(bb.text.length * clamp((t - bb.t0) / 0.45))), x, y, `italic 600 ${(25 * s * kf).toFixed(1)}px Inter`, T.chars[bb.i].color, 0, a);
-    if (a > 0.5) rectOf(bb.i, bb.text, x, y, `italic 600 ${(25 * s * kf).toFixed(1)}px Inter`, 0);
+    spaced(sc, bb.text.slice(0, Math.ceil(bb.text.length * clamp((t - bb.t0) / 0.45))), x, y, `italic 700 ${(36 * s * kf).toFixed(1)}px Inter`, T.chars[bb.i].color, 0, a);
+    if (a > 0.5) rectOf(bb.i, bb.text, x, y, `italic 700 ${(36 * s * kf).toFixed(1)}px Inter`, 0);
   }
   for (const e of T.events) if (e.type === 'marker') {
     const a = ss(e.t, e.t + .3, t) * (1 - ss(e.t + (e.dur || 2) - .3, e.t + (e.dur || 2), t)); if (a <= 0) continue;
-    const p = P[e.i], mf = `700 ${(30 * p.s).toFixed(1)}px Inter`, mw = (sc.font = mf, sc.letterSpacing = '0px', sc.measureText(e.text).width), mx = clamp(p.x + (e.dx != null ? e.dx : -110) * p.s, mw / 2 + 40, 950 - mw / 2), my = p.top + (e.dy != null ? e.dy : 120) * p.s; spaced(sc, e.text, mx, my, mf, e.color || RED, 0, a); if (a > 0.5) rectOf(200 + e.i, e.text, mx, my, mf, 0);
+    const p = P[e.i], mf = `800 ${(38 * clamp(T.__z || 1, 0.92, 1.08)).toFixed(1)}px Inter`, mw = (sc.font = mf, sc.letterSpacing = '0px', sc.measureText(e.text).width), mx = clamp(p.x + (e.dx != null ? e.dx : -110) * p.s, mw / 2 + 40, 950 - mw / 2), my0 = p.top + (e.dy != null ? e.dy : 120) * p.s, lab = (T.__labels || [])[e.i], my = (e.dy != null && e.dy < 0 && lab && lab.stackTop != null) ? Math.min(my0, lab.stackTop - 16) : my0; spaced(sc, e.text, mx, my, mf, e.color || RED, 0, a); if (a > 0.5) rectOf(200 + e.i, e.text, mx, my, mf, 0);
   }
 }
 function drawEndcard(u) {
@@ -652,10 +662,10 @@ function drawEndcard(u) {
 function renderFrame(r) {
   const tm = storyAt(r), t = tm.s, st = T.style;
   const capCanvasBottom = captionBlock(t, tm, scratchC), boardOn = T.style.labels === 'board';
-  const safeTop = (boardOn ? capCanvasBottom + 46 + T.chars.length * 50 : capCanvasBottom) + 26;
+  const safeTop = (boardOn ? capCanvasBottom + 56 + T.chars.length * 60 : capCanvasBottom) + 30;
   const [shx, shy] = shakeAt(t, tm), cam = cameraAt(t, tm, safeTop), look = lookOf(T.chars[0]);
   const X = x => 540 + cam.dx + (x - 540) * cam.z + shx, Y = y => 960 + cam.dy + (y - 960) * cam.z + shy;
-  T.__joints = {}; T.__X = X; T.__Y = Y; T.__z = cam.z;
+  T.__joints = {}; T.__X = X; T.__Y = Y; T.__z = cam.z; T.__kind = tm.kind;
   sc.clearRect(0, 0, W, H);
   sc.save(); sc.translate(540 + cam.dx + shx, 960 + cam.dy + shy); sc.scale(cam.z, cam.z); sc.translate(-540, -960);
   const th = THEMES[st.theme] || THEMES.void;
@@ -685,8 +695,8 @@ function renderFrame(r) {
   ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 0.32 * bloom; ctx.drawImage(g1, 0, 0, W, H); ctx.globalAlpha = (0.22 + 0.2 * warm) * bloom; ctx.drawImage(g2, 0, 0, W, H); ctx.restore();
   // UI layer (numbers, names, tags, bubbles) drawn after the glow so text stays sharp
   sc.clearRect(0, 0, W, H);
-  drawLabels(t, P, capCanvasBottom + 46);
-  if (tm.kind === 'play' || tm.kind === 'slow') qaLayout(t, P); else RECTS.length = 0;
+  drawLabels(t, P, capCanvasBottom + 56);
+  if (tm.kind === 'play' || tm.kind === 'slow' || tm.kind === 'hook') qaLayout(t, P); else RECTS.length = 0;
   ctx.drawImage(scene, 0, 0);
   captionBlock(t, tm);
   // crash flash / cut flash
@@ -696,7 +706,7 @@ function renderFrame(r) {
   if (tm.kind === 'rewind') {
     ctx.fillStyle = 'rgba(40,90,255,0.10)'; ctx.fillRect(0, 0, W, H);
     ctx.fillStyle = 'rgba(255,255,255,0.06)'; for (let y = (r * 900) % 6; y < H; y += 6) ctx.fillRect(0, y, W, 2);
-    spaced(ctx, '◀◀  REWIND', 540, 330, '800 40px Inter', '#ffffff', 6, 0.9, 12);
+    spaced(ctx, '◀◀  REWIND', 540, 250, '800 56px Inter', '#ffffff', 6, 0.9, 12);
   }
   const vg = ctx.createRadialGradient(W / 2, H * .45, 450, W / 2, H * .45, 1250); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,0.55)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
   if (tm.kind === 'endcard') drawEndcard(tm.u);

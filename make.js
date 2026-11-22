@@ -54,6 +54,7 @@ function pickStyle(spec, brand, history) {
     const score = v => recent.reduce((acc, h, j) => acc + (h.style && h.style[dim] === v ? (6 - j) : 0), 0) + rnd() * 1.5 + (dim === 'labels' && spec.characters.length >= 5 && v === 'board' ? -8 : 0);
     style[dim] = opts.map(v => [score(v), v]).sort((a, b) => a[0] - b[0])[0][1]; why[dim] = 'picked';
   }
+  if (style.labels === 'board' && style.transition === 'dayzoom') style.transition = 'cut';   // the zooming counter would cross the leaderboard
   // a hard rule on top of the soft penalties: differ from the previous video in at least half the dimensions
   const last = recent[0] && recent[0].style;
   if (last) {
@@ -130,11 +131,12 @@ async function reviewLoop(page, spec, brand, style0, out) {
     const issues = [], fixes = [];
     const early = st.motion.map((m, k) => [k, m]).filter(([k, m]) => m < 0.35 && k < st.realDur * 0.6);
     if (early.length) { issues.push(`quiet seconds ${early.map(e => e[0] + 's').join(',')}`); for (const [k] of early) { const a = await page.evaluate(r => window.__storyAt(r), Math.max(0, k - 0.3)), b = await page.evaluate(r => window.__storyAt(r), k + 1.3); style.boost.push([Math.min(a, b), Math.max(a, b)]); } fixes.push('energy boost'); }
-    const crowd = st.warnings.filter(w => /overlap|out of frame/.test(w)), edge = st.warnings.filter(w => /off-screen|Shorts like/.test(w));
+    const crowd = st.warnings.filter(w => /overlap|out of frame|too small|covers its own/.test(w)), edge = st.warnings.filter(w => /off-screen|Shorts like|bottom overlay/.test(w));
     if (crowd.length || edge.length) {
       issues.push(...crowd.concat(edge).slice(0, 3));
-      if (crowd.length && style.labels !== 'board' && compatible('labels', 'board', spec, brand)) { style.labels = 'board'; fixes.push('leaderboard labels'); }
-      else if ((style.labelScale || 1) > 0.72) { style.labelScale = +((style.labelScale || 1) * 0.9).toFixed(3); fixes.push('labels -10%'); }
+      if (crowd.length && style.labels !== 'board' && compatible('labels', 'board', spec, brand)) { style.labels = 'board'; if (style.transition === 'dayzoom') style.transition = 'cut'; fixes.push('leaderboard labels'); }
+      else if (edge.length && !crowd.some(w => /too small/.test(w)) && (style.labelScale || 1) > 0.85) { style.labelScale = +((style.labelScale || 1) * 0.94).toFixed(3); fixes.push('labels -6%'); }
+      // "too small" is never fixed by shrinking; if the leaderboard is already on, a human has to shorten names/tags
     }
     const washed = st.washed.filter(w => w.frac > 0.3);
     if (washed.length) { issues.push('washed out: ' + washed.map(w => `${w.name} ${(w.frac * 100).toFixed(0)}%`).join(', ')); if ((style.glow != null ? style.glow : 1) > 0.3) { style.glow = +((style.glow != null ? style.glow : 1) * 0.7).toFixed(3); fixes.push('glow -30%'); } }

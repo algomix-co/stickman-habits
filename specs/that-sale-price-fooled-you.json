@@ -30,7 +30,7 @@
  "metric": {
   "prefix": "$",
   "compact": false,
-  "scale": 0.75
+  "scale": 0.55
  },
  "counter": {
   "label": "MONTH",
@@ -68,19 +68,11 @@
    "caption": "WAS $200. NOW $99.",
    "counter": 2,
    "values": {
-    "DEAL HUNTER": 400,
+    "DEAL HUNTER": 360,
     "HALF-PRICE": 380,
     "OWN PRICE": 420
    },
-   "events": [
-    {
-     "type": "marker",
-     "who": "DEAL HUNTER",
-     "text": "−$99",
-     "at": 0.4,
-     "dur": 1.6
-    }
-   ],
+   "events": [],
    "bubbles": [
     {
      "who": "DEAL HUNTER",
@@ -125,7 +117,7 @@
   },
   {
    "dur": 3.0,
-   "caption": "RRP $500. NOW $250!",
+   "caption": "WAS $500. NOW $250!",
    "counter": 6,
    "values": {
     "HALF-PRICE": 180,
@@ -148,7 +140,7 @@
    "bubbles": [
     {
      "who": "HALF-PRICE",
-     "text": "half price = must buy",
+     "text": "didn't need it. 50% off!",
      "at": 0.2
     }
    ]
@@ -223,7 +215,7 @@
      "text": "TOP",
      "color": "#36e0c8"
     },
-    "DEAL HUNTER": "FELL FOR 'WAS'"
+    "DEAL HUNTER": "BOUGHT 'BARGAINS'"
    }
   },
   {

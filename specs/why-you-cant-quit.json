@@ -76,7 +76,7 @@
   },
   {
    "dur": 3.2,
-   "caption": "ONE CHANGE: ASK 'START IT TODAY?'",
+   "caption": "ONE CHANGE: ASK 'WOULD I START IT NOW?'",
    "counter": 4,
    "values": {
     "RE-CHECKS": 18,
@@ -92,14 +92,14 @@
    "bubbles": [
     {
      "who": "RE-CHECKS",
-     "text": "would I start this now?",
+     "text": "honestly? no.",
      "at": 0.3
     }
    ]
   },
   {
    "dur": 3.0,
-   "caption": "THE ANSWER IS NO. SO IT SWITCHES.",
+   "caption": "THE ANSWER IS NO. SO THEY SWITCH.",
    "counter": 5,
    "values": {
     "RE-CHECKS": 0,
@@ -169,7 +169,7 @@
   },
   {
    "dur": 3.8,
-   "caption": "RE-CHECKS FINDS ITS PATH.",
+   "caption": "RE-CHECKS GETS THERE.",
    "counter": 18,
    "curve": "accel",
    "values": {

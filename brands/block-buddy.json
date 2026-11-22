@@ -1,0 +1,55 @@
+{
+ "name": "Block Buddy",
+ "character": {
+  "body": "block",
+  "face": true,
+  "lineStyle": "flat",
+  "accessory": "beanie",
+  "accent": "#ff5a6e"
+ },
+ "endcard": {
+  "title": "YOUR CHANNEL",
+  "tagline": "BUILT BRICK BY BRICK",
+  "color": "#5dffb0",
+  "accessory": "beanie",
+  "accent": "#ff5a6e",
+  "look": {
+   "body": "block"
+  }
+ },
+ "allow": {
+  "theme": [
+   "void",
+   "grid",
+   "navy"
+  ]
+ },
+ "fixed": {
+  "outro": "endcard"
+ },
+ "music": {
+  "motif": [
+   0,
+   7,
+   10,
+   12
+  ]
+ },
+ "sheetCharacters": [
+  {
+   "name": "A",
+   "color": "#5dffb0",
+   "accessory": "beanie"
+  },
+  {
+   "name": "B",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  },
+  {
+   "name": "C",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  }
+ ]
+}

@@ -1,0 +1,165 @@
+#!/usr/bin/env node
+// Shorts Factory pipeline v2
+//   node make.js --preview specs/a.json            approval sheet (one still per beat) + chosen style
+//   node make.js specs/a.json [more.json]          full render -> out/<id>/<id>.mp4, records style in brand history
+//   node make.js --sheet brands/x.json             character model sheet for a brand
+//   node make.js --check specs/a.json              run every frame (15 fps) through the layout checks, no video
+//   flags: --brand brands/x.json (default: spec.brand or brands/default.json)  --restyle  --keep-frames  --workers N  --fps 30|60 (default 60)
+const { chromium } = require('playwright');
+const fs = require('fs'), path = require('path'), crypto = require('crypto'), { execFileSync } = require('child_process');
+
+const args = process.argv.slice(2);
+const flag = f => args.includes(f), opt = f => (args.indexOf(f) >= 0 ? args[args.indexOf(f) + 1] : null);
+const CHECK = flag('--check'), PREVIEW = flag('--preview') || CHECK, KEEP = flag('--keep-frames'), RESTYLE = flag('--restyle'), SHEET = opt('--sheet');
+const WORKERS = +(opt('--workers') || 4) || 4;
+const specs = args.filter(a => a.endsWith('.json') && a !== opt('--brand') && a !== SHEET);
+const FPS = +(opt('--fps') || 60) || 60, ROOT = __dirname, PAGE = 'file://' + path.join(ROOT, 'engine', 'page.html');
+const SCENES = ['towers', 'race', 'climb', 'pullup', 'lift', 'dig'];
+const STATES = ['active', 'idle', 'boast', 'win', 'quit', 'sad', 'shock', 'fall', 'throw', 'cheer', 'stand', 'sit'];
+const EVENTS = ['crash', 'shake', 'marker', 'burst', 'rain', 'fling', 'flash'];
+
+// ---------------------------------------------------------------- variation ("smart" style picker)
+const DIMS = {
+  theme: ['void', 'dusk', 'navy', 'grid'],
+  captionStyle: ['tracked', 'bold', 'boxed'],
+  transition: ['fade', 'slide', 'cut', 'dayzoom'],
+  camera: ['static', 'push', 'drift'],
+  labels: ['above', 'board'],
+  hook: ['straight', 'flashforward'],
+  speed: ['none', 'slowmo'],
+  outro: ['question', 'endcard', 'loop'],
+  instrument: ['piano', 'pluck', 'musicbox', 'epiano', 'lofi'],
+  impact: ['boom', 'tapestop', 'glitch', 'snap', 'sub'],
+  root: [57, 55, 52, 50, 53, 54, 59],
+  bpm: [72, 76, 80, 84, 90],
+};
+function seededRand(str) { let h = crypto.createHash('sha1').update(str).digest().readUInt32LE(0); return () => { h = (h + 0x6D2B79F5) | 0; let t = Math.imul(h ^ h >>> 15, 1 | h); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function compatible(dim, v, spec, brand) {
+  const n = spec.characters.length, hasBurst = spec.beats.some(b => (b.events || []).some(e => e.type === 'burst'));
+  if (dim === 'labels' && v === 'board') return !['towers'].includes(spec.scene) && !(spec.scene === 'climb' && n > 3);
+  if (dim === 'hook' && v === 'flashforward') return hasBurst;
+  if (dim === 'outro' && v === 'endcard') return !!brand.endcard;
+  return true;
+}
+function pickStyle(spec, brand, history) {
+  const rnd = seededRand(spec.id + ':' + history.length), recent = history.slice(-6).reverse(), style = {}, why = {};
+  for (const dim of Object.keys(DIMS)) {
+    if (spec.style && spec.style[dim] != null) { style[dim] = spec.style[dim]; why[dim] = 'spec'; continue; }
+    if (brand.fixed && brand.fixed[dim] != null) { style[dim] = brand.fixed[dim]; why[dim] = 'brand'; continue; }
+    let opts = ((brand.allow && brand.allow[dim]) || DIMS[dim]).filter(v => compatible(dim, v, spec, brand));
+    if (!opts.length) opts = [DIMS[dim][0]];
+    // 5 characters: prefer the leaderboard (bonus inside score)
+    const score = v => recent.reduce((acc, h, j) => acc + (h.style && h.style[dim] === v ? (6 - j) : 0), 0) + rnd() * 1.5 + (dim === 'labels' && spec.characters.length >= 5 && v === 'board' ? -8 : 0);
+    style[dim] = opts.map(v => [score(v), v]).sort((a, b) => a[0] - b[0])[0][1]; why[dim] = 'picked';
+  }
+  // a hard rule on top of the soft penalties: differ from the previous video in at least half the dimensions
+  const last = recent[0] && recent[0].style;
+  if (last) {
+    const same = Object.keys(DIMS).filter(d => why[d] === 'picked' && style[d] === last[d]);
+    for (const d of same.slice(0, Math.max(0, same.length - 2))) { const alt = ((brand.allow && brand.allow[d]) || DIMS[d]).filter(v => v !== last[d] && compatible(d, v, spec, brand)); if (alt.length) style[d] = alt[Math.floor(rnd() * alt.length)]; }
+  }
+  return style;
+}
+
+// ---------------------------------------------------------------- validation
+function validate(s) {
+  const E = [], Wn = [], need = (c, m) => { if (!c) E.push(m); };
+  need(s.id && /^[a-z0-9-]+$/.test(s.id), 'id must be lowercase-kebab');
+  need(SCENES.includes(s.scene), `scene must be one of ${SCENES.join(', ')}`);
+  need(Array.isArray(s.characters) && s.characters.length >= 2 && s.characters.length <= 5, '2-5 characters');
+  const names = (s.characters || []).map(c => c.name);
+  names.forEach(n => { need(typeof n === 'string' && n.length <= 12, `character name "${n}" must be <= 12 chars`); if (n !== n.toUpperCase()) Wn.push(`name "${n}" is not uppercase`); });
+  need(new Set(names).size === names.length, 'character names must be unique');
+  need(s.metric && typeof s.metric === 'object', 'metric required');
+  need(s.counter && typeof s.counter.start === 'number', 'counter {label,start} required');
+  need(Array.isArray(s.beats) && s.beats.length >= 4, 'at least 4 beats');
+  (s.beats || []).forEach((b, k) => {
+    const at = `beat ${k + 1}`;
+    need(b.dur >= 1.5 && b.dur <= 7, `${at}: dur must be 1.5-7s`);
+    need(typeof b.caption === 'string' && b.caption.length <= 40, `${at}: caption required, <= 40 chars`);
+    if (b.caption && b.caption !== b.caption.toUpperCase()) Wn.push(`${at}: caption should be ALL CAPS`);
+    for (const obj of [b.values, b.states, b.curves, b.tags]) if (obj) for (const n in obj) need(names.includes(n), `${at}: unknown character "${n}"`);
+    if (b.values) for (const n in b.values) need(typeof b.values[n] === 'number' && b.values[n] >= 0, `${at}: value for ${n} must be >= 0`);
+    if (b.states) for (const n in b.states) need(STATES.includes(b.states[n]), `${at}: state "${b.states[n]}" not in ${STATES.join('|')}`);
+    for (const bb of b.bubbles || []) { need(names.includes(bb.who), `${at}: bubble who "${bb.who}"`); need(bb.text && bb.text.length <= 24, `${at}: bubble "${bb.text}" must be <= 24 chars`); }
+    for (const e of b.events || []) { need(EVENTS.includes(e.type), `${at}: event type "${e.type}"`); if (e.who) need(names.includes(e.who), `${at}: event who "${e.who}"`); }
+  });
+  const last = (s.beats || [])[s.beats.length - 1];
+  if (last && last.style !== 'question') Wn.push('last beat is not style:"question"');
+  need(s.upload && s.upload.title && s.upload.title.length <= 100, 'upload.title required (<= 100 chars)');
+  return { errors: E, warnings: Wn };
+}
+const readJSON = p => JSON.parse(fs.readFileSync(p, 'utf8'));
+const hashOf = (...objs) => crypto.createHash('sha1').update(JSON.stringify(objs)).digest('hex').slice(0, 12);
+
+async function sheet(page, times, cols) {
+  return page.evaluate(({ times, cols }) => {
+    const w = 270, h = 480, rows = Math.ceil(times.length / cols), s = document.createElement('canvas');
+    s.width = w * cols; s.height = (h + 26) * rows; const c = s.getContext('2d'); c.fillStyle = '#fff'; c.fillRect(0, 0, s.width, s.height);
+    times.forEach(([r, label], k) => { window.render(r); const x = (k % cols) * w, y = Math.floor(k / cols) * (h + 26); c.drawImage(document.getElementById('c'), x, y + 26, w, h); c.fillStyle = '#000'; c.font = '14px Inter'; c.fillText(label, x + 6, y + 18); });
+    return s.toDataURL('image/jpeg', 0.88);
+  }, { times, cols });
+}
+
+(async () => {
+  const browser = await chromium.launch();
+  if (SHEET) {
+    const brand = readJSON(SHEET), p = await browser.newPage(); await p.goto(PAGE); await p.evaluate(() => window.ready);
+    const d = await p.evaluate(b => window.brandSheet(b), brand), out = path.join(ROOT, 'out', 'brand-' + path.basename(SHEET, '.json'));
+    fs.mkdirSync(out, { recursive: true }); fs.writeFileSync(path.join(out, 'model-sheet.jpg'), Buffer.from(d.split(',')[1], 'base64'));
+    console.log('model sheet ->', path.relative(ROOT, path.join(out, 'model-sheet.jpg'))); await browser.close(); return;
+  }
+  let failed = 0; const session = [];
+  for (const file of specs) {
+    const spec = readJSON(file);
+    const brandPath = opt('--brand') || (spec.brand ? path.join(ROOT, 'brands', spec.brand + '.json') : path.join(ROOT, 'brands', 'default.json'));
+    const brand = fs.existsSync(brandPath) ? readJSON(brandPath) : {};
+    const histPath = brandPath.replace(/\.json$/, '.history.json'), history = (fs.existsSync(histPath) ? readJSON(histPath) : []).concat(session.filter(h => h.brand === brandPath));
+    const v = validate(spec);
+    console.log(`\n== ${spec.id || file} (${spec.scene}, brand: ${brand.name || 'none'})`);
+    if (v.errors.length) { v.errors.forEach(e => console.log('  ERROR:', e)); failed++; continue; }
+    const out = path.join(ROOT, 'out', spec.id); fs.mkdirSync(out, { recursive: true });
+    const stylePath = path.join(out, 'style.json'), key = hashOf(spec, brand);
+    let style;
+    if (!RESTYLE && fs.existsSync(stylePath) && readJSON(stylePath).key === key) style = readJSON(stylePath).style;
+    else { style = pickStyle(spec, brand, history.filter(h => h.id !== spec.id)); fs.writeFileSync(stylePath, JSON.stringify({ key, style }, null, 1)); }
+    session.push({ id: spec.id, brand: brandPath, style });
+    console.log('  style:', Object.entries(style).map(([k, x]) => `${k}=${x}`).join(' '));
+    const pages = await Promise.all([...Array(PREVIEW ? 1 : WORKERS)].map(async () => { const p = await browser.newPage(); await p.goto(PAGE); await p.evaluate(() => window.ready); return p; }));
+    let info;
+    try { for (const p of pages) info = await p.evaluate(([s, b, st]) => window.loadSpec(s, b, st), [spec, brand, style]); } catch (e) { console.log('  ERROR:', e.message); failed++; await Promise.all(pages.map(p => p.close())); continue; }
+    console.log(`  duration: story ${info.dur.toFixed(1)}s -> video ${info.realDur.toFixed(1)}s`);
+    [...v.warnings].forEach(w => console.log('  warn:', w));
+    if (info.tail > 7.5) console.log(`  warn: ${info.tail.toFixed(1)}s of story after the climax; viewers drop off on a long static ending (aim <= 7s)`);
+    if (info.realDur > 59.5) { console.log('  ERROR: video longer than 59.5s after hook/slow-motion/end card; trim beats'); failed++; continue; }
+    // one still per beat (mid-beat, in real time) + hook/endcard if present
+    const marks = await pages[0].evaluate(() => { const T2 = window.__T(); const m = T2.beats.map(B => [window.__realOf(B.t0 + (B.t1 - B.t0) * 0.72), `beat ${B.bi + 1}`]); for (const g of T2.segs) { if (g.kind === 'hook') m.unshift([0.7, 'hook']); if (g.kind === 'rewind') m.splice(1, 0, [g.r0 + 0.3, 'rewind']); if (g.kind === 'endcard') m.push([g.r1 - 0.3, 'end card']); } return m; });
+    fs.writeFileSync(path.join(out, 'sheet.jpg'), Buffer.from((await sheet(pages[0], marks.map(([r, l]) => [r, `${l} · ${r.toFixed(1)}s`]), 6)).split(',')[1], 'base64'));
+    if (CHECK) { const n = Math.round(info.realDur * 15); for (let f = 0; f < n; f++) await pages[0].evaluate(r => window.render(r), f / 15); }
+    if (PREVIEW) { (await pages[0].evaluate(() => window.warnings())).forEach(x => console.log('  warn:', x)); if (CHECK) console.log('  check: every frame tested');  console.log('  preview ->', path.relative(ROOT, path.join(out, 'sheet.jpg'))); await Promise.all(pages.map(p => p.close())); continue; }
+
+    const frames = path.join(out, 'frames'); fs.rmSync(frames, { recursive: true, force: true }); fs.mkdirSync(frames);
+    const total = Math.round(info.realDur * FPS); let next = 0; const t0 = Date.now();
+    await Promise.all(pages.map(async p => { while (next < total) { const f = next++; const d = await p.evaluate(r => { window.render(r); return document.getElementById('c').toDataURL('image/png'); }, f / FPS); fs.writeFileSync(path.join(frames, String(f).padStart(5, '0') + '.png'), Buffer.from(d.split(',')[1], 'base64')); } }));
+    const warns = new Set(); for (const p of pages) (await p.evaluate(() => window.warnings())).forEach(w => warns.add(w));
+    fs.writeFileSync(path.join(out, 'cues.json'), JSON.stringify(await pages[0].evaluate(() => window.cues()), null, 1));
+    await Promise.all(pages.map(p => p.close()));
+    console.log(`  frames: ${total} in ${((Date.now() - t0) / 1000).toFixed(0)}s`);
+    console.log('  ' + execFileSync('python3', ['-I', path.join(ROOT, 'engine', 'audio.py'), path.join(out, 'cues.json'), path.join(out, 'audio.wav')]).toString().trim());
+    const mp4 = path.join(out, spec.id + '.mp4');
+    execFileSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', '-framerate', String(FPS), '-i', path.join(frames, '%05d.png'), '-i', path.join(out, 'audio.wav'), '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-tune', 'animation', '-pix_fmt', 'yuv420p', '-af', 'loudnorm=I=-14:TP=-1.5:LRA=11', '-ar', '48000', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', mp4]);
+    if (!KEEP) fs.rmSync(frames, { recursive: true, force: true });
+    const u = spec.upload; fs.writeFileSync(path.join(out, 'upload.txt'), `TITLE:\n${u.title}\n\nDESCRIPTION:\n${u.description || ''}\n\n${(u.hashtags || []).map(h => '#' + h.replace(/^#/, '')).join(' ')}\n`);
+    // motion check: no quiet second allowed in the first 60% of the video (a planned breather later is fine)
+    const mot = JSON.parse(execFileSync('python3', ['-I', path.join(ROOT, 'tools_motion.py'), mp4, '--json']).toString());
+    const quiet = mot.per_second.map((v, k) => [k, v]).filter(([k, v]) => v < 0.35);
+    const early = quiet.filter(([k]) => k < info.realDur * 0.6).map(([k]) => k + 's');
+    if (early.length) warns.add(`quiet seconds in the first 60% of the video: ${early.join(', ')}`);
+    console.log(`  motion: mean ${mot.mean} | quiet seconds: ${quiet.map(([k]) => k + 's').join(' ') || 'none'}`);
+    const qa = { id: spec.id, scene: spec.scene, brand: brand.name || null, duration: info.realDur, fps: FPS, frames: total, style, motion: mot, warnings: [...v.warnings, ...warns] };
+    fs.writeFileSync(path.join(out, 'qa.json'), JSON.stringify(qa, null, 2)); qa.warnings.forEach(w => console.log('  warn:', w));
+    const hist = history.filter(h => h.id !== spec.id && !h.brand); hist.push({ id: spec.id, scene: spec.scene, date: new Date().toISOString(), style }); fs.writeFileSync(histPath, JSON.stringify(hist, null, 1));
+    console.log('  done ->', path.relative(ROOT, mp4));
+  }
+  await browser.close(); process.exit(failed ? 1 : 0);
+})();

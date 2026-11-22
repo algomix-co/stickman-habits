@@ -1,0 +1,53 @@
+{
+ "name": "Neon Bean",
+ "character": {
+  "body": "bean",
+  "face": true,
+  "lineStyle": "neon",
+  "accent": "#ffffff",
+  "winnerCrown": true
+ },
+ "endcard": {
+  "title": "YOUR CHANNEL",
+  "tagline": "ONE HABIT AT A TIME",
+  "color": "#ffc53d",
+  "accessory": "headband",
+  "accent": "#ff5a6e",
+  "look": {
+   "body": "bean"
+  }
+ },
+ "allow": {
+  "theme": [
+   "void",
+   "navy",
+   "grid",
+   "dusk"
+  ]
+ },
+ "music": {
+  "motif": [
+   0,
+   3,
+   7,
+   12
+  ]
+ },
+ "sheetCharacters": [
+  {
+   "name": "A",
+   "color": "#ffc53d",
+   "accessory": "headband"
+  },
+  {
+   "name": "B",
+   "color": "#5ec8ff",
+   "accessory": "cap"
+  },
+  {
+   "name": "C",
+   "color": "#ff5a6e",
+   "accessory": "headphones"
+  }
+ ]
+}

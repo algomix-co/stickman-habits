@@ -1,0 +1,52 @@
+{
+ "name": "Ink Noodle",
+ "character": {
+  "body": "noodle",
+  "face": true,
+  "lineStyle": "flat",
+  "accent": "#ffffff"
+ },
+ "endcard": {
+  "title": "YOUR CHANNEL",
+  "tagline": "SMALL STEPS. BIG LIFE.",
+  "color": "#e8edf2",
+  "accessory": "glasses",
+  "look": {
+   "body": "noodle"
+  }
+ },
+ "allow": {
+  "theme": [
+   "dusk",
+   "navy"
+  ],
+  "captionStyle": [
+   "bold",
+   "boxed"
+  ]
+ },
+ "music": {
+  "motif": [
+   0,
+   5,
+   7,
+   12
+  ]
+ },
+ "sheetCharacters": [
+  {
+   "name": "A",
+   "color": "#e8edf2",
+   "accessory": "glasses"
+  },
+  {
+   "name": "B",
+   "color": "#ff9e7a",
+   "accessory": "beanie"
+  },
+  {
+   "name": "C",
+   "color": "#8fd3ff"
+  }
+ ]
+}

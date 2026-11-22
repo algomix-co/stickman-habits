@@ -1,0 +1,268 @@
+{
+ "id": "same-salary",
+ "scene": "towers",
+ "characters": [
+  {
+   "name": "SPENDER",
+   "color": "#ff5a6e"
+  },
+  {
+   "name": "GAMBLER",
+   "color": "#b98cff",
+   "volatile": true
+  },
+  {
+   "name": "SAVER",
+   "color": "#e8edf2"
+  },
+  {
+   "name": "INVESTOR",
+   "color": "#ffc53d"
+  }
+ ],
+ "metric": {
+  "prefix": "$",
+  "compact": true,
+  "scale": 0.6
+ },
+ "counter": {
+  "label": "AGE",
+  "start": 25
+ },
+ "footnote": "Illustrative · $500/mo · 8% avg return vs 1% savings",
+ "music": {
+  "seed": 3
+ },
+ "upload": {
+  "title": "Same Salary. Different Futures 💰",
+  "description": "Same $500 a month. Four very different people at 60. Which one are you? (Illustrative: 8% avg annual return vs 1% savings, monthly compounding.)",
+  "hashtags": [
+   "money",
+   "investing",
+   "personalfinance",
+   "shorts"
+  ]
+ },
+ "beats": [
+  {
+   "dur": 2.8,
+   "caption": "SAME SALARY.",
+   "counter": 25
+  },
+  {
+   "dur": 3.0,
+   "caption": "SAME $500 EVERY MONTH.",
+   "counter": 26,
+   "values": {
+    "SPENDER": 6000,
+    "GAMBLER": 6000,
+    "SAVER": 6028,
+    "INVESTOR": 6225
+   },
+   "events": [
+    {
+     "type": "rain",
+     "at": 0.1
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "GAMBLER",
+     "text": "watch this.",
+     "at": 0.7
+    }
+   ]
+  },
+  {
+   "dur": 3.2,
+   "caption": "SPENDER UPGRADES.",
+   "counter": 27.5,
+   "values": {
+    "SPENDER": 0,
+    "GAMBLER": 15000,
+    "SAVER": 15183,
+    "INVESTOR": 16544
+   },
+   "curves": {
+    "SPENDER": "early"
+   },
+   "states": {
+    "SPENDER": "throw"
+   },
+   "events": [
+    {
+     "type": "fling",
+     "who": "SPENDER",
+     "at": 0.6
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "SPENDER",
+     "text": "you only live once."
+    }
+   ]
+  },
+  {
+   "dur": 3.5,
+   "caption": "GAMBLER GOES ALL IN.",
+   "counter": 30,
+   "values": {
+    "GAMBLER": 380000,
+    "SAVER": 30750,
+    "INVESTOR": 36738
+   },
+   "curves": {
+    "GAMBLER": "accel"
+   },
+   "states": {
+    "GAMBLER": "boast",
+    "SPENDER": "idle"
+   },
+   "bubbles": [
+    {
+     "who": "GAMBLER",
+     "text": "to the moon..."
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THEN IT CRASHES.",
+   "counter": 32,
+   "values": {
+    "GAMBLER": 3140,
+    "SAVER": 43486,
+    "INVESTOR": 56057
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "GAMBLER",
+     "at": 0.22
+    }
+   ],
+   "tags": {
+    "GAMBLER": "QUIT"
+   },
+   "bubbles": [
+    {
+     "who": "SAVER",
+     "text": "told you.",
+     "at": 1.3
+    }
+   ]
+  },
+  {
+   "dur": 4.0,
+   "caption": "MARKET DROPS. INVESTOR STAYS.",
+   "counter": 33,
+   "values": {
+    "SAVER": 49951,
+    "INVESTOR": 43507
+   },
+   "curves": {
+    "INVESTOR": "late"
+   },
+   "events": [
+    {
+     "type": "shake",
+     "who": "INVESTOR",
+     "at": 2.2
+    },
+    {
+     "type": "marker",
+     "who": "INVESTOR",
+     "text": "−35%",
+     "at": 2.3,
+     "dur": 1.7
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "INVESTOR",
+     "text": "just hold.",
+     "at": 2.4
+    }
+   ]
+  },
+  {
+   "dur": 5.0,
+   "caption": "BORING. FOR YEARS.",
+   "counter": 45,
+   "values": {
+    "SAVER": 132781,
+    "INVESTOR": 294510
+   },
+   "states": {
+    "SPENDER": "sad"
+   },
+   "bubbles": [
+    {
+     "who": "SPENDER",
+     "text": "next month..."
+    },
+    {
+     "who": "INVESTOR",
+     "text": "keep going."
+    }
+   ]
+  },
+  {
+   "dur": 5.5,
+   "caption": "THEN COMPOUNDING WAKES UP.",
+   "counter": 60,
+   "curve": "accel",
+   "values": {
+    "SAVER": 251316,
+    "INVESTOR": 1146941
+   },
+   "states": {
+    "SAVER": "shock",
+    "INVESTOR": "win"
+   },
+   "stateAt": {
+    "SAVER": 2.2,
+    "INVESTOR": 5.3
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "INVESTOR",
+     "at": 5.35
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "SAVER",
+     "text": "wait... what?",
+     "at": 2.3,
+     "dur": 2.8
+    }
+   ]
+  },
+  {
+   "dur": 3.4,
+   "caption": "SAME SALARY. DIFFERENT FUTURES.",
+   "states": {
+    "SAVER": "idle"
+   },
+   "dim": [
+    "SPENDER",
+    "GAMBLER"
+   ],
+   "tags": {
+    "SPENDER": "SPENT IT ALL",
+    "INVESTOR": {
+     "color": "#ffc53d",
+     "text": "TOP"
+    }
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

@@ -1,0 +1,197 @@
+{
+ "id": "same-idea-different-founders",
+ "scene": "climb",
+ "characters": [
+  {
+   "name": "IDEA GUY",
+   "color": "#b98cff"
+  },
+  {
+   "name": "HYPE",
+   "color": "#ff5a6e"
+  },
+  {
+   "name": "BUILDER",
+   "color": "#ffc53d"
+  }
+ ],
+ "metric": {
+  "prefix": "$",
+  "suffix": " MRR",
+  "compact": true,
+  "scale": 0.6
+ },
+ "counter": {
+  "label": "MONTH",
+  "start": 0
+ },
+ "footnote": "Illustrative · MRR = monthly recurring revenue",
+ "music": {
+  "seed": 5
+ },
+ "upload": {
+  "title": "Same Idea. Different Founders 🚀",
+  "description": "Three founders, one idea, three years. Which one are you?",
+  "hashtags": [
+   "startup",
+   "entrepreneur",
+   "buildinpublic",
+   "shorts"
+  ]
+ },
+ "beats": [
+  {
+   "dur": 2.6,
+   "caption": "SAME IDEA.",
+   "counter": 0,
+   "states": {
+    "IDEA GUY": "idle"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "IDEA GUY PLANS.",
+   "counter": 3,
+   "values": {
+    "BUILDER": 300
+   },
+   "curves": {
+    "BUILDER": "decel"
+   },
+   "bubbles": [
+    {
+     "who": "IDEA GUY",
+     "text": "need a perfect logo."
+    }
+   ]
+  },
+  {
+   "dur": 3.2,
+   "caption": "HYPE RAISES. HYPE SPENDS.",
+   "counter": 8,
+   "values": {
+    "HYPE": 12000,
+    "BUILDER": 1200
+   },
+   "curves": {
+    "HYPE": "accel"
+   },
+   "bubbles": [
+    {
+     "who": "HYPE",
+     "text": "we're crushing it."
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THEN THE MONEY RUNS OUT.",
+   "counter": 12,
+   "values": {
+    "HYPE": 0,
+    "BUILDER": 2100
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "HYPE",
+     "at": 0.3
+    }
+   ],
+   "tags": {
+    "HYPE": "SHUT DOWN"
+   }
+  },
+  {
+   "dur": 3.5,
+   "caption": "BUILDER SHIPS. EVERY WEEK.",
+   "counter": 18,
+   "values": {
+    "BUILDER": 5200
+   },
+   "states": {
+    "IDEA GUY": "sad"
+   },
+   "bubbles": [
+    {
+     "who": "BUILDER",
+     "text": "v1.7 is live."
+    },
+    {
+     "who": "IDEA GUY",
+     "text": "still researching..."
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "NOBODY CLAPS.",
+   "counter": 24,
+   "values": {
+    "BUILDER": 9000
+   },
+   "curve": "linear",
+   "bubbles": [
+    {
+     "who": "BUILDER",
+     "text": "one more customer."
+    }
+   ]
+  },
+  {
+   "dur": 4.5,
+   "caption": "THEN WORD OF MOUTH KICKS IN.",
+   "counter": 36,
+   "curve": "accel",
+   "values": {
+    "BUILDER": 60000
+   },
+   "states": {
+    "IDEA GUY": "shock",
+    "BUILDER": "win"
+   },
+   "stateAt": {
+    "IDEA GUY": 1.8,
+    "BUILDER": 4.3
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "BUILDER",
+     "at": 4.35
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "IDEA GUY",
+     "text": "wait... that was mine.",
+     "at": 1.9,
+     "dur": 2.3
+    }
+   ]
+  },
+  {
+   "dur": 3.4,
+   "caption": "SAME IDEA. DIFFERENT OUTCOMES.",
+   "states": {
+    "IDEA GUY": "sad"
+   },
+   "dim": [
+    "IDEA GUY",
+    "HYPE"
+   ],
+   "tags": {
+    "IDEA GUY": "NEVER STARTED",
+    "BUILDER": {
+     "color": "#ffc53d",
+     "text": "TOP"
+    }
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

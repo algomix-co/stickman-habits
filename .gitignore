@@ -1,0 +1,5 @@
+# rendered output (videos, frames, sheets) - regenerate with `node make.js`
+out/
+node_modules/
+__pycache__/
+*.pyc

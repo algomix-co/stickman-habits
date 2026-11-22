@@ -1,0 +1,17 @@
+{
+ "name": "Classic Neon",
+ "character": {
+  "body": "stick",
+  "face": false,
+  "lineStyle": "neon"
+ },
+ "endcard": null,
+ "allow": {},
+ "music": {
+  "motif": [
+   0,
+   7,
+   12
+  ]
+ }
+}

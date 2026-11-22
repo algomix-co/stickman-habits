@@ -1,0 +1,179 @@
+{
+ "id": "same-gym-different-strength",
+ "scene": "lift",
+ "characters": [
+  {
+   "name": "EGO",
+   "color": "#ff5a6e"
+  },
+  {
+   "name": "HOPPER",
+   "color": "#b98cff"
+  },
+  {
+   "name": "PROGRESSIVE",
+   "color": "#ffc53d"
+  }
+ ],
+ "start": {
+  "EGO": 60,
+  "HOPPER": 60,
+  "PROGRESSIVE": 60
+ },
+ "metric": {
+  "suffix": " KG",
+  "scale": 1.3,
+  "max": 160
+ },
+ "counter": {
+  "label": "WEEK",
+  "start": 1
+ },
+ "footnote": "Illustrative · deadlift, novice lifter",
+ "music": {
+  "seed": 7
+ },
+ "upload": {
+  "title": "Same Gym. Different Strength 🏋️",
+  "description": "Same starting weight. One year of training, three very different results. Which one are you?",
+  "hashtags": [
+   "gym",
+   "strengthtraining",
+   "progressiveoverload",
+   "shorts"
+  ]
+ },
+ "beats": [
+  {
+   "dur": 2.6,
+   "caption": "SAME GYM. SAME START.",
+   "counter": 1
+  },
+  {
+   "dur": 3.0,
+   "caption": "EGO LOADS 140 KG.",
+   "counter": 2,
+   "values": {
+    "EGO": 140,
+    "HOPPER": 70,
+    "PROGRESSIVE": 62.5
+   },
+   "curves": {
+    "EGO": "decel"
+   },
+   "bubbles": [
+    {
+     "who": "EGO",
+     "text": "watch this."
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "HOPPER TRIES A NEW PROGRAM.",
+   "counter": 6,
+   "values": {
+    "HOPPER": 85,
+    "PROGRESSIVE": 75
+   },
+   "bubbles": [
+    {
+     "who": "HOPPER",
+     "text": "this one's the one."
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THEN THE BACK GIVES OUT.",
+   "counter": 8,
+   "values": {
+    "EGO": 0,
+    "PROGRESSIVE": 80
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "EGO",
+     "at": 0.3
+    }
+   ],
+   "tags": {
+    "EGO": "INJURED"
+   }
+  },
+  {
+   "dur": 3.2,
+   "caption": "HOPPER STARTS OVER. AGAIN.",
+   "counter": 20,
+   "values": {
+    "HOPPER": 80,
+    "PROGRESSIVE": 100
+   },
+   "bubbles": [
+    {
+     "who": "HOPPER",
+     "text": "new program, day 1!"
+    }
+   ]
+  },
+  {
+   "dur": 3.5,
+   "caption": "PROGRESSIVE ADDS 2.5 KG.",
+   "counter": 36,
+   "curve": "linear",
+   "values": {
+    "PROGRESSIVE": 135
+   },
+   "bubbles": [
+    {
+     "who": "PROGRESSIVE",
+     "text": "just 2.5 more."
+    }
+   ]
+  },
+  {
+   "dur": 4.0,
+   "caption": "ONE YEAR OF SMALL WINS.",
+   "counter": 52,
+   "curve": "linear",
+   "values": {
+    "PROGRESSIVE": 160,
+    "HOPPER": 85
+   },
+   "states": {
+    "PROGRESSIVE": "win"
+   },
+   "stateAt": {
+    "PROGRESSIVE": 3.8
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "PROGRESSIVE",
+     "at": 3.85
+    }
+   ]
+  },
+  {
+   "dur": 3.4,
+   "caption": "SAME GYM. DIFFERENT BODIES.",
+   "dim": [
+    "EGO",
+    "HOPPER"
+   ],
+   "tags": {
+    "HOPPER": "STILL DAY 1",
+    "PROGRESSIVE": {
+     "color": "#ffc53d",
+     "text": "TOP"
+    }
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

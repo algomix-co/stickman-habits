@@ -1,0 +1,13 @@
+{
+  "name": "stickman-habits",
+  "private": true,
+  "description": "Spec-driven generator for neon stick-figure comparison Shorts",
+  "scripts": {
+    "preview": "node make.js --preview",
+    "check": "node make.js --check",
+    "render": "node make.js"
+  },
+  "dependencies": {
+    "playwright": "1.63.0"
+  }
+}

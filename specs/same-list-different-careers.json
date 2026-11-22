@@ -1,0 +1,185 @@
+{
+ "id": "same-list-different-careers",
+ "scene": "pullup",
+ "characters": [
+  {
+   "name": "SCARED",
+   "color": "#5ec8ff"
+  },
+  {
+   "name": "SPAMMER",
+   "color": "#ff5a6e"
+  },
+  {
+   "name": "STEADY",
+   "color": "#ffc53d"
+  }
+ ],
+ "metric": {
+  "suffix": " CALLS",
+  "scale": 0.8
+ },
+ "counter": {
+  "label": "WEEK",
+  "start": 1
+ },
+ "footnote": "Illustrative · cold calls made",
+ "music": {
+  "seed": 6
+ },
+ "upload": {
+  "title": "Same List. Different Careers 📞",
+  "description": "Same phone, same lead list. One year later only one of them has a pipeline. Which one are you?",
+  "hashtags": [
+   "sales",
+   "coldcalling",
+   "salestips",
+   "shorts"
+  ]
+ },
+ "beats": [
+  {
+   "dur": 2.6,
+   "caption": "SAME PHONE. SAME LIST.",
+   "counter": 1
+  },
+  {
+   "dur": 3.0,
+   "caption": "SCARED MAKES 3 CALLS.",
+   "counter": 1,
+   "values": {
+    "SCARED": 3,
+    "SPAMMER": 200,
+    "STEADY": 30
+   },
+   "bubbles": [
+    {
+     "who": "SCARED",
+     "text": "what if they say no?"
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THEN HIDES IN EMAIL.",
+   "counter": 2,
+   "values": {
+    "SCARED": 3,
+    "SPAMMER": 1000,
+    "STEADY": 150
+   },
+   "states": {
+    "SCARED": "quit"
+   },
+   "stateAt": {
+    "SCARED": 0.4
+   },
+   "tags": {
+    "SCARED": "QUIT"
+   }
+  },
+  {
+   "dur": 3.2,
+   "caption": "SPAMMER DIALS 200 A DAY.",
+   "counter": 3,
+   "values": {
+    "SPAMMER": 3000,
+    "STEADY": 450
+   },
+   "curves": {
+    "SPAMMER": "accel"
+   },
+   "bubbles": [
+    {
+     "who": "SPAMMER",
+     "text": "it's a numbers game!"
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "ZERO DEALS. TOTAL BURNOUT.",
+   "counter": 4,
+   "values": {
+    "SPAMMER": 3000,
+    "STEADY": 600
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "SPAMMER",
+     "at": 0.3
+    }
+   ],
+   "tags": {
+    "SPAMMER": "BURNED OUT"
+   }
+  },
+  {
+   "dur": 3.5,
+   "caption": "STEADY: 30 CALLS. EVERY DAY.",
+   "counter": 20,
+   "curve": "linear",
+   "values": {
+    "STEADY": 2400
+   },
+   "bubbles": [
+    {
+     "who": "STEADY",
+     "text": "same time tomorrow."
+    }
+   ]
+  },
+  {
+   "dur": 4.0,
+   "caption": "THEN THE CALLBACKS START.",
+   "counter": 52,
+   "curve": "accel",
+   "values": {
+    "STEADY": 7800
+   },
+   "states": {
+    "STEADY": "win"
+   },
+   "stateAt": {
+    "STEADY": 3.8
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "STEADY",
+     "at": 3.85
+    },
+    {
+     "type": "marker",
+     "who": "STEADY",
+     "text": "+ DEALS",
+     "color": "#ffc53d",
+     "at": 2.4,
+     "dur": 5.0,
+     "dx": 0,
+     "dy": 330
+    }
+   ]
+  },
+  {
+   "dur": 3.4,
+   "caption": "SAME LIST. DIFFERENT CAREERS.",
+   "dim": [
+    "SCARED",
+    "SPAMMER"
+   ],
+   "tags": {
+    "STEADY": {
+     "color": "#ffc53d",
+     "text": "TOP"
+    }
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

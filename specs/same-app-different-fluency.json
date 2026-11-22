@@ -1,0 +1,188 @@
+{
+ "id": "same-app-different-fluency",
+ "scene": "race",
+ "characters": [
+  {
+   "name": "CRAMMER",
+   "color": "#ff5a6e"
+  },
+  {
+   "name": "STREAKER",
+   "color": "#5ec8ff"
+  },
+  {
+   "name": "SPEAKER",
+   "color": "#ffc53d"
+  }
+ ],
+ "metric": {
+  "suffix": " WORDS",
+  "scale": 0.85
+ },
+ "counter": {
+  "label": "DAY",
+  "start": 1
+ },
+ "footnote": "Illustrative · words you can actually use",
+ "music": {
+  "seed": 4
+ },
+ "upload": {
+  "title": "Same App. Different Fluency 🗣️",
+  "description": "Three people learn the same language for a year. Only one can hold a conversation. Which one are you?",
+  "hashtags": [
+   "languagelearning",
+   "fluency",
+   "polyglot",
+   "shorts"
+  ]
+ },
+ "beats": [
+  {
+   "dur": 2.6,
+   "caption": "SAME APP. SAME GOAL.",
+   "counter": 1
+  },
+  {
+   "dur": 3.0,
+   "caption": "CRAMMER GOES HARD.",
+   "counter": 7,
+   "values": {
+    "CRAMMER": 600,
+    "STREAKER": 70,
+    "SPEAKER": 50
+   },
+   "curves": {
+    "CRAMMER": "decel"
+   },
+   "bubbles": [
+    {
+     "who": "CRAMMER",
+     "text": "fluent by summer."
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "STREAKER NEVER MISSES.",
+   "counter": 30,
+   "values": {
+    "CRAMMER": 750,
+    "STREAKER": 300,
+    "SPEAKER": 260
+   },
+   "bubbles": [
+    {
+     "who": "STREAKER",
+     "text": "30 day streak!"
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THEN THE CRAMMER FORGETS.",
+   "counter": 45,
+   "values": {
+    "CRAMMER": 300,
+    "STREAKER": 420,
+    "SPEAKER": 420
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "CRAMMER",
+     "at": 0.3
+    }
+   ],
+   "tags": {
+    "CRAMMER": "QUIT"
+   }
+  },
+  {
+   "dur": 3.5,
+   "caption": "STREAKER TAPS. NEVER TALKS.",
+   "counter": 120,
+   "values": {
+    "STREAKER": 900,
+    "SPEAKER": 1100
+   },
+   "bubbles": [
+    {
+     "who": "STREAKER",
+     "text": "one more lesson."
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "SPEAKER STUMBLES. DAILY.",
+   "counter": 180,
+   "values": {
+    "STREAKER": 1100,
+    "SPEAKER": 1700
+   },
+   "bubbles": [
+    {
+     "who": "SPEAKER",
+     "text": "how do you say...?"
+    }
+   ]
+  },
+  {
+   "dur": 4.0,
+   "caption": "THEN IT CLICKS.",
+   "counter": 365,
+   "curve": "accel",
+   "values": {
+    "STREAKER": 1500,
+    "SPEAKER": 4000
+   },
+   "states": {
+    "STREAKER": "shock",
+    "SPEAKER": "win"
+   },
+   "stateAt": {
+    "STREAKER": 1.6,
+    "SPEAKER": 3.8
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "SPEAKER",
+     "at": 3.85
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "STREAKER",
+     "text": "wait... fluent?",
+     "at": 1.7,
+     "dur": 2.0
+    }
+   ]
+  },
+  {
+   "dur": 3.4,
+   "caption": "SAME APP. DIFFERENT FLUENCY.",
+   "states": {
+    "STREAKER": "idle"
+   },
+   "dim": [
+    "CRAMMER",
+    "STREAKER"
+   ],
+   "tags": {
+    "STREAKER": "ONLY TAPS",
+    "SPEAKER": {
+     "color": "#ffc53d",
+     "text": "TOP"
+    }
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

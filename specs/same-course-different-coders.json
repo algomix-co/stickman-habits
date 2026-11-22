@@ -1,0 +1,187 @@
+{
+ "id": "same-course-different-coders",
+ "scene": "dig",
+ "characters": [
+  {
+   "name": "WATCHER",
+   "color": "#5ec8ff"
+  },
+  {
+   "name": "COPIER",
+   "color": "#b98cff"
+  },
+  {
+   "name": "BUILDER",
+   "color": "#ffc53d"
+  }
+ ],
+ "metric": {
+  "suffix": " H",
+  "scale": 0.85
+ },
+ "counter": {
+  "label": "MONTH",
+  "start": 0
+ },
+ "footnote": "Illustrative · hours of hands-on coding",
+ "music": {
+  "seed": 8
+ },
+ "upload": {
+  "title": "Same Course. Different Coders 💻",
+  "description": "Same course, same laptop. Twelve months later only one of them gets the offer. Which one are you?",
+  "hashtags": [
+   "coding",
+   "learntocode",
+   "programming",
+   "shorts"
+  ]
+ },
+ "beats": [
+  {
+   "dur": 2.6,
+   "caption": "SAME COURSE. SAME LAPTOP.",
+   "counter": 0,
+   "states": {
+    "WATCHER": "idle"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WATCHER WATCHES TUTORIALS.",
+   "counter": 2,
+   "values": {
+    "WATCHER": 15,
+    "COPIER": 40,
+    "BUILDER": 30
+   },
+   "bubbles": [
+    {
+     "who": "WATCHER",
+     "text": "just one more video."
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "COPIER SHIPS FAST.",
+   "counter": 4,
+   "values": {
+    "COPIER": 160,
+    "BUILDER": 90
+   },
+   "curves": {
+    "COPIER": "accel"
+   },
+   "bubbles": [
+    {
+     "who": "COPIER",
+     "text": "ctrl+c, ctrl+v."
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THEN THE FIRST REAL BUG.",
+   "counter": 5,
+   "values": {
+    "COPIER": 160,
+    "BUILDER": 120
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "COPIER",
+     "at": 0.3
+    }
+   ],
+   "tags": {
+    "COPIER": "STUCK"
+   }
+  },
+  {
+   "dur": 3.5,
+   "caption": "BUILDER BREAKS THINGS. DAILY.",
+   "counter": 8,
+   "values": {
+    "BUILDER": 300,
+    "WATCHER": 25
+   },
+   "states": {
+    "WATCHER": "sad"
+   },
+   "bubbles": [
+    {
+     "who": "BUILDER",
+     "text": "why is this null?!"
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "AND FIXES THEM.",
+   "counter": 10,
+   "values": {
+    "BUILDER": 420
+   },
+   "bubbles": [
+    {
+     "who": "WATCHER",
+     "text": "maybe I'm not smart."
+    }
+   ]
+  },
+  {
+   "dur": 4.0,
+   "caption": "THEN IT ALL CONNECTS.",
+   "counter": 12,
+   "curve": "accel",
+   "values": {
+    "BUILDER": 900
+   },
+   "states": {
+    "BUILDER": "win"
+   },
+   "stateAt": {
+    "BUILDER": 3.8
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "BUILDER",
+     "at": 3.85
+    },
+    {
+     "type": "marker",
+     "who": "BUILDER",
+     "text": "JOB OFFER",
+     "color": "#ffc53d",
+     "at": 3.9,
+     "dur": 7.5,
+     "dx": 0,
+     "dy": 250
+    }
+   ]
+  },
+  {
+   "dur": 3.4,
+   "caption": "SAME COURSE. DIFFERENT CAREERS.",
+   "dim": [
+    "WATCHER",
+    "COPIER"
+   ],
+   "tags": {
+    "WATCHER": "STILL WATCHING",
+    "BUILDER": {
+     "color": "#ffc53d",
+     "text": "TOP"
+    }
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

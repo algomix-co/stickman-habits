@@ -51,12 +51,12 @@ SCENES.race = {
     const fin = T.beats[T.beats.length - 1].to; this.lane = []; T.chars.map((_, i) => i).sort((a, b) => fin[b] - fin[a]).forEach((ci, k) => { this.lane[ci] = k; });
   },
   laneY(i) { return this.y0 + this.lane[i] * this.gap; },
-  extent() { return { x0: this.x0 - 50, x1: this.x1 + 210, y0: this.y0 - figH() * this.s - 40, y1: this.y0 + (T.chars.length - 1) * this.gap + 60 }; },
+  extent() { return { x0: this.x0 - 50, x1: this.x1 + 90, y0: this.y0 - figH() * this.s - 40, y1: this.y0 + (T.chars.length - 1) * this.gap + 60 }; },
   xAt(i, t) { return this.x0 + fracAt(i, t) * (this.x1 - this.x0); },
   place(i, t) { const y = this.laneY(i); return { x: this.xAt(i, t), top: y - figH() * this.s, s: this.s, floor: y, footY: y }; },
   activePose(i, t) { return blendPose(POSES.stand, runPose(this.xAt(i, t) / (15 * this.s)), moving(i, t, 0.003, 0.03)); },
   draw(c, t) {
-    const yTop = this.y0 - figH() * this.s - 20, yBot = this.y0 + (T.chars.length - 1) * this.gap, fx = this.x1 + 150;
+    const yTop = this.y0 - figH() * this.s - 20, yBot = this.y0 + (T.chars.length - 1) * this.gap, fx = this.x1 - 40;   // the winner ends past the line
     c.save(); c.setLineDash([14, 12]); c.strokeStyle = 'rgba(255,255,255,0.4)'; c.lineWidth = 3; c.beginPath(); c.moveTo(fx, yTop); c.lineTo(fx, yBot + 4); c.stroke(); c.restore();
     spaced(c, 'FINISH', fx - 20, yBot + 56, '800 44px Inter', '#dfe4e9', 3, 0.9);
     c.fillStyle = 'rgba(255,255,255,0.12)'; c.fillRect(this.x0 - 30, yTop, 2, yBot - yTop);
@@ -69,7 +69,7 @@ function climbPose(ph) { const s = Math.sin(ph); return { la: [-2.95 + 0.75 * Ma
 SCENES.climb = {
   facing: 'front', boardMax: 3, upperBodyFree: false, steadyCam: true, K: 1.35,
   freeUpper(i, t) { return this.hip(i, t) > this.stand - 8; },
-  setup(T) { this.xs = colsX(T.chars.length, 270); this.BAR = T.style.labels === 'board' ? 660 : 560; this.F = FLOOR_MAX; this.stand = this.F - 72.5 * this.K; this.high = this.BAR + 115 * this.K; },
+  setup(T) { this.xs = colsX(T.chars.length, 380, 1300); this.BAR = T.style.labels === 'board' ? 660 : 560; this.F = FLOOR_MAX; this.stand = this.F - 72.5 * this.K; this.high = this.BAR + 115 * this.K; },
   floorY() { return this.F; },
   extent() { return { x0: this.xs[0] - 130, x1: this.xs[this.xs.length - 1] + 130, y0: this.BAR - 40, y1: this.F + 12 }; },
   hipAt(i, t) { return lerp(this.stand, this.high, fracAt(i, t)); },
@@ -81,7 +81,7 @@ SCENES.climb = {
     c.fillStyle = 'rgba(255,255,255,0.7)'; c.fillRect(x0, this.BAR - 3, x1 - x0, 6); floorLine(c, this.F); if (T.__lines) T.__lines.push({ y: this.BAR, x0, x1 });
     charsDo((ch, i) => {
       const x = this.xs[i];
-      c.strokeStyle = 'rgba(214,180,130,0.55)'; c.lineWidth = 6; c.beginPath(); c.moveTo(x, this.BAR); c.lineTo(x, this.F - 4); c.stroke(); if (T.__vlines) T.__vlines.push({ x, y0: this.BAR, y1: this.F });
+      c.strokeStyle = 'rgba(214,180,130,0.55)'; c.lineWidth = 6; c.beginPath(); c.moveTo(x, this.BAR); c.lineTo(x, this.F - 4); c.stroke();
       c.strokeStyle = 'rgba(255,230,190,0.35)'; c.lineWidth = 2; c.beginPath(); for (let y = this.BAR + 6; y < this.F - 8; y += 14) { c.moveTo(x - 3, y); c.lineTo(x + 3, y + 6); } c.stroke();
       c.strokeStyle = fracAt(i, t) > 0.985 ? GOLD : 'rgba(255,255,255,0.35)'; c.lineWidth = 3; c.beginPath(); c.arc(x, this.BAR - 22, 13, 0, 7); c.stroke();
     });
@@ -94,7 +94,7 @@ const HANG = { la: [-2.75, -2.85], ra: [2.75, 2.85], ll: [-0.06, 0.12], rl: [0.0
 const PULL = { la: [-1.15, -2.65], ra: [1.15, 2.65], ll: [-0.75, 0.55], rl: [0.75, -0.55], lean: 0, drop: -0.4 };
 SCENES.pullup = {
   facing: 'front', upperBodyFree: false, K: 1.35,
-  setup(T) { this.xs = colsX(T.chars.length, 280); this.BAR = 720; this.F = FLOOR_MAX; },
+  setup(T) { this.xs = colsX(T.chars.length, 360, 1250); this.BAR = 720; this.F = FLOOR_MAX; },
   floorY() { return this.F; },
   extent() { return { x0: this.xs[0] - 150, x1: this.xs[this.xs.length - 1] + 150, y0: this.BAR - 10, y1: this.F + 12 }; },
   dropped(i, t) { const since = fallStart(i, t); return since == null ? null : clamp((t - since) / 0.55); },

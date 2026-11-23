@@ -99,7 +99,7 @@
   },
   {
    "dur": 3.0,
-   "caption": "THE ANSWER IS NO. SO THEY SWITCH.",
+   "caption": "RE-CHECKS SWITCHES TO A BETTER PATH.",
    "counter": 5,
    "values": {
     "RE-CHECKS": 0,
@@ -117,7 +117,7 @@
      "dur": 1.8,
      "color": "#36e0c8",
      "dx": 0,
-     "dy": 230
+     "dy": 300
     }
    ],
    "bubbles": [
@@ -164,7 +164,7 @@
     }
    ],
    "tags": {
-    "TOO FAR IN": "STUCK AT 40%"
+    "TOO FAR IN": "STILL DIGGING"
    }
   },
   {

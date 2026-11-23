@@ -38,7 +38,7 @@ function seededRand(str) { let h = crypto.createHash('sha1').update(str).digest(
 function compatible(dim, v, spec, brand) {
   const n = spec.characters.length, hasBurst = spec.beats.some(b => (b.events || []).some(e => e.type === 'burst'));
   if (dim === 'labels' && v === 'board') return !['towers'].includes(spec.scene) && !(spec.scene === 'climb' && n > 3);
-  if (dim === 'hook' && v === 'flashforward') return hasBurst;
+  if (dim === 'hook' && v === 'flashforward') return hasBurst && !spec.question;   // a flashforward would reveal the open-loop answer
   if (dim === 'outro' && v === 'endcard') return !!brand.endcard;
   return true;
 }

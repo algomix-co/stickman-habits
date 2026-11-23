@@ -155,7 +155,7 @@
     }
    ],
    "tags": {
-    "BED SCROLLER": "4H SLEEP"
+    "BED SCROLLER": "UP AT 2AM"
    }
   },
   {
@@ -177,7 +177,7 @@
   },
   {
    "dur": 3.8,
-   "caption": "60 FREE HOURS. EVERY MONTH.",
+   "caption": "UP TO 60 FREE HOURS A MONTH.",
    "counter": 30,
    "curve": "accel",
    "values": {

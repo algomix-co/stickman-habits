@@ -638,6 +638,7 @@ function drawLabels(t, P, boardTop) {
     return { i, x: p.x, top: p.top, s, grow, rate, w: Math.max(numW, nameW, tagW), numW, tagW, split, lines: [ch.name], f: 1, lift: 0 };
   });
   const sorted = L.slice().sort((a, b) => a.x - b.x);
+  const solve = () => { sorted.sort((u, v) => u.x - v.x);
   if (!window.__disableSolver) for (let pass = 0; pass < 3; pass++) for (let k = 0; k < sorted.length - 1; k++) {
     const A = sorted[k], Bq = sorted[k + 1];
     const hOf = Z => ((Z.lines.length > 1 ? 72 : 38) + (nonum ? 0 : 60) + (Z.tagW ? 50 : 0)) * Z.s * Z.grow, aB = A.top - A.lift, bB = Bq.top - Bq.lift;   // real stack heights, not a fixed guess
@@ -648,6 +649,8 @@ function drawLabels(t, P, boardTop) {
     const kf = clamp((dx - GAP) / ((A.w + Bq.w) / 2), 0.9, 1); A.f = Math.min(A.f, kf); Bq.f = Math.min(Bq.f, kf);   // 2) shrink a little
     if ((A.w * A.f + Bq.w * Bq.f) / 2 + GAP > dx) { const hi = aB <= bB ? A : Bq, lo = hi === A ? Bq : A; hi.lift += Math.max(20, (hi.top - hi.lift) - (lo.top - lo.lift) + hOf(lo) + 14); }   // 3) stagger: lift the higher stack clear of the other
   }
+  };
+  solve();
   for (const q of L) { const half = q.w * q.f / 2; q.x = clamp(q.x, half + 40, 950 - half); }
   if (!window.__disableSolver) for (const q of L) {   // a label never sits on another character's body: move it into the free gap beside them (wrap, then shrink <=15% if needed)
     const yb = q.top - q.lift + 8, yt = yb - stackH(q) - 8, blk = [];
@@ -663,6 +666,7 @@ function drawLabels(t, P, boardTop) {
     if (got) q.x = got[1];
     else { let topB = 1e9; for (const [u0, u1] of blk) if (q.x + q.w * q.f / 2 > u0 && q.x - q.w * q.f / 2 < u1) T.chars.forEach((_, o) => { const bx = o === q.i ? null : bodyBox(o, 10); if (bx && bx.x0 <= u1 && bx.x1 >= u0) topB = Math.min(topB, bx.y0); }); if (topB < 1e9) q.lift += Math.min(70 * q.s, Math.max(0, yb - (topB - 12))); }   // no room beside: rise above the obstacle
   }
+  if (!T.scene.sideLabels) solve();   // body-fit moved some labels: re-check label vs label
   if (T.scene.sideLabels) for (const q of L) { const p = P[q.i], off = (70 + (T.scene.labelGap || 0)) * p.s + 18, maxR = T.scene.labelMaxX && !(T.scene.beyond && T.scene.beyond(q.i, t)) ? T.__X(T.scene.labelMaxX) : 950, pad = ((T.question || T.spec.question) ? 90 : 10) * q.s;
     q.lift = 0; q.top = p.floor - 0.3 * (p.floor - p.top);
     if (T.scene.beyond && T.scene.beyond(q.i, t) && T.scene.lightX) { if (q.split && q.lines.length === 1) { q.lines = [q.split[1], q.split[2]]; q.w = Math.max(q.numW, q.split[0], q.tagW); } const half = q.w * q.f / 2; q.top = p.top; q.side = 0; q.x = clamp(p.x, T.__X(T.scene.lightX) + half, 920 - half); continue; }

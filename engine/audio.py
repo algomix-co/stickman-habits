@@ -289,14 +289,17 @@ for w in cues['whoosh']:
 
 # ---------------- hook / rewind / slow-mo / end card ----------------
 if cues.get('hook'):
-    h0, h1 = cues['hook']; t = tvec(h1 - h0)
-    add(music, h0, sum(np.sin(2 * np.pi * midi(root - 12 + d) * t) for d in (0, 7)) * np.minimum(1, t / 0.3) * 0.08)
+    h0, h1 = cues['hook']; _rw = cues.get('rewind') or []; _rw = [_rw] if _rw and not isinstance(_rw[0], list) else _rw
+    h2 = max([h1] + [b for a, b in _rw if a <= h1 + 0.05]) + 0.2; t = tvec(h2 - h0)   # the hook bed runs through the rewind into the story: no gap
+    add(music, h0, sum(np.sin(2 * np.pi * midi(root - 12 + d) * t) for d in (0, 7)) * np.minimum(1, t / 0.02) * np.clip((h2 - h0 - t) / 0.25, 0, 1) * 0.13)
+    for k in range(int((h2 - h0) / 0.125)): add(fx, h0 + k * 0.125, tick(0.05 + 0.03 * (k % 2)))   # a running pulse under the hook and rewind
+    for k in range(1, int((h2 - h0) / 0.5) + 1): add(fx, h0 + 0.1 + k * 0.5, kick(0.4, low=46, dec=0.2))   # four-on-the-floor under the hook: the first seconds hit as hard as the rest
     add(fx, h0 + 0.1, kick(0.5, low=46, dec=0.22)); add(fx, h0 + 0.32, kick(0.35, low=46, dec=0.2))
 rw = cues.get('rewind') or []
 rw = [rw] if rw and not isinstance(rw[0], list) else rw
 for r0, r1 in rw:
     L = tvec(r1 - r0); u = L / max(L[-1], 1e-3)
-    add(fx, r0, (np.sin(2 * np.pi * np.cumsum(300 + 2500 * u ** 1.5 + 200 * np.sin(2 * np.pi * 18 * L)) / SR) * 0.12 + onepole(rng.standard_normal(len(L)), 3000) * 0.08) * np.sin(np.pi * u) ** 0.5)
+    add(fx, r0, (np.sin(2 * np.pi * np.cumsum(300 + 2500 * u ** 1.5 + 200 * np.sin(2 * np.pi * 18 * L)) / SR) * 0.12 + onepole(rng.standard_normal(len(L)), 3000) * 0.08) * (0.45 + 0.55 * np.sin(np.pi * u) ** 0.5))   # never fades to silence at the cut
 for s0, s1 in cues.get('slow', []):
     t = tvec(0.8); add(fx, s0, np.sin(2 * np.pi * np.cumsum(500 * np.exp(-t / 0.25) + 60) / SR) * np.exp(-t / 0.5) * 0.18)
 if cues.get('endcard') is not None:
@@ -324,7 +327,7 @@ if cues.get('slow'):   # muffle everything during slow-motion
     for s0, s1 in cues['slow']: a, b = int(s0 * SR), min(N, int(s1 * SR)); cut[a:b] = np.minimum(cut[a:b], 900 + 4000 * np.abs(np.linspace(-1, 1, b - a)) ** 2)
     for ch in range(2): mix[:, ch] = onepole(mix[:, ch], cut)
 if q is not None:
-    g = np.ones(N); a, b = int(max(0, q - 0.3) * SR), int(q * SR); g[a:b] = np.linspace(1, 0.05, b - a); mix *= g[:, None]
+    g = np.ones(N); a, b = int(max(0, q - 0.3) * SR), int(q * SR); g[a:b] = np.linspace(1, 0.6, b - a); mix *= g[:, None]   # a short dip, never a pause (owner: no pause in the music)
 mix = np.tanh(1.4 * mix / (np.max(np.abs(mix)) + 1e-9)) / np.tanh(1.4) * 0.95
 fl = int(0.25 * SR); mix[-fl:] *= np.linspace(1, 0, fl)[:, None]
 with wave.open(sys.argv[2], 'wb') as w:

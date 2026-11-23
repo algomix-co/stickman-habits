@@ -1,155 +1,8 @@
 [
  {
-  "id": "why-you-cant-quit",
-  "scene": "dig",
-  "date": "2026-11-22T23:46:38.557Z",
-  "style": {
-   "theme": "dusk",
-   "captionStyle": "bold",
-   "transition": "slide",
-   "camera": "static",
-   "labels": "above",
-   "hook": "flashforward",
-   "speed": "none",
-   "outro": "endcard",
-   "instrument": "musicbox",
-   "impact": "glitch",
-   "root": 59,
-   "bpm": 76,
-   "boost": [
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ]
-   ]
-  }
- },
- {
-  "id": "willpower-is-overrated",
-  "scene": "lift",
-  "date": "2026-11-22T23:52:02.134Z",
-  "style": {
-   "theme": "grid",
-   "captionStyle": "bold",
-   "transition": "cut",
-   "camera": "static",
-   "labels": "board",
-   "hook": "flashforward",
-   "speed": "none",
-   "outro": "endcard",
-   "instrument": "piano",
-   "impact": "sub",
-   "root": 54,
-   "bpm": 80,
-   "boost": [
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ]
-   ]
-  }
- },
- {
-  "id": "why-you-check-your-phone",
-  "scene": "race",
-  "date": "2026-11-22T23:55:01.597Z",
-  "style": {
-   "theme": "void",
-   "captionStyle": "tracked",
-   "transition": "cut",
-   "camera": "drift",
-   "labels": "board",
-   "hook": "straight",
-   "speed": "slowmo",
-   "outro": "loop",
-   "instrument": "pluck",
-   "impact": "snap",
-   "root": 52,
-   "bpm": 84,
-   "boost": [
-    [
-     13.557894736842103,
-     15.157894736842104
-    ]
-   ]
-  }
- },
- {
   "id": "that-sale-price-fooled-you",
   "scene": "towers",
-  "date": "2026-11-23T12:03:13.690Z",
+  "date": "2026-11-23T12:13:23.154Z",
   "style": {
    "theme": "navy",
    "captionStyle": "boxed",
@@ -170,26 +23,86 @@
     [
      21.6,
      22.8
+    ],
+    [
+     21.6,
+     22.8
     ]
    ]
   }
  },
  {
-  "id": "why-new-things-stop-working",
-  "scene": "climb",
-  "date": "2026-11-23T12:06:39.904Z",
+  "id": "why-you-cant-quit",
+  "scene": "dig",
+  "date": "2026-11-23T12:20:30.208Z",
   "style": {
-   "theme": "dusk",
-   "captionStyle": "tracked",
-   "transition": "cut",
+   "theme": "grid",
+   "captionStyle": "bold",
+   "transition": "dayzoom",
+   "labels": "above",
+   "hook": "straight",
+   "speed": "none",
+   "outro": "endcard",
+   "instrument": "musicbox",
+   "impact": "glitch",
+   "root": 50,
+   "bpm": 76,
+   "boost": [
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ]
+   ]
+  }
+ },
+ {
+  "id": "why-you-check-your-phone",
+  "scene": "race",
+  "date": "2026-11-23T12:24:11.012Z",
+  "style": {
+   "theme": "void",
+   "captionStyle": "boxed",
+   "transition": "slide",
+   "labels": "board",
+   "hook": "straight",
+   "speed": "slowmo",
+   "outro": "loop",
+   "instrument": "pluck",
+   "impact": "snap",
+   "root": 52,
+   "bpm": 84,
+   "boost": [
+    [
+     13.557894736842103,
+     15.157894736842104
+    ]
+   ]
+  }
+ },
+ {
+  "id": "willpower-is-overrated",
+  "scene": "lift",
+  "date": "2026-11-23T12:28:15.398Z",
+  "style": {
+   "theme": "navy",
+   "captionStyle": "bold",
+   "transition": "fade",
    "labels": "board",
    "hook": "straight",
    "speed": "none",
-   "outro": "question",
-   "instrument": "lofi",
-   "impact": "boom",
-   "root": 53,
-   "bpm": 90,
+   "outro": "endcard",
+   "instrument": "piano",
+   "impact": "sub",
+   "root": 57,
+   "bpm": 80,
    "boost": [
     [
      21.6,
@@ -202,6 +115,34 @@
     [
      21.6,
      22.8
+    ]
+   ]
+  }
+ },
+ {
+  "id": "why-new-things-stop-working",
+  "scene": "climb",
+  "date": "2026-11-23T12:33:15.333Z",
+  "style": {
+   "theme": "dusk",
+   "captionStyle": "tracked",
+   "transition": "cut",
+   "labels": "above",
+   "hook": "straight",
+   "speed": "slowmo",
+   "outro": "question",
+   "instrument": "lofi",
+   "impact": "boom",
+   "root": 54,
+   "bpm": 90,
+   "boost": [
+    [
+     21.6,
+     22.8
+    ],
+    [
+     16.5578947368421,
+     18.157894736842103
     ]
    ]
   }

@@ -129,7 +129,7 @@ async function reviewLoop(page, spec, brand, style0, out) {
     await page.evaluate(([s, b, st]) => window.loadSpec(s, b, st), [spec, brand, style]);
     const st = await page.evaluate(() => window.reviewRun(15)); last = st;
     const issues = [], fixes = [];
-    const early = st.motion.map((m, k) => [k, m]).filter(([k, m]) => m < 0.5 && k < st.realDur * 0.6);   // stricter than the post-render 0.35: video encoding smooths small motion
+    const early = st.motion.map((m, k) => [k, m]).filter(([k, m]) => m < 0.6 && k < st.realDur * 0.6);   // stricter than the post-render 0.35: video encoding smooths small motion
     if (early.length) { issues.push(`quiet seconds ${early.map(e => e[0] + 's').join(',')}`); for (const [k] of early) { const a = await page.evaluate(r => window.__storyAt(r), Math.max(0, k - 0.3)), b = await page.evaluate(r => window.__storyAt(r), k + 1.3); style.boost.push([Math.min(a, b), Math.max(a, b)]); } fixes.push('energy boost'); }
     const crowd = st.warnings.filter(w => /overlap|out of frame|too small|covers its own/.test(w)), edge = st.warnings.filter(w => /off-screen|Shorts like|bottom overlay/.test(w));
     if (crowd.length || edge.length) {

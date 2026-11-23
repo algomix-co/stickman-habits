@@ -30,6 +30,8 @@ are enforced by `make.js` (see "Enforced" at the bottom); a spec that breaks one
 - **Don't:** resend the same stories or titles after they were rejected. A rejection means new concepts,
   not a reword.
 - **Do:** make the viewer see themselves in one of the characters.
+- **Do:** at least **4 characters** per video, each a recognisable archetype with a visible arc (enforced:
+  `rules.minCharacters`). The owner judges a story by seeing it, so the visuals alone must tell it.
 
 ## Titles
 - **Do:** at most 5 words, a statement or command that is quotable on its own ("Success is earned, never
@@ -44,16 +46,21 @@ are enforced by `make.js` (see "Enforced" at the bottom); a spec that breaks one
 - **Don't:** static frames toward the end, or a quiet opening. Use big movements, not small tweaks.
 - **Do:** a consistent custom character for the channel, and vary the look per video so it never feels
   templated.
+- **Do:** an end-card tagline written for each story (enforced: `endcard.tagline`), never one fixed line.
 
 ## Music & sound
 - **Don't:** the same "thunder" impact and pattern every video (template feel).
 - **Don't:** smooth, slow or relaxing beds (rejected round 2).
 - **Do:** rhythmic and urgent, escalating as the video goes on: faster, layered, brighter, a lift before the
   climax (`music: drive`).
+- **Don't:** any pause or gap in the music, including a 'drop-out' before the climax (round 2 feedback).
+- **Do:** lock the music to the story: every caption change lands on a downbeat with a fill/swell, and
+  filler SFX (bricks, hammers, blades, steps) play on the beat while characters work.
 
 ## Process
 - **Do:** run the reviewer before every render and iterate until confident.
-- **Do:** send scripts for approval before building new concepts.
+- **Do:** send scripts for approval before building new concepts, unless the owner says to decide and
+  proceed (round 2: "you decide and proceed... don't take shortcuts").
 
 ## Performance notes
 (add YouTube Studio numbers per video here: viewed-vs-swiped, average % viewed, subs per 1k views)
@@ -68,3 +75,4 @@ are enforced by `make.js` (see "Enforced" at the bottom); a spec that breaks one
 - 2026-11-23: zoom distracting → still camera, effects on text. Hooks must relate to daily life.
 - 2026-11-23: titles and stories rejected; niche corrected to discipline/motivation keywords; music must be
   rhythmic and escalating, not relaxing; build this feedback loop.
+- 2026-11-23: round 2 feedback: at least 4 characters; tagline varies per story; music must never pause and needs rhythmic filler SFX; owner can't judge scripts on paper, wants to see videos

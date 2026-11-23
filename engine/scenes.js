@@ -160,11 +160,11 @@ const DIG_UP = { la: [-2.6, -2.95], ra: [-2.35, -2.8], ll: [-0.3, -0.1], rl: [0.
 const DIG_DOWN = { la: [1.2, 0.7], ra: [1.0, 0.55], ll: [-0.3, -0.1], rl: [0.35, 0.15], lean: 0.45, drop: 0.3 };
 const ROCKS = (() => { const r = rng(21); return [...Array(160)].map(() => ({ x: -500 + r() * (W + 1000), y: 600 + r() * 1600, s: 6 + r() * 16, k: r(), gem: r() < 0.12 })); })();
 SCENES.dig = {
-  facing: 'right', K: 1.35,
+  facing: 'right', K: 1.35, labelRoom: 500,   /* surface diggers stand close: their stacked labels need more headroom under the caption */
   workAt(i, t) { return Math.max(moving(i, t), 0.8 * energyAt(t)); },
-  setup(T) { this.xs = colsX(T.chars.length, 270, 1000); this.G = T.style.labels === 'board' ? 740 : T.spec.question ? 780 : 600; this.D = 1290 - this.G;   /* the gold sits well above the Shorts overlay */ this.HW = 70 * this.K; },
+  setup(T) { this.xs = colsX(T.chars.length, 270, 1000); this.G = T.style.labels === 'board' ? 740 : T.spec.question ? 780 : 600; this.D = 1250 - this.G;   /* the gold sits well above the Shorts overlay */ this.HW = 70 * this.K; },
   foot(i, t) { return this.G + fracAt(i, t) * this.D; },
-  extent(t) { return { x0: this.xs[0] - this.HW - 10, x1: this.xs[this.xs.length - 1] + this.HW + 10, y0: this.G - 40, y1: Math.max(...T.chars.map((_, i) => this.foot(i, t))) + 70 }; },
+  extent(t) { return { x0: this.xs[0] - this.HW - 10, x1: this.xs[this.xs.length - 1] + this.HW + 10, y0: this.G - 40, y1: Math.max(this.G + this.D + 34 + 75, ...T.chars.map((_, i) => this.foot(i, t)) .map(y => y + 70)) }; },   /* the gold (the payoff) always stays in frame, above the Shorts overlay */
   place(i, t) { const y = this.foot(i, t); return { x: this.xs[i], top: y - figH() * this.K, s: this.K, floor: y }; },
   cyc(i, t) { const u = ((phaseInt(i, t, 6, 0.7, 2) + i * 0.37) % 1 + 1) % 1; return u < 0.68 ? ss(0, 0.68, u) : 1 - ss(0.68, 0.82, u); },
   activePose(i, t) { return blendPose(POSES.stand, blendPose(DIG_DOWN, DIG_UP, this.cyc(i, t)), Math.max(moving(i, t), 0.8 * energyAt(t))); },

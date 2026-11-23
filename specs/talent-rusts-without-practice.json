@@ -271,11 +271,11 @@
     "WEEKENDS": 1.5
    },
    "tags": {
-    "NEW GEAR": "UNTRAINED",
-    "WEEKENDS": "A SCRATCH",
+    "NEW GEAR": "UNUSED",
+    "WEEKENDS": "SCRATCH",
     "BORN GIFTED": "SNAPPED",
     "DAILY REPS": {
-     "text": "CLEAN CUT",
+     "text": "SPLIT IT",
      "color": "#36e0c8"
     }
    }

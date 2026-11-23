@@ -177,7 +177,7 @@ function gestureLayer(i, t, p) {
   const free = T.scene.freeUpper ? T.scene.freeUpper(i, t) : T.scene.upperBodyFree !== false, en = energyAt(t), still = 1 - moving(i, t, 0.004, 0.04);
   const rc = reactionAt(i, t), rp = rollPop(i, t), fd = fidgetAt(i, t);
   const fw = st === 'sad' ? fd.w * deadAir(t) * en * 0.6 : fd.w * en * still * (0.9 + 0.1 * deadAir(t));
-  if (!free) return blendLegs(p, Math.max(rp, rc.shock, rc.clap * 0.6, fw), t);
+  if (!free) return T.scene.legGestures === false ? p : blendLegs(p, Math.max(rp, rc.shock, rc.clap * 0.6, fw), t);
   let q = blendUpper(p, gesturePose(fd.kind, t), fw);
   q = blendUpper(q, gesturePose('wave', t), rp);
   if (st !== 'sad') q = blendUpper(q, gesturePose('clap', t), rc.clap);
@@ -665,7 +665,7 @@ function drawLabels(t, P, boardTop) {
   }
   if (T.scene.sideLabels) for (const q of L) { const p = P[q.i], off = (70 + (T.scene.labelGap || 0)) * p.s + 18, maxR = T.scene.labelMaxX && !(T.scene.beyond && T.scene.beyond(q.i, t)) ? T.__X(T.scene.labelMaxX) : 950, pad = ((T.question || T.spec.question) ? 90 : 10) * q.s;
     q.lift = 0; q.top = p.floor - 0.3 * (p.floor - p.top);
-    if (T.scene.beyond && T.scene.beyond(q.i, t) && T.scene.lightX) { if (q.split && q.lines.length === 1) { q.lines = [q.split[1], q.split[2]]; q.w = Math.max(q.numW, q.split[0], q.tagW); } const half = q.w * q.f / 2; q.top = p.top; q.side = 0; q.x = clamp(p.x, T.__X(T.scene.lightX) + half, 950 - half); continue; }
+    if (T.scene.beyond && T.scene.beyond(q.i, t) && T.scene.lightX) { if (q.split && q.lines.length === 1) { q.lines = [q.split[1], q.split[2]]; q.w = Math.max(q.numW, q.split[0], q.tagW); } const half = q.w * q.f / 2; q.top = p.top; q.side = 0; q.x = clamp(p.x, T.__X(T.scene.lightX) + half, 920 - half); continue; }
     const fit = () => { const half = q.w * q.f / 2, rightX = Math.max(p.x + off, ((bodyBox(q.i, 12) || {}).x1 || -1e9)) + half, leftX = (T.scene.labelSide === -1 ? Math.min(p.x - (64 * p.s + 18), ((bodyBox(q.i, 12 + 0.3 * ((T.__joints[q.i] || {}).hr || 0) * (T.__z || 1)) || {}).x0 || 1e9)) : p.x - off - 26 * q.s) - half, R = rightX + half + pad <= maxR, Lf = leftX - half >= 40; if (T.scene.labelSide === -1 && !(T.scene.beyond && T.scene.beyond(q.i, t))) { if (Lf) return [-1, leftX]; if (R) return [1, rightX]; return null; } if (R) return [1, rightX]; if (Lf) return [-1, leftX]; return null; };
     let got = fit();
     if (!got && q.split && q.lines.length === 1) { q.lines = [q.split[1], q.split[2]]; q.w = Math.max(q.numW, q.split[0], q.tagW); got = fit(); }   // tight spot: wrap the name first
@@ -733,7 +733,7 @@ function drawLabels(t, P, boardTop) {
   }
   for (const e of T.events) if (e.type === 'marker') {
     const a = ss(e.t, e.t + .3, t) * (1 - ss(e.t + (e.dur || 2) - .3, e.t + (e.dur || 2), t)); if (a <= 0) continue;
-    const p = P[e.i], mf = `800 ${(38 * clamp(T.__z || 1, 0.92, 1.08)).toFixed(1)}px Inter`, mw = (sc.font = mf, sc.letterSpacing = '0px', sc.measureText(e.text).width), Jm = T.__joints[e.i], side = e.side === 'right' && Jm, mx = side ? clamp(T.__X(Jm.head[0]) + Jm.hr * (T.__z || 1) + 22 + mw / 2 + 12, mw / 2 + 40, 950 - mw / 2) : clamp(p.x + (e.dx != null ? e.dx : -110) * p.s, mw / 2 + 40, 950 - mw / 2), my0 = side ? T.__Y(Jm.head[1]) + 12 : p.top + (e.dy != null ? e.dy : 120) * p.s, lab = (T.__labels || [])[e.i], my = (e.dy != null && e.dy < 0 && lab && lab.stackTop != null) ? Math.min(my0, lab.stackTop - 16) : my0; { const px = parseFloat(mf.match(/([0-9.]+)px/)[1]); sc.save(); sc.globalAlpha = a * 0.9; sc.fillStyle = 'rgba(8,10,14,0.9)'; sc.strokeStyle = e.color || RED; sc.lineWidth = 2; sc.beginPath(); sc.roundRect(mx - mw / 2 - 12, my - px * 0.85, mw + 24, px * 1.15, 10); sc.fill(); sc.stroke(); sc.restore(); } spaced(sc, e.text, mx, my, mf, e.color || RED, 0, a, 0, false, false); if (a > 0.5) rectOf(200 + e.i, e.text, mx, my, mf, 0);
+    const p = P[e.i], mf = `800 ${(38 * clamp(T.__z || 1, 0.92, 1.08)).toFixed(1)}px Inter`, mw = (sc.font = mf, sc.letterSpacing = '0px', sc.measureText(e.text).width), Jm = T.__joints[e.i], side = e.side === 'right' && Jm, mxR = side ? T.__X(Jm.head[0]) + Jm.hr * (T.__z || 1) + 22 + mw / 2 + 12 : 0, mx = side ? clamp(T.scene.labelMaxX && mxR + mw / 2 + 12 > T.__X(T.scene.labelMaxX) - 30 ? T.__X(Jm.head[0]) - Jm.hr * (T.__z || 1) - 22 - mw / 2 - 12 : mxR, mw / 2 + 40, 950 - mw / 2) : clamp(p.x + (e.dx != null ? e.dx : -110) * p.s, mw / 2 + 40, 950 - mw / 2), my0 = side ? T.__Y(Jm.head[1]) + 12 : p.top + (e.dy != null ? e.dy : 120) * p.s, lab = (T.__labels || [])[e.i], my = (e.dy != null && e.dy < 0 && lab && lab.stackTop != null) ? Math.min(my0, lab.stackTop - 16) : my0; { const px = parseFloat(mf.match(/([0-9.]+)px/)[1]); sc.save(); sc.globalAlpha = a * 0.9; sc.fillStyle = 'rgba(8,10,14,0.9)'; sc.strokeStyle = e.color || RED; sc.lineWidth = 2; sc.beginPath(); sc.roundRect(mx - mw / 2 - 12, my - px * 0.85, mw + 24, px * 1.15, 10); sc.fill(); sc.stroke(); sc.restore(); } spaced(sc, e.text, mx, my, mf, e.color || RED, 0, a, 0, false, false); if (a > 0.5) rectOf(200 + e.i, e.text, mx, my, mf, 0);
   }
 }
 function drawEndcard(u) {

@@ -343,7 +343,7 @@ const SW_UP = { la: [-0.4, -0.2], ra: [1.95, 2.65], ll: [-0.25, -0.1], rl: [0.25
 const SW_DOWN = { la: [-0.4, -0.2], ra: [0.45, 0.7], ll: [-0.25, 0.05], rl: [0.25, -0.05], lean: 0.12, drop: 0.2 };
 const SW_GUARD = { la: [-0.35, -0.15], ra: [0.45, 0.95], ll: [-0.3, -0.12], rl: [0.3, 0.12], lean: 0, drop: 0 };
 SCENES.swords = {
-  facing: 'front', foley: 'blade', K: 1.7, labelRoom: 250, upperBodyFree: false,   // sword hand never waves or pumps toward a neighbour
+  facing: 'front', foley: 'blade', K: 1.7, labelRoom: 250, upperBodyFree: false, legGestures: false,   // sword hand never waves or pumps toward a neighbour
   debrisSpan() { return null; },   // shards and chips are drawn by the scene itself
   setup(T) { this.xs = colsX(T.chars.length, 240, 940); this.F = FLOOR_MAX; this.kS = this.K / 1.35; },
   floorY() { return this.F; },

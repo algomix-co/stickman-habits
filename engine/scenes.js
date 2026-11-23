@@ -196,7 +196,7 @@ SCENES.dig = {
 // A crash on someone with regret > 0.3 is the boulder dropping; a shake drops a small rock.
 const BRICK_DOWN = { la: [-0.45, 0.35], ra: [0.45, -0.35], ll: [-0.75, 0.5], rl: [0.75, -0.5], lean: 0, drop: 0.35 };
 const BRICK_UP = { la: [-1.55, -2.65], ra: [1.55, 2.65], ll: [-0.14, -0.08], rl: [0.14, 0.08], lean: 0, drop: -0.25 };
-const PINNED = { la: [-2.35, -2.95], ra: [2.35, 2.95], ll: [-0.95, 0.75], rl: [0.95, -0.75], lean: 0, drop: 0.35 };   // holding the regret boulder up
+const PINNED = { la: [-2.35, -2.95], ra: [2.35, 2.95], ll: [-0.55, 0.3], rl: [0.55, -0.3], lean: 0, drop: 0.25 };   // holding the regret boulder up
 SCENES.bricks = {
   facing: 'front', debris: 'bricks', foley: 'brick', K: 1.3, HMAX: 560,
   setup(T) { this.xs = colsX(T.chars.length, 235, 920); this.F = FLOOR_MAX; this.BEAM = this.F - this.HMAX - figH() * this.K - 175; },
@@ -209,13 +209,14 @@ SCENES.bricks = {
   activePose(i, t) { const pk = propAt(i, 'pack', t), w = Math.max(moving(i, t, 0.001, 0.01), 0.75 * energyAt(t)); const p = blendPose(POSES.stand, blendPose(BRICK_DOWN, BRICK_UP, this.cyc(i, t)), w); return { ...p, lean: p.lean + 0.1 * Math.max(0, pk - 0.9) * Math.sin(t * 3.1 + i) }; },
   idlePose(i, t) { return POSES.stand; },
   poseOverride(i, t, p) { const d = this.drop(i); if (!d || d.type !== 'crash' || t < d.t - 0.25) return p; const k = Math.sin(t * 23 + i) * 0.04; const q = blendPose(p, PINNED, ss(d.t - 0.25, d.t + 0.05, t)); return { ...q, lean: q.lean + k }; },
+  noSpin(i, t) { const d = this.drop(i); return !!d && d.type === 'crash'; },
   drop(i) { return T.events.find(e => (e.type === 'crash' || e.type === 'shake') && e.i === i && propAt(i, 'regret', e.t - 0.05) > 0.08); },
   boulder(i, t) {   // where the regret boulder is: hanging, falling or landed
-    const r = 22 + 66 * propAt(i, 'regret', t), x = this.xs[i], p = this.place(i, t), labelRoom = 200;
+    const dd = this.drop(i), rg0 = propAt(i, 'regret', t), r = dd && dd.type === 'shake' ? 20 + 36 * rg0 : 22 + 66 * rg0, x = this.xs[i], p = this.place(i, t), labelRoom = 200;
     const hangY = Math.min(this.BEAM + 95 + r, p.top - labelRoom - r), d = this.drop(i);
     if (!d || t < d.t - 0.34) return { x, y: hangY, r, rope: true };
     const small = d.type === 'shake', J = T.__joints[i], handsY = J ? Math.min(J.hands[0][1], J.hands[1][1]) : p.top, ground = small ? p.footY - r : handsY - r * 0.8, u = clamp((t - (d.t - 0.34)) / 0.34), y = lerp(hangY, ground, u * u);
-    return { x: small ? x + 62 * this.K : x, y: Math.min(y, ground), r, rope: false, landed: u >= 1 };
+    return { x: small ? x + 64 - r : x, y: Math.min(y, ground), r, rope: false, landed: u >= 1 };
   },
   draw(c, t) {
     const K = this.K, BW = 128, BH = 20;
@@ -288,7 +289,7 @@ SCENES.buckets = {
     if (sky > 0.01) {   // gold clouds of opportunity
       c.save(); c.globalAlpha = sky;
       for (let k = 0; k < 7; k++) { const x = this.xs[0] - 120 + k * (this.xs[this.xs.length - 1] - this.xs[0] + 240) / 6, y = this.SKY + 10 * Math.sin(t * 1.3 + k); const g = c.createRadialGradient(x, y, 10, x, y, 120); g.addColorStop(0, 'rgba(255,214,110,0.55)'); g.addColorStop(1, 'rgba(255,214,110,0)'); c.fillStyle = g; c.beginPath(); c.ellipse(x, y, 140, 46, 0, 0, 7); c.fill(); }
-      if (sky > 0.6) spaced(c, 'OPPORTUNITY', 540, this.SKY + 16, '800 50px Inter', '#fff1c9', 8, (sky - 0.6) / 0.4, 0, false, false);
+      if (sky > 0.6) spaced(c, 'OPPORTUNITY', 540, this.SKY - 4, '800 50px Inter', '#fff1c9', 8, (sky - 0.6) / 0.4, 0, false, false);
       c.restore();
     }
     const rains = this.rainTimes();
@@ -338,23 +339,23 @@ SCENES.buckets = {
 // mat (wood -> steel, 0..1), rock (0..1: the test boulder appears). Climax: each strikes their rock; the
 // strike is the character's crash / shake / burst event (crash on gold = the blade snaps; crash on shiny =
 // the sword slips out of their hands; shake = a chip; burst = the rock splits clean).
-const SW_UP = { la: [-2.6, -2.95], ra: [2.6, 2.95], ll: [-0.25, -0.1], rl: [0.25, 0.1], lean: -0.08, drop: -0.3 };
-const SW_DOWN = { la: [0.75, 1.3], ra: [1.0, 1.45], ll: [-0.35, 0.2], rl: [0.3, 0.05], lean: 0.18, drop: 0.25 };
+const SW_UP = { la: [-0.4, -0.2], ra: [1.95, 2.65], ll: [-0.25, -0.1], rl: [0.25, 0.1], lean: -0.05, drop: -0.25 };
+const SW_DOWN = { la: [-0.4, -0.2], ra: [0.45, 0.7], ll: [-0.35, 0.2], rl: [0.3, 0.05], lean: 0.12, drop: 0.2 };
 const SW_GUARD = { la: [-0.35, -0.15], ra: [0.45, 0.95], ll: [-0.3, -0.12], rl: [0.3, 0.12], lean: 0, drop: 0 };
 SCENES.swords = {
-  facing: 'front', foley: 'blade', K: 1.7, labelRoom: 250,
+  facing: 'front', foley: 'blade', K: 1.7, labelRoom: 250, upperBodyFree: false,   // sword hand never waves or pumps toward a neighbour
   debrisSpan() { return null; },   // shards and chips are drawn by the scene itself
   setup(T) { this.xs = colsX(T.chars.length, 240, 940); this.F = FLOOR_MAX; this.kS = this.K / 1.35; },
   floorY() { return this.F; },
   extent() { return { x0: this.xs[0] - 125, x1: this.xs[this.xs.length - 1] + 125, y0: this.F - 420, y1: this.F + 12 }; },
   cx(i) { return this.xs[i] - 40; }, rx(i) { return this.xs[i] + 62; },
   place(i, t) { return { x: this.cx(i), top: this.F - figH() * this.K, s: this.K, floor: this.F }; },
-  labelTop(i, top, t) { return Math.min(top, this.place(i, t).top - 62 * this.kS * 1.35); },   // room for the overhead swing, so the label never jumps
+  labelTop(i, top, t) { const st = stateAt(i, t).state; return ['sit', 'sad', 'quit', 'fall'].includes(st) ? top : Math.min(top, this.place(i, t).top - 50 * this.kS * 1.35); },   // room for a raised blade; a sitting character keeps its label close   // room for the overhead swing, so the label never jumps
   hit(i) { return T.events.find(e => e.i === i && ['crash', 'shake', 'burst'].includes(e.type) && propAt(i, 'rock', e.t) > 0.5); },
   cyc(i, t) { const u = ((phaseInt(i, t, 8, 0.6, 2.4) + i * 0.41) % 1 + 1) % 1; return u < 0.55 ? ss(0, 0.55, u) : 1 - ss(0.55, 0.7, u); },
   activePose(i, t) { return blendPose(SW_GUARD, blendPose(SW_UP, SW_DOWN, this.cyc(i, t)), Math.max(moving(i, t, 0.001, 0.01), 0.75 * energyAt(t))); },
   idlePose() { return SW_GUARD; },
-  winPose(i, t) { const k = Math.sin(t * 6 + i); return { la: [-0.4, -0.2], ra: [2.7, 3.0 + 0.1 * k], ll: [-0.2, -0.1], rl: [0.2, 0.1], lean: 0, drop: -0.3 }; },   // blade raised
+  winPose(i, t) { const k = Math.sin(t * 6 + i); return { la: [-0.4, -0.2], ra: [1.6, 2.35 + 0.08 * k], ll: [-0.2, -0.1], rl: [0.2, 0.1], lean: 0, drop: -0.3 }; },   // blade raised out to the side, clear of the head
   poseOverride(i, t, p) { const h = this.hit(i); if (!h) return p; const w = ss(h.t - 0.55, h.t - 0.25, t) * (1 - ss(h.t + 0.5, h.t + 0.8, t)); if (w <= 0) return p; return blendPose(p, t < h.t ? SW_UP : SW_DOWN, t < h.t ? w : 1 - ss(h.t, h.t + 0.6, t) * 0.0); },
   bladeColor(ch, i, t) {
     const kind = ch.blade || 'steel', mix = (a, b, u) => { const A = parseInt(a.slice(1), 16), B = parseInt(b.slice(1), 16); return '#' + [16, 8, 0].map(s => Math.round(lerp(A >> s & 255, B >> s & 255, clamp(u))).toString(16).padStart(2, '0')).join(''); };
@@ -389,9 +390,9 @@ SCENES.swords = {
       const dropped = h && h.type === 'crash' && kind !== 'gold' && t > h.t, snapped = h && h.type === 'crash' && kind === 'gold' && t > h.t;
       const lying = dropped || ((st === 'sit' || st === 'sad' || st === 'quit') && !snapped);
       let hx, hy, ux, uy;
-      if (lying) { hx = this.cx(i) - 8 * K; hy = this.F - 6; ux = -0.998; uy = -0.06; }
+      if (lying) { hx = this.cx(i) - 34 * K; hy = this.F - 6; ux = 0.998; uy = -0.06; }
       else { const dx = J.rhand[0] - J.relbow[0], dy = J.rhand[1] - J.relbow[1], L = Math.hypot(dx, dy) || 1; ux = dx / L; uy = dy / L; hx = J.rhand[0]; hy = J.rhand[1]; }
-      let len = (kind === 'wood' ? 58 : 64) * K * (snapped ? 0.45 : 1) * (lying ? 0.8 : 1); const wid = (kind === 'wood' ? 9 : 7) * K;
+      let len = (kind === 'wood' ? 52 : 56) * K * (snapped ? 0.45 : 1) * (lying ? 0.75 : 1); const wid = (kind === 'wood' ? 9 : 7) * K;
       c.save(); c.globalAlpha = a; c.lineCap = 'round';
       c.strokeStyle = '#5b4632'; c.lineWidth = 7 * K; c.beginPath(); c.moveTo(hx - ux * 14 * K, hy - uy * 14 * K); c.lineTo(hx + ux * 8 * K, hy + uy * 8 * K); c.stroke();   // grip
       if (kind !== 'wood' || propAt(i, 'mat', t) > 0.35) { c.strokeStyle = kind === 'gold' ? '#ffd45a' : '#c9ced6'; c.lineWidth = 5 * K; c.beginPath(); c.moveTo(hx + ux * 8 * K - uy * 16 * K, hy + uy * 8 * K + ux * 16 * K); c.lineTo(hx + ux * 8 * K + uy * 16 * K, hy + uy * 8 * K - ux * 16 * K); c.stroke(); }   // guard
@@ -422,6 +423,7 @@ SCENES.doors = {
   laneY(i) { return this.y0 + i * this.gap; },
   xAt(i, t) { return this.x0 + fracAt(i, t) * (this.DOOR - 70 - this.x0) + propAt(i, 'through', t) * 190; },
   head(i, t) { return 1 + 1.6 * propAt(i, 'ego', t); },
+  beyond(i, t) { return propAt(i, 'through', t) > 0.55; },
   extent() { return { x0: 40, x1: this.DOOR + 220, y0: this.y0 - this.gap * 0.95 - 140, y1: this.y0 + (T.chars.length - 1) * this.gap + 50 }; },
   place(i, t) { const y = this.laneY(i), hs = this.head(i, t), extra = (hs - 1) * 2 * 27 * this.s; return { x: this.xAt(i, t), top: y - figH() * this.s - extra, s: this.s, floor: y, footY: y }; },
   activePose(i, t) { const w = moving(i, t, 0.002, 0.02); return blendPose(POSES.stand, WALK(this.xAt(i, t) / (13 * this.s)), Math.max(w, 0)); },

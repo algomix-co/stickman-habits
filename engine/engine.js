@@ -212,7 +212,7 @@ function anchorWithMotion(i, t, an, s) {
 function drawChar(c, i, t, anchorFn0, opt = {}) {
   const ch = T.chars[i], s = opt.s || 1, sp = opt.speed || 0, a = Math.max(alphaAt(i, t), pickTurn(i, t));
   const anchorFn = tt => anchorWithMotion(i, tt, anchorFn0(tt), s);
-  const stn = stateAt(i, t); if (stn.state === 'fall') opt = { ...opt, rot: (t - stn.since) * 11 * (i % 2 ? 1 : -1) };
+  const stn = stateAt(i, t); if (stn.state === 'fall' && !(T.scene.noSpin && T.scene.noSpin(i, t))) opt = { ...opt, rot: (t - stn.since) * 11 * (i % 2 ? 1 : -1) };
   if (sp > 0.05) for (let k = 3; k >= 1; k--) { const tt = t - k * 0.05; drawFigure(c, ch, anchorFn(tt), poseAt(i, tt), tt, a * sp * (0.34 - 0.09 * k), s, { ...opt, ghost: true }); }
   const J = drawFigure(c, ch, anchorFn(t), poseAt(i, t), t, a, s, opt);
   if ((opt.sweat || 0) > 0.1) for (let k = 0; k < 3; k++) {
@@ -661,11 +661,11 @@ function drawLabels(t, P, boardTop) {
     if ((!got || got[0] > 160) && q.split && q.lines.length === 1) { const keep = [q.lines, q.w]; q.lines = [q.split[1], q.split[2]]; q.w = Math.max(q.numW, q.split[0], q.tagW); const g2 = tryFit(); if (g2 && (!got || g2[0] < got[0])) got = g2; else [q.lines, q.w] = keep; }
     if (!got) { const f0 = q.f; for (const [a0, a1] of free) { const k = (a1 - a0) / q.w; if (k >= 0.85 && k < q.f && Math.abs((a0 + a1) / 2 - cx) < 260) { q.f = Math.min(q.f, k); got = [0, (a0 + a1) / 2]; break; } } if (!got) q.f = f0; }
     if (got) q.x = got[1];
-    else { let topB = 1e9; for (const [u0, u1] of blk) if (q.x + q.w * q.f / 2 > u0 && q.x - q.w * q.f / 2 < u1) T.chars.forEach((_, o) => { const bx = o === q.i ? null : bodyBox(o, 10); if (bx && bx.x0 <= u1 && bx.x1 >= u0) topB = Math.min(topB, bx.y0); }); if (topB < 1e9) q.lift += Math.max(0, yb - (topB - 12)); }   // no room beside: rise above the obstacle
+    else { let topB = 1e9; for (const [u0, u1] of blk) if (q.x + q.w * q.f / 2 > u0 && q.x - q.w * q.f / 2 < u1) T.chars.forEach((_, o) => { const bx = o === q.i ? null : bodyBox(o, 10); if (bx && bx.x0 <= u1 && bx.x1 >= u0) topB = Math.min(topB, bx.y0); }); if (topB < 1e9) q.lift += Math.min(70 * q.s, Math.max(0, yb - (topB - 12))); }   // no room beside: rise above the obstacle
   }
-  if (T.scene.sideLabels) for (const q of L) { const p = P[q.i], off = (70 + (T.scene.labelGap || 0)) * p.s + 18, maxR = T.scene.labelMaxX ? T.__X(T.scene.labelMaxX) : 950, pad = ((T.question || T.spec.question) ? 90 : 10) * q.s;
+  if (T.scene.sideLabels) for (const q of L) { const p = P[q.i], off = (70 + (T.scene.labelGap || 0)) * p.s + 18, maxR = T.scene.labelMaxX && !(T.scene.beyond && T.scene.beyond(q.i, t)) ? T.__X(T.scene.labelMaxX) : 950, pad = ((T.question || T.spec.question) ? 90 : 10) * q.s;
     q.lift = 0; q.top = p.floor - 0.3 * (p.floor - p.top);
-    const fit = () => { const half = q.w * q.f / 2, rightX = Math.max(p.x + off, ((bodyBox(q.i, 12) || {}).x1 || -1e9)) + half, leftX = (T.scene.labelSide === -1 ? Math.min(p.x - (64 * p.s + 18), ((bodyBox(q.i, 12) || {}).x0 || 1e9)) : p.x - off - 26 * q.s) - half, R = rightX + half + pad <= maxR, Lf = leftX - half >= 40; if (T.scene.labelSide === -1) { if (Lf) return [-1, leftX]; if (R) return [1, rightX]; return null; } if (R) return [1, rightX]; if (Lf) return [-1, leftX]; return null; };
+    const fit = () => { const half = q.w * q.f / 2, rightX = Math.max(p.x + off, ((bodyBox(q.i, 12) || {}).x1 || -1e9)) + half, leftX = (T.scene.labelSide === -1 ? Math.min(p.x - (64 * p.s + 18), ((bodyBox(q.i, 12 + 0.3 * ((T.__joints[q.i] || {}).hr || 0) * (T.__z || 1)) || {}).x0 || 1e9)) : p.x - off - 26 * q.s) - half, R = rightX + half + pad <= maxR, Lf = leftX - half >= 40; if (T.scene.labelSide === -1 && !(T.scene.beyond && T.scene.beyond(q.i, t))) { if (Lf) return [-1, leftX]; if (R) return [1, rightX]; return null; } if (R) return [1, rightX]; if (Lf) return [-1, leftX]; return null; };
     let got = fit();
     if (!got && q.split && q.lines.length === 1) { q.lines = [q.split[1], q.split[2]]; q.w = Math.max(q.numW, q.split[0], q.tagW); got = fit(); }   // tight spot: wrap the name first
     if (!got) { const x0 = Math.max(p.x + off, ((bodyBox(q.i, 12) || {}).x1 || -1e9)), room = maxR + 60 - x0; q.f = clamp(room / q.w, 0.75, q.f); got = [1, x0 + q.w * q.f / 2]; }   // last resort: shrink to fit beside, never on the body
@@ -709,7 +709,7 @@ function drawLabels(t, P, boardTop) {
       if (J) { if (!(y1 < hy - hr - 8 || y0 > hy + hr + 8)) blk.push([hx - hr - 14, hx + hr + 14]); for (const hd of J.hands) { const X = T.__X(hd[0]), Y = T.__Y(hd[1]); if (!(y1 < Y - 14 || y0 > Y + 14)) blk.push([X - 16, X + 16]); } }
       for (const C of CAPRECTS) if (!(y1 < C.y0 || y0 > C.y1)) blk.push([C.x0, C.x1]);
       return blk.sort((u, v) => u[0] - v[0]); };
-    const freeAt = (y0, y1) => { const R0 = (y1 > 860 && y0 < 1720) ? 950 : W - 24, out = []; let cur = 24; for (const [u0, u1] of blockers(y0, y1)) { if (u0 > cur) out.push([cur, Math.min(u0, R0)]); cur = Math.max(cur, u1); } if (cur < R0) out.push([cur, R0]); return out; };
+    const freeAt = (y0, y1) => { const lim = T.scene.labelMaxX && !(T.scene.beyond && T.scene.beyond(bb.i, t)) ? T.__X(T.scene.labelMaxX) : 1e9, R0 = Math.min(lim, (y1 > 860 && y0 < 1720) ? 950 : W - 24), out = []; let cur = 24; for (const [u0, u1] of blockers(y0, y1)) { if (u0 > cur) out.push([cur, Math.min(u0, R0)]); cur = Math.max(cur, u1); } if (cur < R0) out.push([cur, R0]); return out; };
     const layouts = [[bb.text]]; if (bb.text.includes(' ')) { const ws = bb.text.split(' '); let best = null; for (let k = 1; k < ws.length; k++) { const a1 = ws.slice(0, k).join(' '), a2 = ws.slice(k).join(' '), m = Math.max(meas(a1, bf0, 0), meas(a2, bf0, 0)); if (!best || m < best[0]) best = [m, a1, a2]; } layouts.push([best[1], best[2]]); }
     let pick = null;
     for (const lines of layouts) {   // beside the head first (one line, then two), nearest side wins
@@ -723,7 +723,7 @@ function drawLabels(t, P, boardTop) {
     const { lines, x, yc, bw, bh } = pick, col = T.chars[bb.i].color, bx0 = x - bw / 2, by0 = yc - bh / 2;
     sc.save(); sc.globalAlpha = a * 0.92; sc.fillStyle = 'rgba(8,10,14,0.9)'; sc.strokeStyle = col; sc.lineWidth = 2.5;
     // tail: from the plate edge toward the head
-    const tx = pick.above ? clamp(hx, bx0 + 18, bx0 + bw - 18) : (x < hx ? bx0 + bw : bx0), ty = pick.above ? by0 + bh : yc + bh * 0.15, ang = Math.atan2(hy - ty, hx - tx), tl = Math.max(0, Math.min(46 * s, Math.hypot(hx - tx, hy - ty) - hr - 6));
+    const tx = pick.above ? clamp(hx, bx0 + 18, bx0 + bw - 18) : (x < hx ? bx0 + bw : bx0), ty = pick.above ? by0 + bh : yc + bh * 0.15, ang = Math.atan2(hy - ty, hx - tx); let tl = Math.max(0, Math.min(46 * s, Math.hypot(hx - tx, hy - ty) - hr - 6)); if (pick.above) tl = Math.min(tl, Math.max(0, (q.stackTop - 6) - ty) / Math.max(0.2, Math.sin(ang)));
     sc.beginPath(); sc.roundRect(bx0, by0, bw, bh, 16 * s); sc.fill(); sc.stroke();
     if (tl > 6) { const nx = -Math.sin(ang), ny = Math.cos(ang), b0 = 9 * s; sc.beginPath(); sc.moveTo(tx + nx * b0 - Math.cos(ang) * 3, ty + ny * b0 - Math.sin(ang) * 3); sc.lineTo(tx + Math.cos(ang) * tl, ty + Math.sin(ang) * tl); sc.lineTo(tx - nx * b0 - Math.cos(ang) * 3, ty - ny * b0 - Math.sin(ang) * 3); sc.closePath(); sc.fill(); sc.beginPath(); sc.moveTo(tx + nx * b0, ty + ny * b0); sc.lineTo(tx + Math.cos(ang) * tl, ty + Math.sin(ang) * tl); sc.lineTo(tx - nx * b0, ty - ny * b0); sc.stroke(); }
     sc.restore();

@@ -49,5 +49,55 @@
   "nameEffect": true,
   "oneChange": true,
   "question": true
+ },
+ "fixed": {
+  "music": "drive"
+ },
+ "rules": {
+  "ledger": "brands/mind-the-gap.titles.json",
+  "titleBan": [
+   "^why\\b"
+  ],
+  "keywords": [
+   "discipline",
+   "mindset",
+   "motivation",
+   "money",
+   "fitness",
+   "top 1%",
+   "consistency",
+   "strengths",
+   "goal",
+   "vision",
+   "willpower",
+   "ambition",
+   "procrastination",
+   "overthinking",
+   "problem solving",
+   "focus",
+   "social",
+   "comfort",
+   "lust",
+   "quitting",
+   "obsession",
+   "talent",
+   "success",
+   "perfection",
+   "practice",
+   "ego",
+   "failure",
+   "hardest",
+   "dreams",
+   "decision",
+   "progress",
+   "chasing",
+   "choices",
+   "luck",
+   "potential",
+   "mistakes",
+   "pain",
+   "silence",
+   "results"
+  ]
  }
 }

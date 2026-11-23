@@ -1,0 +1,32 @@
+{
+ "note": "Every title we have used or the owner rejected. make.js refuses a new title that matches or mostly overlaps one of these.",
+ "rejected": [
+  {
+   "title": "Why Sales Keep You Broke",
+   "reason": "round 1: psychology niche and 'Why' question titles rejected by the owner",
+   "date": "2026-11-23"
+  },
+  {
+   "title": "Why You Can't Stop Checking",
+   "reason": "round 1: psychology niche and 'Why' question titles rejected by the owner",
+   "date": "2026-11-23"
+  },
+  {
+   "title": "Why You Can't Quit",
+   "reason": "round 1: psychology niche and 'Why' question titles rejected by the owner",
+   "date": "2026-11-23"
+  },
+  {
+   "title": "Why Monday Never Comes",
+   "reason": "round 1: psychology niche and 'Why' question titles rejected by the owner",
+   "date": "2026-11-23"
+  },
+  {
+   "title": "Why The Thrill Never Lasts",
+   "reason": "round 1: psychology niche and 'Why' question titles rejected by the owner",
+   "date": "2026-11-23"
+  }
+ ],
+ "approved": [],
+ "used": []
+}

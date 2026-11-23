@@ -81,8 +81,81 @@ def chord(deg, q, octave=0):
     if base > root + 7 + 12 * octave: base -= 12
     return [base, base + (3 if q == 'm' else 4), base + 7]
 crash_t, burst_t = cues['crash'], cues['burst']
+MUSIC = ST.get('music', 'calm')
+# ================= DRIVE: rhythmic score that escalates every few seconds (urgency, not relaxation) =================
+# tempo accelerates toward the climax; layers stack in 4 stages; key lifts a semitone at the halfway mark;
+# snare roll + one-beat drop-out before the climax; full drop after it; calms only for the closing line.
+_saw_cache = {}
+def saw(f, d, K, dec, att=0.004):
+    key = (round(f, 2), round(d, 3), K, round(dec, 3))
+    if key not in _saw_cache:
+        t = tvec(d); s = np.zeros_like(t)
+        for k_ in range(1, K + 1):
+            if f * k_ > 15000: break
+            s += np.sin(2 * np.pi * f * k_ * t) / k_
+        _saw_cache[key] = s * np.minimum(1, t / att) * np.exp(-t / dec)
+    return _saw_cache[key]
+def lp(x, fc):   # zero-phase low-pass for short one-shots
+    n = len(x); X = np.fft.rfft(x); f = np.fft.rfftfreq(n, 1 / SR); return np.fft.irfft(X / (1 + (f / fc) ** 4), n)
+_clap = {}
+def clap(vel=0.3):
+    if vel in _clap: return _clap[vel]
+    n = rng.standard_normal(int(0.2 * SR)); e = np.zeros(len(n)); tt = np.arange(len(n)) / SR
+    for d in (0, 0.011, 0.022): e += (tt >= d) * np.exp(-np.maximum(tt - d, 0) / 0.012)
+    e += (tt >= 0.03) * np.exp(-np.maximum(tt - 0.03, 0) / 0.07) * 0.6
+    _clap[vel] = lp(n * e, 3800) * vel * 1.3; return _clap[vel]
+def tick(vel=0.05):
+    t = tvec(0.03); return (np.sin(2 * np.pi * 3400 * t) + 0.5 * np.sin(2 * np.pi * 5100 * t)) * np.exp(-t / 0.006) * vel
+if MUSIC == 'drive':
+    climax = burst_t[0] if burst_t else DUR * 0.78
+    calm_at = min([x for x in [cues.get('question'), cues.get('endcard')] if x is not None] or [DUR])
+    B0 = float(ST.get('driveBpm', 108 + (bpm - 72))); B1 = B0 + float(ST.get('driveRamp', 24))
+    grid = []; t = 0.0
+    while t < DUR: p = min(1.0, t / climax); grid.append(t); t += 60.0 / (B0 + (B1 - B0) * p ** 1.2)
+    grid = np.array(grid); PROG = [[0, 8, 3, 10], [0, 10, 8, 7], [0, 5, 8, 10]][seed % 3]
+    def stage(t):
+        if t >= calm_at: return 6
+        if t >= climax: return 5
+        p = t / climax
+        return 1 if p < 0.25 else 2 if p < 0.5 else 3 if p < 0.8 else 4
+    for bi, t in enumerate(grid):
+        nxt = grid[bi + 1] if bi + 1 < len(grid) else t + 60 / B1; beat = nxt - t; st = stage(t)
+        if climax - 0.5 * beat <= t < climax: continue          # one-beat drop-out right before the climax
+        bar, pos = divmod(bi, 4); key = root + (1 if t >= climax * 0.5 else 0) + (2 if st >= 5 else 0)
+        deg = PROG[bar % 4]; r = key + deg - (12 if deg > 7 else 0); fifth, oct_ = r + 7, r + 12
+        p = min(1.0, t / climax); ramp = 0.55 + 0.45 * p
+        if st == 6:   # closing line: half-time pulse only, so the question lands
+            if pos % 2 == 0: add(fx, t, kick(0.45, low=44, dec=0.3)); add(music, t, saw(midi(r - 12), beat * 1.8, 6, 0.5) * 0.10)
+            continue
+        # kick: four on the floor from the first beat
+        add(fx, t, kick((0.5 if st == 1 else 0.68) * (1.1 if st == 5 else 1), low=44, dec=0.22 if st < 5 else 0.32))
+        if st >= 2 and pos in (1, 3): add(fx, t, clap(0.26 + 0.1 * (st >= 3)), pan=0.05)
+        # clock ticks: 8ths, then 16ths from stage 3 (time running out)
+        div = 4 if st >= 3 else 2
+        for j in range(div): add(fx, t + j * beat / div, tick(0.022 + 0.015 * (j % div == 0) + 0.01 * (st >= 4)), pan=0.35 * (1 if j % 2 else -1))
+        if st >= 3: add(fx, t + beat / 2, lp(hat(0.07 + 0.03 * (st >= 4)), 9000), pan=-0.2)   # open off-beat hat
+        # bass: driving 8th-note pulse on the root, octave jumps from stage 3
+        for j in range(2):
+            m = r - 24 + (12 if st >= 3 and j == 1 else 0)
+            add(music, t + j * beat / 2, saw(midi(m), beat * 0.45, 5 + 3 * (st >= 3), beat * 0.18) * (0.16 + 0.04 * (st >= 4)))
+        # string ostinato: 8ths, then 16ths; brightness grows with progress
+        sub = 2 if st == 1 else 4; pat = [m + 12 for m in (r, fifth, oct_, fifth, r + 3, fifth, oct_ + 3, fifth)]
+        for j in range(sub):
+            n_ = pat[(pos * sub + j) % 8]; K = 3 + int(9 * p) + (4 if st >= 5 else 0)
+            add(music, t + j * beat / sub, saw(midi(n_), beat / sub * 0.9, K, beat / sub * 0.35) * (0.2 * ramp + 0.06 * (st >= 5)), pan=0.3 * np.sin(bi * 1.7 + j))
+        # brass stabs on the bar from stage 3; on every beat in the drop
+        if (st >= 3 and pos == 0) or st == 5:
+            for m in (r, r + 3, fifth, oct_): add(music, t, saw(midi(m), beat * 0.6, 12, beat * 0.3, att=0.012) * (0.12 + 0.05 * (st == 5)), pan=-0.15)
+        # sustained pad underneath, swelling
+        if pos == 0: add(music, t, pad([midi(m) for m in (r - 12, r - 9, r - 5)], beat * 4, vel=0.5 + 0.9 * p, att=0.3, rel=0.4, bright=1.6))
+    # snare roll over the last 2 bars before the climax: 8ths -> 16ths -> 32nds, crescendo
+    roll0 = grid[max(0, int(np.searchsorted(grid, climax)) - 8)]
+    t = roll0
+    while t < climax - 0.06:
+        u = (t - roll0) / max(1e-3, climax - roll0); bt = 60 / B1; step = bt / 2 if u < 0.4 else bt / 4 if u < 0.75 else bt / 8
+        add(fx, t, snare(0.08 + 0.3 * u ** 1.5)); t += step
 k = 0
-for b in cues['beats']:
+for b in (cues['beats'] if MUSIC != 'drive' else []):
     t0, t1, mood = b['t0'], b['t1'], b['mood']
     if mood == 'end': segs = [(t0, t1, (0, 'm'))]
     elif mood == 'build': n = 4; d = (t1 - t0) / n; segs = [(t0 + j * d, t0 + (j + 1) * d, prog[(k + j) % 4]) for j in range(n)]; k += n
@@ -191,9 +264,9 @@ def reverb(x, secs=2.4, s=1):
         ir = onepole(r.standard_normal(Mn) * np.exp(-t / (secs / 6.9)), 5000); ir /= np.sqrt(np.sum(ir ** 2))
         n = 1 << int(np.ceil(np.log2(len(x) + Mn))); out[:, ch] = np.fft.irfft(np.fft.rfft(x[:, ch], n) * np.fft.rfft(ir, n), n)[:len(x)]
     return out
-wet = {'lofi': 0.18, 'musicbox': 0.4}.get(INST, 0.3)
+wet = 0.12 if MUSIC == 'drive' else {'lofi': 0.18, 'musicbox': 0.4}.get(INST, 0.3)
 mix = music + wet * reverb(music) + fx + 0.12 * reverb(fx, 1.5, 2)
-if INST == 'lofi':
+if INST == 'lofi' and MUSIC != 'drive':
     cr = (rng.random(N) < 0.0009) * rng.uniform(-0.3, 0.3, N); mix[:, 0] += cr * 0.25; mix[:, 1] += cr * 0.25
     for ch in range(2): mix[:, ch] = onepole(mix[:, ch], 5200)
 if cues.get('slow'):   # muffle everything during slow-motion
@@ -206,4 +279,4 @@ mix = np.tanh(1.4 * mix / (np.max(np.abs(mix)) + 1e-9)) / np.tanh(1.4) * 0.95
 fl = int(0.25 * SR); mix[-fl:] *= np.linspace(1, 0, fl)[:, None]
 with wave.open(sys.argv[2], 'wb') as w:
     w.setnchannels(2); w.setsampwidth(2); w.setframerate(SR); w.writeframes((mix * 32767).astype('<i2').tobytes())
-print(f'audio ok: {INST} / {IMPACT} / root {root} / {bpm:.0f} bpm / progression {seed % len(PROGS)}')
+print(f'audio ok: {MUSIC} / {INST} / {IMPACT} / root {root} / {bpm:.0f} bpm / progression {seed % len(PROGS)}')

@@ -33,6 +33,7 @@ const DIMS = {
   impact: ['boom', 'tapestop', 'glitch', 'snap', 'sub'],
   root: [57, 55, 52, 50, 53, 54, 59],
   bpm: [72, 76, 80, 84, 90],
+  music: ['drive', 'calm'],   // drive: rhythmic, escalating score; calm: the older ambient bed
 };
 function seededRand(str) { let h = crypto.createHash('sha1').update(str).digest().readUInt32LE(0); return () => { h = (h + 0x6D2B79F5) | 0; let t = Math.imul(h ^ h >>> 15, 1 | h); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 function compatible(dim, v, spec, brand) {
@@ -91,6 +92,16 @@ function validate(s, brand = {}) {
   if (last && last.style !== 'question') Wn.push('last beat is not style:"question"');
   need(s.upload && s.upload.title && s.upload.title.length <= 100, 'upload.title required (<= 100 chars)');
   if (s.upload && s.upload.title && brand.titleMaxWords) { const words = s.upload.title.split(/\s+/).filter(w => /[A-Za-z0-9]/.test(w)).length; need(words <= brand.titleMaxWords, `title "${s.upload.title}" has ${words} words; the ${brand.name} brand allows ${brand.titleMaxWords}`); }
+  // brand rules learned from owner feedback (LEARNINGS.md): banned title shapes, the title ledger, keywords
+  const BR = brand.rules || {}, T0 = (s.upload && s.upload.title) || '';
+  for (const pat of BR.titleBan || []) need(!new RegExp(pat, 'i').test(T0), `title "${T0}" matches banned pattern /${pat}/ (see LEARNINGS.md)`);
+  if (BR.ledger && T0) { let L = {}; try { L = JSON.parse(fs.readFileSync(path.join(ROOT, BR.ledger))); } catch (e) {}
+    const STOP = new Set(['the', 'a', 'an', 'is', 'are', 'you', 'your', 'of', 'to', 'it', 'and', 'or', 'not', 'in', 'on', 'for', 'never', 'always']);
+    const words = t => new Set(t.toLowerCase().replace(/['’]/g, '').replace(/[^a-z0-9% ]/g, ' ').split(/\s+/).filter(w => w && !STOP.has(w)));
+    const mine = words(T0), own = (L.approved || []).concat(L.used || []).map(x => x.title || x).filter(t => s.upload.approved !== true || t.toLowerCase() !== T0.toLowerCase());
+    for (const e of (L.rejected || []).map(x => x.title || x)) { const w = words(e), inter = [...mine].filter(x => w.has(x)).length; need(e.toLowerCase() !== T0.toLowerCase() && inter / Math.max(1, Math.min(mine.size, w.size)) < 0.6, `title "${T0}" repeats rejected title "${e}" (ledger)`); }
+    for (const e of (L.used || []).map(x => x.title || x)) need(e.toLowerCase() !== T0.toLowerCase() || s.upload.rerender === true, `title "${T0}" was already used (ledger)`); }
+  if (BR.keywords) { const kw = (s.keywords || []).map(k => String(k).toLowerCase()); need(kw.some(k => BR.keywords.includes(k)), `"keywords" must include at least one of the brand keywords (${BR.keywords.slice(0, 6).join(', ')}, ...)`); }
   // brand story rules ("mirror cast"): who viewers can see themselves in
   const R = brand.storyRules || {};
   if (R.roles) {

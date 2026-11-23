@@ -58,7 +58,7 @@ SCENES.race = {
   draw(c, t) {
     const yTop = this.y0 - figH() * this.s - 20, yBot = this.y0 + (T.chars.length - 1) * this.gap, fx = this.x1 - 80;   // the winner ends past the line
     c.save(); c.setLineDash([14, 12]); c.strokeStyle = 'rgba(255,255,255,0.4)'; c.lineWidth = 3; c.beginPath(); c.moveTo(fx, yTop); c.lineTo(fx, yBot + 4); c.stroke(); c.restore();
-    spaced(c, 'FINISH', fx, yTop - 22, '800 44px Inter', '#dfe4e9', 3, 0.9);
+    spaced(c, 'FINISH', fx - 110, yTop - 22, '800 44px Inter', '#dfe4e9', 3, 0.9); if (T.__vlines) T.__vlines.push({ x: fx, y0: yTop, y1: yBot + 4 });
     c.fillStyle = 'rgba(255,255,255,0.12)'; c.fillRect(this.x0 - 30, yTop, 2, yBot - yTop);
     return charsDo((ch, i) => { const y = this.laneY(i); floorLine(c, y, -200, W + 200, 0.16); const p = this.place(i, t); drawChar(c, i, t, tt => ({ mode: 'feet', x: this.xAt(i, tt), y }), { s: this.s, speed: speedFx(i, t, 0.12, 0.35), sweat: speedFx(i, t, 0.08, 0.2) }); return p; });
   },

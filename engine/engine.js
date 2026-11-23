@@ -546,7 +546,7 @@ function captionBlock(t, tm, C = ctx) {
   if (st.captionStyle === 'bold') {
     const pz = (st.transition === 'dayzoom' || st.transition === 'cut') && B.bi > 0 ? 1 + 0.35 * (1 - easeOut(clamp((t - B.t0) / 0.4))) : 1;
     if (counter && tm.kind !== 'rewind') { C.save(); C.translate(W / 2, 150 + yo); C.scale(pz, pz); spaced(C, counter, 0, 0, '700 40px Inter', '#9aa6b2', 6, 1, 0, false); C.restore(); }
-    const lines = text ? wrapText(text, '800 54px Inter', 1, 800) : [];
+    const lines = text ? wrapText(text, '800 54px Inter', 1, 760) : [];
     lines.forEach((ln, k) => { wb += drawWords(C, ln, W / 2 + xoff, 228 + yo + k * 62, '800 54px Inter', 3, capColor(gold ? GOLD : '#c9d0d8'), a, gold || burstHit ? 14 : 0, tStart, clock, wb); });
     bottom = 228 + yo + Math.max(0, lines.length - 1) * 62 + 18;
   } else if (st.captionStyle === 'boxed') {

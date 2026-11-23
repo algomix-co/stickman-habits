@@ -18,9 +18,23 @@ specs/<id>.json ──► validate ──► preview sheet (approve) ──► f
   brand's last 6 videos used (`brands/<name>.history.json`) and forced to differ from the previous video in at
   least half of them. Picks are saved to `out/<id>/style.json` so preview and render match.
 - **Effects**: day-counter zoom, slow-motion speed ramps on crashes/climaxes, flash-forward + rewind hook,
-  motion trails on fast movers, sweat, per-character tempo, mood colour tints, camera push/drift/punch.
+  motion trails on fast movers, sweat, per-character tempo, mood colour tints.
 - **Lift scene rebuilt** (front view, barbell + plates scale with the character and weight).
 - **Safety checks**: text off-screen, text under the Shorts like/comment buttons, auto-shrinking labels.
+
+## Still camera, moving text (v10)
+- **The camera never moves.** Each video gets one fixed frame that keeps every character, label and badge in
+  view for the whole video, so viewers watch the characters progress without zoom or pan distractions.
+- **Emphasis lives in the text**: captions shake and flash red on crashes and glow gold at the climax; words
+  after "THAT'S" and "ONE CHANGE:" are teal, numbers gold.
+- **Open loop**: with `"question"` in the spec (required for brands with `storyRules.question`), a gold question
+  sits at the top from frame 1 ("WHO KEEPS THE MOST MONEY?") and flips to the answer on a dark pill at the
+  climax ("IT'S C: OWN PRICE"; override with `"answer"`). A/B/C predict badges show in beat 1 so viewers pick.
+  The flash-forward hook is disabled for these videos because it would reveal the answer.
+- **Layout**: labels and bubbles avoid every other character's whole body (slide into the free gap, wrap,
+  shrink at most 15%); in the race scene each label sits beside its runner inside its own lane; text crossed by
+  bars, ground lines or the finish line gets a dark plate. Captions wrap to stay inside x 130-950.
+- See `STRATEGY.md` for the audience, evergreen rules, hook formulas and the topic backlog.
 
 ## Review before render (two layers)
 1. **Automatic reviewer** (`node make.js --review specs/<id>.json`, and always before a full render).
@@ -28,7 +42,7 @@ specs/<id>.json ──► validate ──► preview sheet (approve) ──► f
    - label/bubble/badge overlaps and text off screen;
    - the Shorts bottom overlay and right button strip;
    - text under 26-27px;
-   - characters covering their own labels;
+   - characters covering their own labels, and labels/bubbles covering any other character;
    - labels overlapping the caption block;
    - props crossing faces or not held by the hands;
    - scenery lines striking through text;
@@ -61,9 +75,7 @@ specs/<id>.json ──► validate ──► preview sheet (approve) ──► f
   out of frame; the camera always keeps every character (with labels) in view.
 
 ## Motion & pacing (v3)
-- **Camera director**: every beat is framed automatically. Priority: climax/crash moments > dips/flings >
-  the character named in the caption > whoever is speaking (bubble) > wide. It tracks the character as they
-  move, then pulls wide for reveals. Override per beat with `"focus": "GAMBLER"` or `"focus": "all"`.
+- **Camera director** (retired in v10; the code remains as `cameraAtOld` but the camera is now still).
 - **Ending sequence** (automatic): confetti on the climax → short wide reveal → recap tour (camera visits each
   character's final result, lowest first, winner last) → "WHICH ONE ARE YOU?" with A/B/C badges, each character
   jumping in turn, "COMMENT A · B · C", a second confetti wave → end card (bouncing mascot, title pop,
@@ -82,9 +94,8 @@ specs/<id>.json ──► validate ──► preview sheet (approve) ──► f
 | theme | void · dusk · navy · grid |
 | captionStyle | tracked (thin, wide-spaced) · bold (huge DAY counter) · boxed (pill caption) |
 | transition | fade · slide · cut (white pop + punch) · dayzoom (giant counter flies into place) |
-| camera | static · push (slow push-in per beat) · drift |
 | labels | above (value over each head) · board (live leaderboard that re-ranks) |
-| hook | straight · flashforward (opens on the climax, "HOW DID THIS HAPPEN?", rewinds to day 1) |
+| hook | straight · flashforward (opens on the climax, "HOW DID THIS HAPPEN?", rewinds to day 1; not used with a question header) |
 | speed | none · slowmo (speed ramp on crashes and the climax, audio muffled) |
 | outro | question · endcard (brand mascot + channel name + motif) · loop (rewinds to the first frame) |
 | instrument | piano · pluck · musicbox · epiano · lofi (voice, pad and drum feel) |
@@ -159,7 +170,7 @@ Requirements: Node 18+, `playwright` with Chromium, Python 3 + numpy, ffmpeg, th
 ## Scenes (visual metaphors)
 | scene | what the number means visually | good for |
 |---|---|---|
-| `towers` | stack of coins/blocks under each character (camera pulls back as they grow) | money, savings, followers, anything that accumulates |
+| `towers` | stack of coins/blocks under each character (fixed frame sized for the tallest stack) | money, savings, followers, anything that accumulates |
 | `race` | side-view lanes toward a FINISH line | skills, learning, progress to a goal |
 | `climb` | ropes up to a goal bar; quitters fall to the floor | careers, startups, anything with "falling off" |
 | `pullup` | hanging from one bar doing reps; quitters drop and sit | effort/volume: calls, reps, sessions |

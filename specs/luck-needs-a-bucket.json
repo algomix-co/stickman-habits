@@ -17,7 +17,7 @@
    "accessory": "headphones"
   },
   {
-   "name": "WISHES",
+   "name": "QUITS EARLY",
    "color": "#b98cff",
    "accessory": "beanie"
   },
@@ -36,9 +36,6 @@
   "max": 100,
   "scale": 1.0
  },
- "start": {
-  "WISHES": 6
- },
  "counter": {
   "label": "DAY",
   "start": 1
@@ -54,25 +51,25 @@
    "caption": "LUCK WILL FIND YOU. THEN WHAT?",
    "counter": 1,
    "values": {
-    "BUILDS DAILY": 6
+    "BUILDS DAILY": 8,
+    "QUITS EARLY": 10
    },
    "states": {
     "WAITS": "sit",
-    "WISHES": "idle",
     "STARTS LATE": "stand"
    },
    "bubbles": [
     {
      "who": "WAITS",
      "text": "any day now",
-     "at": 0.7,
-     "dur": 1.0
+     "at": 0.5,
+     "dur": 1.1
     },
     {
-     "who": "WISHES",
-     "text": "please, universe",
-     "at": 1.7,
-     "dur": 1.0
+     "who": "QUITS EARLY",
+     "text": "this'll be quick",
+     "at": 1.6,
+     "dur": 1.1
     }
    ]
   },
@@ -81,7 +78,8 @@
    "caption": "SOME WAIT. SOME BUILD.",
    "counter": 30,
    "values": {
-    "BUILDS DAILY": 20
+    "BUILDS DAILY": 20,
+    "QUITS EARLY": 26
    },
    "bubbles": [
     {
@@ -103,20 +101,31 @@
    "caption": "NOBODY CLAPS FOR DAY 120.",
    "counter": 120,
    "values": {
-    "BUILDS DAILY": 40
+    "BUILDS DAILY": 40,
+    "QUITS EARLY": 0
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "QUITS EARLY",
+     "at": 1.3
+    }
+   ],
+   "tags": {
+    "QUITS EARLY": "QUIT"
    },
    "bubbles": [
     {
-     "who": "WAITS",
-     "text": "why not me?",
-     "at": 0.5,
-     "dur": 1.2
+     "who": "QUITS EARLY",
+     "text": "this takes forever",
+     "at": 0.2,
+     "dur": 1.0
     },
     {
-     "who": "WISHES",
-     "text": "it's coming, I feel it",
-     "at": 1.7,
-     "dur": 1.2
+     "who": "WAITS",
+     "text": "why not me?",
+     "at": 1.8,
+     "dur": 1.1
     }
    ]
   },
@@ -129,10 +138,12 @@
     "STARTS LATE": 18
    },
    "states": {
-    "STARTS LATE": "active"
+    "STARTS LATE": "active",
+    "QUITS EARLY": "sad"
    },
    "stateAt": {
-    "STARTS LATE": 0.3
+    "STARTS LATE": 0.3,
+    "QUITS EARLY": 0
    },
    "tags": {
     "STARTS LATE": {
@@ -177,8 +188,8 @@
     {
      "type": "rain",
      "at": 0.5,
-     "count": 16,
-     "interval": 0.15
+     "count": 20,
+     "interval": 0.12
     }
    ],
    "props": {
@@ -187,9 +198,6 @@
     },
     "STARTS LATE": {
      "gold": 0.6
-    },
-    "WISHES": {
-     "gold": 1.2
     }
    },
    "states": {
@@ -212,9 +220,6 @@
     },
     "STARTS LATE": {
      "gold": 1.1
-    },
-    "WISHES": {
-     "gold": 1.4
     }
    },
    "events": [
@@ -232,35 +237,71 @@
    ],
    "states": {
     "BUILDS DAILY": "win",
-    "STARTS LATE": "cheer",
+    "STARTS LATE": "win",
     "WAITS": "sad",
-    "WISHES": "sad"
+    "QUITS EARLY": "sad"
    },
    "stateAt": {
     "BUILDS DAILY": 1.0,
     "STARTS LATE": 1.3,
     "WAITS": 0.6,
-    "WISHES": 0.8
+    "QUITS EARLY": 0.8
    },
    "tags": {
     "BUILDS DAILY": {
      "text": "READY",
      "color": "#36e0c8"
     },
+    "STARTS LATE": {
+     "text": "LATE, BUT READY",
+     "color": "#ffc53d"
+    },
     "WAITS": "EMPTY HANDS",
-    "WISHES": "OVERFLOWED"
+    "QUITS EARLY": "NOTHING LEFT"
    }
   },
   {
    "dur": 3.0,
    "caption": "ONLY SOME BUILT A BUCKET.",
-   "counter": 365
+   "counter": 365,
+   "values": {
+    "STARTS LATE": 52,
+    "QUITS EARLY": 8
+   },
+   "states": {
+    "STARTS LATE": "active",
+    "QUITS EARLY": "active"
+   },
+   "stateAt": {
+    "STARTS LATE": 0.4,
+    "QUITS EARLY": 1.2
+   },
+   "events": [
+    {
+     "type": "rain",
+     "at": 0.2,
+     "count": 12,
+     "interval": 0.18
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "QUITS EARLY",
+     "text": "okay. starting again.",
+     "at": 1.3,
+     "dur": 1.5
+    }
+   ]
   },
   {
    "dur": 2.0,
    "caption": "LUCK NEEDS A BUCKET.",
    "style": "closing",
-   "counter": 365
+   "counter": 365,
+   "values": {
+    "STARTS LATE": 60,
+    "QUITS EARLY": 16
+   }
   }
  ],
  "endcard": {

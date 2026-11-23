@@ -196,6 +196,7 @@ SCENES.dig = {
 // A crash on someone with regret > 0.3 is the boulder dropping; a shake drops a small rock.
 const BRICK_DOWN = { la: [-0.45, 0.35], ra: [0.45, -0.35], ll: [-0.75, 0.5], rl: [0.75, -0.5], lean: 0, drop: 0.35 };
 const BRICK_UP = { la: [-1.55, -2.65], ra: [1.55, 2.65], ll: [-0.14, -0.08], rl: [0.14, 0.08], lean: 0, drop: -0.25 };
+const PINNED = { la: [-2.35, -2.95], ra: [2.35, 2.95], ll: [-0.95, 0.75], rl: [0.95, -0.75], lean: 0, drop: 0.35 };   // holding the regret boulder up
 SCENES.bricks = {
   facing: 'front', debris: 'bricks', foley: 'brick', K: 1.3, HMAX: 560,
   setup(T) { this.xs = colsX(T.chars.length, 235, 920); this.F = FLOOR_MAX; this.BEAM = this.F - this.HMAX - figH() * this.K - 175; },
@@ -207,13 +208,14 @@ SCENES.bricks = {
   cyc(i, t) { const u = ((phaseInt(i, t, 7, 0.55, 2.2) + i * 0.31) % 1 + 1) % 1; return 0.5 - 0.5 * Math.cos(2 * Math.PI * u); },
   activePose(i, t) { const pk = propAt(i, 'pack', t), w = Math.max(moving(i, t, 0.001, 0.01), 0.75 * energyAt(t)); const p = blendPose(POSES.stand, blendPose(BRICK_DOWN, BRICK_UP, this.cyc(i, t)), w); return { ...p, lean: p.lean + 0.1 * Math.max(0, pk - 0.9) * Math.sin(t * 3.1 + i) }; },
   idlePose(i, t) { return POSES.stand; },
+  poseOverride(i, t, p) { const d = this.drop(i); if (!d || d.type !== 'crash' || t < d.t - 0.25) return p; const k = Math.sin(t * 23 + i) * 0.04; const q = blendPose(p, PINNED, ss(d.t - 0.25, d.t + 0.05, t)); return { ...q, lean: q.lean + k }; },
   drop(i) { return T.events.find(e => (e.type === 'crash' || e.type === 'shake') && e.i === i && propAt(i, 'regret', e.t - 0.05) > 0.08); },
   boulder(i, t) {   // where the regret boulder is: hanging, falling or landed
-    const r = 26 + 92 * propAt(i, 'regret', t), x = this.xs[i] + (i % 2 ? -8 : 8), p = this.place(i, t), labelRoom = 200;
-    const hangY = Math.min(this.BEAM + 70 + r, p.top - labelRoom - r), d = this.drop(i);
+    const r = 22 + 66 * propAt(i, 'regret', t), x = this.xs[i], p = this.place(i, t), labelRoom = 200;
+    const hangY = Math.min(this.BEAM + 95 + r, p.top - labelRoom - r), d = this.drop(i);
     if (!d || t < d.t - 0.34) return { x, y: hangY, r, rope: true };
-    const small = d.type === 'shake', ground = small ? p.footY - r : this.F - r, u = clamp((t - (d.t - 0.34)) / 0.34), y = lerp(hangY, ground, u * u);
-    return { x: small ? x + 62 * this.K : x + 0.55 * r, y: Math.min(y, ground), r, rope: false, landed: u >= 1 };
+    const small = d.type === 'shake', J = T.__joints[i], handsY = J ? Math.min(J.hands[0][1], J.hands[1][1]) : p.top, ground = small ? p.footY - r : handsY - r * 0.8, u = clamp((t - (d.t - 0.34)) / 0.34), y = lerp(hangY, ground, u * u);
+    return { x: small ? x + 62 * this.K : x, y: Math.min(y, ground), r, rope: false, landed: u >= 1 };
   },
   draw(c, t) {
     const K = this.K, BW = 128, BH = 20;
@@ -241,12 +243,14 @@ SCENES.bricks = {
       if (rg > 0.02) {   // the regret boulder
         const b = this.boulder(i, t), rr = rng(i * 13 + 5);
         c.save();
-        if (b.rope) { c.strokeStyle = 'rgba(214,180,130,0.8)'; c.lineWidth = 4; c.beginPath(); c.moveTo(b.x, this.BEAM); c.lineTo(b.x, b.y - b.r * 0.9); c.stroke(); }
+        if (b.rope) { c.strokeStyle = 'rgba(214,180,130,0.8)'; c.lineWidth = 4; c.beginPath(); c.moveTo(b.x, this.BEAM); c.lineTo(b.x, b.y - b.r * 0.9); c.stroke();
+          c.font = '800 38px Inter'; c.letterSpacing = '2px'; const sw = c.measureText('REGRET').width + 22, sy = this.BEAM + 44; c.fillStyle = 'rgba(12,14,18,0.95)'; c.strokeStyle = '#8b929c'; c.lineWidth = 3; c.beginPath(); c.roundRect(b.x - sw / 2, sy - 30, sw, 44, 8); c.fill(); c.stroke(); c.letterSpacing = '0px';
+          spaced(c, 'REGRET', b.x, sy + 4, '800 38px Inter', '#d5dbe2', 2, 1, 0, false, false); }
         c.fillStyle = '#2a2d33'; c.strokeStyle = '#8b929c'; c.lineWidth = 4; c.beginPath();
         for (let k = 0; k < 11; k++) { const an = k / 11 * 6.283, q = b.r * (0.86 + 0.18 * rr()); k ? c.lineTo(b.x + Math.cos(an) * q, b.y + Math.sin(an) * q * 0.92) : c.moveTo(b.x + Math.cos(an) * q, b.y + Math.sin(an) * q * 0.92); }
         c.closePath(); c.fill(); c.stroke();
         c.strokeStyle = 'rgba(255,255,255,0.12)'; c.lineWidth = 3; c.beginPath(); c.arc(b.x - b.r * 0.3, b.y - b.r * 0.3, b.r * 0.35, 3.6, 5.2); c.stroke();
-        if (b.r > 70) spaced(c, 'REGRET', b.x, b.y + 14, '800 40px Inter', '#c3cad3', 3, 1, 0, false, false);
+        if (!b.rope && T.__joints && T.__joints[i]) T.__joints[i].minY = Math.min(T.__joints[i].minY, b.y - b.r);   // labels go above a landed rock
         c.restore();
       }
       return p;
@@ -261,17 +265,19 @@ SCENES.bricks = {
 const HAM_UP = { la: [-0.9, 1.5], ra: [2.3, 2.9], ll: [-0.18, -0.1], rl: [0.18, 0.1], lean: 0.05, drop: -0.1 };
 const HAM_DOWN = { la: [-0.9, 1.5], ra: [1.25, 1.75], ll: [-0.22, -0.12], rl: [0.22, 0.12], lean: 0.1, drop: 0.1 };
 SCENES.buckets = {
-  facing: 'front', foley: 'hammer', K: 1.35, labelRoom: 250,
-  setup(T) { this.xs = colsX(T.chars.length, 235, 920); this.F = FLOOR_MAX; this.SKY = this.F - 600; },
+  facing: 'front', foley: 'hammer', K: 1.7, labelRoom: 250, debris: 'planks',
+  setup(T) { this.xs = colsX(T.chars.length, 240, 940); this.F = FLOOR_MAX; this.SKY = this.F - 790; this.kS = this.K / 1.35; },
+  debrisSpan(i, tc) { const d = this.dims(i, tc - 0.02); if (d.h < 20) return null; return { x: this.bx(i), y0: this.F - d.h, y1: this.F, floor: this.F }; },
   floorY() { return this.F; },
-  cx(i) { return this.xs[i] - 46; }, bx(i) { return this.xs[i] + 44; },
-  dims(i, t) { const f = clamp(value(i, t) / T.maxV); return { f, h: f > 0.01 ? 34 + 240 * f : 0, w: f > 0.01 ? 46 + 84 * f : 0 }; },
+  cx(i) { return this.xs[i] - 52; }, bx(i) { return this.xs[i] + 50; },
+  dims(i, t) { const f = clamp(value(i, t) / T.maxV), k = this.kS; return { f, h: f > 0.01 ? (28 + 150 * f) * k : 0, w: f > 0.01 ? (50 + 100 * f) * k : 0 }; },
   extent() { return { x0: this.xs[0] - 120, x1: this.xs[this.xs.length - 1] + 120, y0: this.SKY - 60, y1: this.F + 12 }; },
   place(i, t) { return { x: this.cx(i), top: this.F - figH() * this.K, s: this.K, floor: this.F }; },
   labelTop(i, top, t) { const d = this.dims(i, t); return Math.min(top, this.F - d.h - 30); },
   cyc(i, t) { const u = ((phaseInt(i, t, 9, 0.7, 2.6) + i * 0.29) % 1 + 1) % 1; return u < 0.6 ? ss(0, 0.6, u) : 1 - ss(0.6, 0.75, u); },
   activePose(i, t) { return blendPose(POSES.stand, blendPose(HAM_UP, HAM_DOWN, this.cyc(i, t)), Math.max(moving(i, t, 0.001, 0.01), 0.7 * energyAt(t))); },
-  idlePose(i, t) { const k = Math.sin(t * 2 + i); return { la: [-2.5, -2.9 + 0.1 * k], ra: [2.5, 2.9 - 0.1 * k], ll: [-0.14, -0.08], rl: [0.14, 0.08], lean: 0, drop: -0.45 }; },   // looking up, hands raised: wishing
+  idlePose(i, t) { return POSES.stand; },
+  winPose(i, t) { const k = Math.sin(t * 7 + i); return { la: [-2.05 + 0.15 * k, -2.35], ra: [2.05 - 0.15 * k, 2.35], ll: [-0.25, -0.1], rl: [0.25, 0.1], lean: 0, drop: -0.3 }; },
   rainTimes() { const out = []; for (const e of T.events) if (e.type === 'rain') for (let ci = 0; ci < T.chars.length; ci++) for (let k = 0; k < (e.count || 14); k++) out.push({ ci, t0: e.t + k * (e.interval || 0.16) + ((ci * 7 + k * 3) % 5) * 0.03, dx: ((k * 37 + ci * 11) % 9 - 4) * 9 }); return out; },
   coinY(r, t) { const dt = t - r.t0; return this.SKY + 40 + 1700 * dt * dt; },
   landY(r, t) { const d = this.dims(r.ci, t); return d.h > 0 ? this.F - d.h + 6 : this.F - 12; },
@@ -281,7 +287,7 @@ SCENES.buckets = {
     floorLine(c, this.F);
     if (sky > 0.01) {   // gold clouds of opportunity
       c.save(); c.globalAlpha = sky;
-      for (let k = 0; k < 7; k++) { const x = this.xs[0] - 120 + k * (this.xs[this.xs.length - 1] - this.xs[0] + 240) / 6, y = this.SKY + 10 * Math.sin(t * 1.3 + k); const g = c.createRadialGradient(x, y, 10, x, y, 120); g.addColorStop(0, 'rgba(255,214,110,0.55)'); g.addColorStop(1, 'rgba(255,214,110,0)'); c.fillStyle = g; c.beginPath(); c.ellipse(x, y, 140, 60, 0, 0, 7); c.fill(); }
+      for (let k = 0; k < 7; k++) { const x = this.xs[0] - 120 + k * (this.xs[this.xs.length - 1] - this.xs[0] + 240) / 6, y = this.SKY + 10 * Math.sin(t * 1.3 + k); const g = c.createRadialGradient(x, y, 10, x, y, 120); g.addColorStop(0, 'rgba(255,214,110,0.55)'); g.addColorStop(1, 'rgba(255,214,110,0)'); c.fillStyle = g; c.beginPath(); c.ellipse(x, y, 140, 46, 0, 0, 7); c.fill(); }
       if (sky > 0.6) spaced(c, 'OPPORTUNITY', 540, this.SKY + 16, '800 50px Inter', '#fff1c9', 8, (sky - 0.6) / 0.4, 0, false, false);
       c.restore();
     }
@@ -293,29 +299,30 @@ SCENES.buckets = {
       c.save(); c.globalAlpha = a;
       if (gold > 0.01) {   // gold inside
         const lvl = Math.min(1, gold), gy = this.F - d.h * lvl + 4, ww = lerp(wb, wt, lvl);
-        const g = c.createLinearGradient(0, gy, 0, this.F); g.addColorStop(0, 'rgba(255,212,90,0.95)'); g.addColorStop(1, 'rgba(210,150,40,0.85)');
+        const g = c.createLinearGradient(0, Math.max(gy, top), 0, this.F); g.addColorStop(0, 'rgba(255,212,90,0.95)'); g.addColorStop(1, 'rgba(210,150,40,0.85)');
         c.fillStyle = g; c.beginPath(); c.moveTo(x - ww, gy); c.lineTo(x + ww, gy); c.lineTo(x + wb, this.F - 3); c.lineTo(x - wb, this.F - 3); c.closePath(); c.fill();
         if (gold > 1) { c.shadowColor = GOLD; c.shadowBlur = 30 * Math.min(1, gold - 1); c.beginPath(); c.ellipse(x, top + 2, wt * 1.05, 14 + 30 * (gold - 1), 0, Math.PI, 2 * Math.PI); c.fill(); c.shadowBlur = 0; }
       }
       c.strokeStyle = ch.color; c.fillStyle = ch.color + '22'; c.lineWidth = 4;
       c.beginPath(); c.moveTo(x - wt, top); c.lineTo(x + wt, top); c.lineTo(x + wb, this.F - 2); c.lineTo(x - wb, this.F - 2); c.closePath(); c.fill(); c.stroke();
+      c.lineWidth = 4; c.strokeStyle = ch.color; c.beginPath(); c.ellipse(x, top, wt, Math.max(6, wt * 0.16), 0, 0, 2 * Math.PI); c.stroke();   // rim
+      c.lineWidth = 3.5; c.beginPath(); c.ellipse(x, top - 2, wt * 0.92, wt * 0.62, 0, Math.PI * 1.04, Math.PI * 1.96); c.stroke();   // handle
       c.lineWidth = 2; c.strokeStyle = ch.color + '99';
       for (let k = 1; k < 4; k++) { const u = k / 4; c.beginPath(); c.moveTo(lerp(x - wt, x - wb, u), lerp(top, this.F, u)); c.lineTo(lerp(x + wt, x + wb, u), lerp(top, this.F, u)); c.stroke(); }   // hoops
-      for (let k = -2; k <= 2; k++) { const u = k / 5; c.beginPath(); c.moveTo(x + u * 2 * wt, top); c.lineTo(x + u * 2 * wb, this.F - 2); c.stroke(); }   // planks
       c.restore();
     });
     for (const r of rains) {   // falling coins: caught by containers, bouncing off empty hands
       const dt = t - r.t0; if (dt < 0) continue; const x = this.bx(r.ci) + r.dx * (this.dims(r.ci, t).h > 0 ? 0.6 : 1) - (this.dims(r.ci, t).h > 0 ? 0 : 60), y = this.coinY(r, t), land = this.landY(r, t);
-      if (y < land) flyingCoin(c, GOLD, x, y, dt * 11 + r.ci, 1, 1.7);
-      else if (this.dims(r.ci, t).h <= 0) { const bt = dt - Math.sqrt((land - this.SKY - 40) / 1700); if (bt < 0.6) flyingCoin(c, GOLD, x + 90 * bt, land - 160 * bt + 400 * bt * bt, 1.57, 1 - ss(0.3, 0.6, bt), 1.7); }
+      if (y < land) flyingCoin(c, GOLD, x, y, dt * 11 + r.ci, 1, 2.6);
+      else if (this.dims(r.ci, t).h <= 0) { const bt = dt - Math.sqrt((land - this.SKY - 40) / 1700); if (bt < 0.6) flyingCoin(c, GOLD, x + 90 * bt, land - 160 * bt + 400 * bt * bt, 1.57, 1 - ss(0.3, 0.6, bt), 2.6); }
     }
     return charsDo((ch, i) => {
       const p = this.place(i, t), a = alphaAt(i, t), st = stateAt(i, t).state;
       if (st === 'sit') {   // deck chair
         c.save(); c.globalAlpha = a; c.strokeStyle = '#c9b48f'; c.lineWidth = 6; c.lineCap = 'round'; const x = this.cx(i);
-        c.beginPath(); c.moveTo(x - 50, this.F); c.lineTo(x + 30, this.F - 95); c.moveTo(x + 40, this.F); c.lineTo(x - 30, this.F - 60); c.moveTo(x - 40, this.F - 62); c.lineTo(x + 35, this.F - 60); c.stroke(); c.restore();
+        const k = this.kS; c.beginPath(); c.moveTo(x - 50 * k, this.F); c.lineTo(x + 30 * k, this.F - 95 * k); c.moveTo(x + 40 * k, this.F); c.lineTo(x - 30 * k, this.F - 60 * k); c.moveTo(x - 40 * k, this.F - 62 * k); c.lineTo(x + 35 * k, this.F - 60 * k); c.stroke(); c.restore();
       }
-      const J = drawChar(c, i, t, () => ({ mode: 'feet', x: this.cx(i), y: st === 'sit' ? this.F - 40 : this.F }), { s: K, sweat: moving(i, t) * 0.6 });
+      const J = drawChar(c, i, t, () => ({ mode: 'feet', x: this.cx(i), y: st === 'sit' ? this.F - 40 * this.kS : this.F }), { s: K, sweat: moving(i, t) * 0.6 });
       if (st === 'active') {   // hammer
         const dx = J.rhand[0] - J.relbow[0], dy = J.rhand[1] - J.relbow[1], L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, ex = J.rhand[0] + ux * 36 * K, ey = J.rhand[1] + uy * 36 * K;
         c.save(); c.globalAlpha = a; c.strokeStyle = '#c9b48f'; c.lineWidth = 5 * K; c.lineCap = 'round'; c.beginPath(); c.moveTo(J.rhand[0] - ux * 6, J.rhand[1] - uy * 6); c.lineTo(ex, ey); c.stroke();
@@ -333,15 +340,16 @@ SCENES.buckets = {
 // the sword slips out of their hands; shake = a chip; burst = the rock splits clean).
 const SW_UP = { la: [-2.6, -2.95], ra: [2.6, 2.95], ll: [-0.25, -0.1], rl: [0.25, 0.1], lean: -0.08, drop: -0.3 };
 const SW_DOWN = { la: [0.75, 1.3], ra: [1.0, 1.45], ll: [-0.35, 0.2], rl: [0.3, 0.05], lean: 0.18, drop: 0.25 };
-const SW_GUARD = { la: [0.45, 2.55], ra: [0.6, 2.95], ll: [-0.3, -0.12], rl: [0.3, 0.12], lean: 0, drop: 0 };
+const SW_GUARD = { la: [-0.35, -0.15], ra: [0.45, 0.95], ll: [-0.3, -0.12], rl: [0.3, 0.12], lean: 0, drop: 0 };
 SCENES.swords = {
-  facing: 'front', foley: 'blade', K: 1.35, labelRoom: 250,
+  facing: 'front', foley: 'blade', K: 1.7, labelRoom: 250,
   debrisSpan() { return null; },   // shards and chips are drawn by the scene itself
-  setup(T) { this.xs = colsX(T.chars.length, 235, 920); this.F = FLOOR_MAX; },
+  setup(T) { this.xs = colsX(T.chars.length, 240, 940); this.F = FLOOR_MAX; this.kS = this.K / 1.35; },
   floorY() { return this.F; },
-  extent() { return { x0: this.xs[0] - 120, x1: this.xs[this.xs.length - 1] + 120, y0: this.F - 330, y1: this.F + 12 }; },
-  cx(i) { return this.xs[i] - 30; }, rx(i) { return this.xs[i] + 62; },
+  extent() { return { x0: this.xs[0] - 125, x1: this.xs[this.xs.length - 1] + 125, y0: this.F - 420, y1: this.F + 12 }; },
+  cx(i) { return this.xs[i] - 40; }, rx(i) { return this.xs[i] + 62; },
   place(i, t) { return { x: this.cx(i), top: this.F - figH() * this.K, s: this.K, floor: this.F }; },
+  labelTop(i, top, t) { return Math.min(top, this.place(i, t).top - 62 * this.kS * 1.35); },   // room for the overhead swing, so the label never jumps
   hit(i) { return T.events.find(e => e.i === i && ['crash', 'shake', 'burst'].includes(e.type) && propAt(i, 'rock', e.t) > 0.5); },
   cyc(i, t) { const u = ((phaseInt(i, t, 8, 0.6, 2.4) + i * 0.41) % 1 + 1) % 1; return u < 0.55 ? ss(0, 0.55, u) : 1 - ss(0.55, 0.7, u); },
   activePose(i, t) { return blendPose(SW_GUARD, blendPose(SW_UP, SW_DOWN, this.cyc(i, t)), Math.max(moving(i, t, 0.001, 0.01), 0.75 * energyAt(t))); },
@@ -350,8 +358,8 @@ SCENES.swords = {
   poseOverride(i, t, p) { const h = this.hit(i); if (!h) return p; const w = ss(h.t - 0.55, h.t - 0.25, t) * (1 - ss(h.t + 0.5, h.t + 0.8, t)); if (w <= 0) return p; return blendPose(p, t < h.t ? SW_UP : SW_DOWN, t < h.t ? w : 1 - ss(h.t, h.t + 0.6, t) * 0.0); },
   bladeColor(ch, i, t) {
     const kind = ch.blade || 'steel', mix = (a, b, u) => { const A = parseInt(a.slice(1), 16), B = parseInt(b.slice(1), 16); return '#' + [16, 8, 0].map(s => Math.round(lerp(A >> s & 255, B >> s & 255, clamp(u))).toString(16).padStart(2, '0')).join(''); };
-    if (kind === 'gold') return mix('#ffd45a', '#8a4b2a', propAt(i, 'rust', t));
-    if (kind === 'wood') return mix('#b48a5a', '#e4ecf3', propAt(i, 'mat', t));
+    if (kind === 'gold') return mix('#ffd45a', '#a3421a', propAt(i, 'rust', t));
+    if (kind === 'wood') return mix('#c9a26b', '#e4ecf3', propAt(i, 'mat', t));
     if (kind === 'shiny') return '#efeaff';
     return '#a7b0ba';
   },
@@ -360,7 +368,7 @@ SCENES.swords = {
     floorLine(c, this.F);
     charsDo((ch, i) => {   // the test rocks
       const rk = propAt(i, 'rock', t); if (rk < 0.01) return;
-      const h = this.hit(i), x = this.rx(i), r = 50 * K * easeBack(rk), rr = rng(i * 17 + 3), a = Math.min(1, rk * 2);
+      const h = this.hit(i), x = this.rx(i), r = 40 * K * easeBack(rk), rr = rng(i * 17 + 3), a = Math.min(1, rk * 2);
       const split = h && h.type === 'burst' && t > h.t ? easeOut((t - h.t) / 0.6) : 0;
       c.save(); c.globalAlpha = a;
       for (const side of split > 0 ? [-1, 1] : [0]) {
@@ -379,22 +387,22 @@ SCENES.swords = {
       const J = drawChar(c, i, t, () => ({ mode: 'feet', x: this.cx(i), y: this.F }), { s: K, sweat: moving(i, t) * 0.7 });
       const col = this.bladeColor(ch, i, t), kind = ch.blade || 'steel';
       const dropped = h && h.type === 'crash' && kind !== 'gold' && t > h.t, snapped = h && h.type === 'crash' && kind === 'gold' && t > h.t;
-      const lying = dropped || (st === 'sit' && !h) || st === 'quit' && !snapped;
+      const lying = dropped || ((st === 'sit' || st === 'sad' || st === 'quit') && !snapped);
       let hx, hy, ux, uy;
-      if (lying) { hx = this.cx(i) + 30 * K; hy = this.F - 6; ux = 1; uy = -0.06; const n = Math.hypot(ux, uy); ux /= n; uy /= n; }
+      if (lying) { hx = this.cx(i) - 8 * K; hy = this.F - 6; ux = -0.998; uy = -0.06; }
       else { const dx = J.rhand[0] - J.relbow[0], dy = J.rhand[1] - J.relbow[1], L = Math.hypot(dx, dy) || 1; ux = dx / L; uy = dy / L; hx = J.rhand[0]; hy = J.rhand[1]; }
-      let len = (kind === 'wood' ? 74 : 84) * K * (snapped ? 0.45 : 1); const wid = (kind === 'wood' ? 9 : 7) * K;
+      let len = (kind === 'wood' ? 58 : 64) * K * (snapped ? 0.45 : 1) * (lying ? 0.8 : 1); const wid = (kind === 'wood' ? 9 : 7) * K;
       c.save(); c.globalAlpha = a; c.lineCap = 'round';
       c.strokeStyle = '#5b4632'; c.lineWidth = 7 * K; c.beginPath(); c.moveTo(hx - ux * 14 * K, hy - uy * 14 * K); c.lineTo(hx + ux * 8 * K, hy + uy * 8 * K); c.stroke();   // grip
-      if (kind !== 'wood' || propAt(i, 'mat', t) > 0.35) { c.strokeStyle = '#c9ced6'; c.lineWidth = 5 * K; c.beginPath(); c.moveTo(hx + ux * 8 * K - uy * 16 * K, hy + uy * 8 * K + ux * 16 * K); c.lineTo(hx + ux * 8 * K + uy * 16 * K, hy + uy * 8 * K - ux * 16 * K); c.stroke(); }   // guard
+      if (kind !== 'wood' || propAt(i, 'mat', t) > 0.35) { c.strokeStyle = kind === 'gold' ? '#ffd45a' : '#c9ced6'; c.lineWidth = 5 * K; c.beginPath(); c.moveTo(hx + ux * 8 * K - uy * 16 * K, hy + uy * 8 * K + ux * 16 * K); c.lineTo(hx + ux * 8 * K + uy * 16 * K, hy + uy * 8 * K - ux * 16 * K); c.stroke(); }   // guard
       const bx0 = hx + ux * 10 * K, by0 = hy + uy * 10 * K, bx1 = bx0 + ux * len, by1 = by0 + uy * len;
       c.strokeStyle = col; c.lineWidth = wid; if (kind === 'shiny' || (kind === 'wood' && propAt(i, 'mat', t) > 0.8) || (kind === 'gold' && propAt(i, 'rust', t) < 0.3)) { c.shadowColor = col; c.shadowBlur = 14; }
       c.beginPath(); c.moveTo(bx0, by0); c.lineTo(bx1, by1); c.stroke(); c.shadowBlur = 0;
-      if (kind === 'gold' && propAt(i, 'rust', t) > 0.15) { const rr = rng(i * 7 + 1), n = Math.round(10 * propAt(i, 'rust', t)); c.fillStyle = '#6b3519'; for (let k = 0; k < n; k++) { const u = 0.15 + 0.8 * rr(); c.beginPath(); c.arc(bx0 + ux * len * u + (rr() - .5) * 4, by0 + uy * len * u + (rr() - .5) * 4, 2.5 + 3 * rr(), 0, 7); c.fill(); } }
+      if (kind === 'gold' && propAt(i, 'rust', t) > 0.15) { c.strokeStyle = '#ffd45a'; c.lineWidth = wid * 0.5; c.beginPath(); c.moveTo(bx1 - ux * len * 0.12, by1 - uy * len * 0.12); c.lineTo(bx1, by1); c.stroke(); const rr = rng(i * 7 + 1), n = Math.round(12 * propAt(i, 'rust', t)); c.fillStyle = '#e07a2e'; for (let k = 0; k < n; k++) { const u = 0.15 + 0.8 * rr(); c.beginPath(); c.arc(bx0 + ux * len * u + (rr() - .5) * 4, by0 + uy * len * u + (rr() - .5) * 4, 2.5 + 3 * rr(), 0, 7); c.fill(); } }
       if (kind === 'shiny' && !lying) { const sp = (t * 1.7 + i) % 1; c.fillStyle = '#ffffff'; c.globalAlpha = a * Math.sin(Math.PI * sp); c.beginPath(); c.arc(bx0 + ux * len * sp, by0 + uy * len * sp, 5, 0, 7); c.fill(); }
       c.restore();
       if (snapped && t < h.t + 1.4) { const dt = t - h.t, fx = bx1 + 160 * dt, fy = by1 - 380 * dt + 1100 * dt * dt; if (fy < this.F) { c.save(); c.translate(fx, fy); c.rotate(dt * 14); c.strokeStyle = col; c.lineWidth = wid; c.beginPath(); c.moveTo(-len * 0.6, 0); c.lineTo(len * 0.6, 0); c.stroke(); c.restore(); } }
-      else if (snapped) { c.save(); c.globalAlpha = a; c.strokeStyle = col; c.lineWidth = wid; c.beginPath(); c.moveTo(this.rx(i) + 40, this.F - 5); c.lineTo(this.rx(i) + 40 + len * 1.2, this.F - 9); c.stroke(); c.restore(); }
+      else if (snapped) { c.save(); c.globalAlpha = a; c.strokeStyle = col; c.lineWidth = wid; c.beginPath(); c.moveTo(this.rx(i) + 10, this.F - 5); c.lineTo(this.rx(i) + 10 + len * 1.1, this.F - 9); c.stroke(); c.restore(); }
       return p;
     });
   },
@@ -406,24 +414,24 @@ SCENES.swords = {
 // through (0..1, walks through the doorway into the light). A head too big for the doorway hits the lintel.
 const WALK = ph => { const leg = p => { const th = 0.55 * Math.sin(p); return [th, th - 0.15 - 0.7 * Math.max(0, Math.cos(p))]; }, arm = p => { const u = -0.6 * Math.sin(p); return [u, u + 0.9]; }; return { la: arm(ph + Math.PI), ra: arm(ph), ll: leg(ph), rl: leg(ph + Math.PI), lean: 0.12, drop: -0.05 }; };
 SCENES.doors = {
-  facing: 'right', sideLabels: true, foley: 'step', labelMaxX: 772, labelGap: 72,
+  facing: 'right', sideLabels: true, labelSide: -1, foley: 'step', labelMaxX: 812, labelGap: 72,
   setup(T) {
     const n = T.chars.length; this.gap = Math.min(330, 1150 / n); this.s = clamp((this.gap - 110) / 175, 0.85, 1.25);
-    this.y0 = 1450 - (n - 1) * this.gap; this.x0 = 105; this.DOOR = 800; this.DH = (figH() + 22) * this.s;
+    this.y0 = 1450 - (n - 1) * this.gap; this.x0 = 520; this.DOOR = 840; this.DH = (figH() + 22) * this.s;
   },
   laneY(i) { return this.y0 + i * this.gap; },
   xAt(i, t) { return this.x0 + fracAt(i, t) * (this.DOOR - 70 - this.x0) + propAt(i, 'through', t) * 190; },
   head(i, t) { return 1 + 1.6 * propAt(i, 'ego', t); },
-  extent() { return { x0: this.x0 - 60, x1: this.DOOR + 220, y0: this.y0 - this.DH - 120, y1: this.y0 + (T.chars.length - 1) * this.gap + 50 }; },
+  extent() { return { x0: 40, x1: this.DOOR + 220, y0: this.y0 - this.gap * 0.95 - 140, y1: this.y0 + (T.chars.length - 1) * this.gap + 50 }; },
   place(i, t) { const y = this.laneY(i), hs = this.head(i, t), extra = (hs - 1) * 2 * 27 * this.s; return { x: this.xAt(i, t), top: y - figH() * this.s - extra, s: this.s, floor: y, footY: y }; },
   activePose(i, t) { const w = moving(i, t, 0.002, 0.02); return blendPose(POSES.stand, WALK(this.xAt(i, t) / (13 * this.s)), Math.max(w, 0)); },
   idlePose() { return POSES.stand; },
-  stuckPose(i, t) { const k = Math.sin(t * 13 + i); return { la: [0.9, 1.9 + 0.2 * k], ra: [1.2, 2.2 - 0.2 * k], ll: [-0.35, -0.15], rl: [0.4, 0.2], lean: -0.25, drop: 0.1 }; },
+  stuckPose(i, t) { const k = Math.sin(t * 17 + i) * 1.4; return { la: [0.9, 1.9 + 0.2 * k], ra: [1.2, 2.2 - 0.2 * k], ll: [-0.35, -0.15], rl: [0.4, 0.2], lean: -0.25, drop: 0.1 }; },
   poseOverride(i, t, p) { const stuck = propAt(i, 'stuck', t); return stuck > 0.01 ? blendPose(p, this.stuckPose(i, t), stuck) : p; },
   draw(c, t) {
     const n = T.chars.length, top = this.y0 - this.gap * 0.95, bot = this.y0 + (n - 1) * this.gap + 6, D = this.DOOR;
     const g = c.createLinearGradient(D, 0, D + 260, 0); g.addColorStop(0, 'rgba(255,214,120,0.30)'); g.addColorStop(1, 'rgba(255,214,120,0)'); c.fillStyle = g; c.fillRect(D, top, 260, bot - top);   // light beyond the doors
-    spaced(c, 'NEXT LEVEL', D + 70, top - 26, '800 44px Inter', '#ffe3a1', 6, 0.95, 10, false, false);
+    spaced(c, 'NEXT LEVEL', D + 40, top - 92, '800 44px Inter', '#ffe3a1', 6, 0.95, 10, false, false);
     charsDo((ch, i) => floorLine(c, this.laneY(i), -200, W + 200, 0.16));
     const P = charsDo((ch, i) => {
       const y = this.laneY(i), st = stateAt(i, t).state;
@@ -436,6 +444,8 @@ SCENES.doors = {
       c.strokeStyle = 'rgba(255,255,255,0.10)'; c.lineWidth = 2; for (let yy = nextTop + 18; yy < ly - 4; yy += 18) { c.beginPath(); c.moveTo(D - WW / 2, yy); c.lineTo(D + WW / 2, yy); c.stroke(); }
       const lg = c.createLinearGradient(D - WW / 2, 0, D + WW / 2, 0); lg.addColorStop(0, 'rgba(255,220,130,0.25)'); lg.addColorStop(1, 'rgba(255,220,130,0.6)'); c.fillStyle = lg; c.fillRect(D - WW / 2, ly, WW, y - ly);
       c.strokeStyle = GOLD; c.lineWidth = 4; c.beginPath(); c.moveTo(D - WW / 2, y); c.lineTo(D - WW / 2, ly); c.lineTo(D + WW / 2, ly); c.lineTo(D + WW / 2, y); c.stroke();
+      const dw = this.DH * 0.42; c.fillStyle = 'rgba(120,86,52,0.9)'; c.strokeStyle = '#d9b77e'; c.lineWidth = 3; c.beginPath(); c.moveTo(D + WW / 2, ly + 2); c.lineTo(D + WW / 2 + dw, ly + 18); c.lineTo(D + WW / 2 + dw, y - 6); c.lineTo(D + WW / 2, y); c.closePath(); c.fill(); c.stroke();   // the open door
+      c.fillStyle = GOLD; c.beginPath(); c.arc(D + WW / 2 + dw * 0.82, (ly + y) / 2 + 6, 5, 0, 7); c.fill();
       if (T.__lines) T.__lines.push({ y: ly, x0: D - WW / 2, x1: D + WW / 2 });
     }
     if (T.__vlines) T.__vlines.push({ x: D, y0: top, y1: bot });

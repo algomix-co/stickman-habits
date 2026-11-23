@@ -31,7 +31,7 @@ const EXPR = { active: 'determined', idle: 'neutral', stand: 'neutral', boast: '
 
 const POSES = {
   stand: { la: [-0.18, -0.08], ra: [0.18, 0.08], ll: [-0.14, -0.08], rl: [0.14, 0.08], lean: 0, drop: 0 },
-  cheer: { la: [-2.5, -2.85], ra: [2.5, 2.85], ll: [-0.2, -0.12], rl: [0.2, 0.12], lean: 0, drop: -0.3 },
+  cheer: { la: [-2.1, -2.4], ra: [2.1, 2.4], ll: [-0.2, -0.12], rl: [0.2, 0.12], lean: 0, drop: -0.3 },
   throw: { la: [-0.35, -0.15], ra: [2.2, 2.75], ll: [-0.22, -0.1], rl: [0.2, 0.12], lean: -0.06, drop: 0 },
   sad: { la: [-0.04, 0.02], ra: [0.04, -0.02], ll: [-0.1, -0.06], rl: [0.1, 0.06], lean: 0.12, drop: 1 },
   fall: { la: [-2.2, -1.5], ra: [2.0, 2.6], ll: [-0.7, 0.3], rl: [0.6, -0.2], lean: -0.35, drop: -0.5 },
@@ -339,7 +339,7 @@ function poseOf(state, i, t) {
   if (state === 'quit') return (T.scene.quitPose && T.scene.quitPose(i, t)) || POSES.sit;
   return POSES[state] || POSES.stand;
 }
-function cheerAnim(t, i) { const k = Math.sin(t * 7 + i * 1.3), up = Math.max(0, k); return { la: [-2.45 + 0.4 * k, -2.85 + 0.35 * k], ra: [2.45 - 0.4 * k, 2.85 - 0.35 * k], ll: [-0.3, -0.1 - 0.5 * up], rl: [0.3, 0.1 + 0.5 * up], lean: 0, drop: -0.35 }; }
+function cheerAnim(t, i) { const k = Math.sin(t * 7 + i * 1.3), up = Math.max(0, k); return { la: [-2.05 + 0.25 * k, -2.4 + 0.2 * k], ra: [2.05 - 0.25 * k, 2.4 - 0.2 * k], ll: [-0.3, -0.1 - 0.5 * up], rl: [0.3, 0.1 + 0.5 * up], lean: 0, drop: -0.35 }; }
 function poseAt(i, t) { const tl = T.stateTL[i]; let p = poseOf(tl[0][1], i, t); for (let k = 1; k < tl.length; k++) { const [tk, st] = tl[k]; if (t < tk) break; p = blendPose(p, poseOf(st, i, t), ss(tk, tk + (st === 'fall' ? 0.15 : 0.35), t)); } if (T.scene.poseOverride) p = T.scene.poseOverride(i, t, p); return gestureLayer(i, t, p); }
 const moving = (i, t, lo = 0.002, hi = 0.02) => ss(lo, hi, Math.abs(fracRate(i, t)));
 const alphaAt = (i, t) => (T.question && t >= T.question.t0 + 0.2) ? 1 : 1 - 0.62 * ss(T.dimTL[i], T.dimTL[i] + 1, t);
@@ -475,6 +475,7 @@ function drawEffects(c, t, P) {
         const x = span.x + (d.a - .5) * 900 * tt, y = Math.min(floorNow - (coins ? 13 : 3), dy0 + lerp(span.y1, span.y0, d.b) - (150 + d.c * 650) * tt + 1400 * tt * tt);
         const landed = y >= floorNow - (coins ? 14 : 4), al = 1 - ss(1.2, 2.2, tt);
         if (coins) flyingCoin(c, T.chars[e.i].color, x, y, landed ? 1.57 : tt * (4 + 12 * d.d), al);
+        else if (T.scene.debris === 'planks') { c.save(); c.globalAlpha = al; c.translate(x, Math.min(y, floorNow - 6)); c.rotate(landed ? 0.1 : tt * (5 + 10 * d.d)); c.fillStyle = T.chars[e.i].color + '40'; c.strokeStyle = T.chars[e.i].color; c.lineWidth = 2.5; c.beginPath(); c.roundRect(-26, -5, 52, 10, 3); c.fill(); c.stroke(); c.restore(); }
         else if (T.scene.debris === 'bricks') { c.save(); c.globalAlpha = al; c.translate(x, Math.min(y, floorNow - 9)); c.rotate(landed ? 0 : tt * (5 + 10 * d.d)); c.fillStyle = T.chars[e.i].color + '40'; c.strokeStyle = T.chars[e.i].color; c.lineWidth = 2; c.beginPath(); c.roundRect(-14, -8, 28, 16, 3); c.fill(); c.stroke(); c.restore(); }
         else { const an = landed ? 0 : tt * (6 + 14 * d.d), L = 8 + 14 * d.c; c.save(); c.globalAlpha = al; c.strokeStyle = T.chars[e.i].color; c.lineWidth = 3; c.lineCap = 'round'; c.beginPath(); c.moveTo(x - Math.cos(an) * L / 2, y - Math.sin(an) * L / 2); c.lineTo(x + Math.cos(an) * L / 2, y + Math.sin(an) * L / 2); c.stroke(); c.restore(); }
       }
@@ -547,7 +548,7 @@ function captionBlock(t, tm, C = ctx) {
   xoff += textShake(t);
   const crashHit = T.events.some(e => (e.type === 'crash' || e.type === 'shake') && t > e.t && t < e.t + 0.45), burstHit = T.burst && t > T.burst.t && t < T.burst.t + 0.8;
   const capColor = c0 => crashHit ? RED : burstHit ? GOLD : c0;
-  let bottom, wb = 0;
+  let bottom, wb = 0, cY = 260;
   if (st.captionStyle === 'bold') {
     const pz = (st.transition === 'dayzoom' || st.transition === 'cut') && B.bi > 0 ? 1 + 0.35 * (1 - easeOut(clamp((t - B.t0) / 0.4))) : 1;
     if (counter && tm.kind !== 'rewind') { C.save(); C.translate(W / 2, 150 + yo); C.scale(pz, pz); spaced(C, counter, 0, 0, '700 40px Inter', '#9aa6b2', 6, 1, 0, false); C.restore(); }
@@ -561,19 +562,19 @@ function captionBlock(t, tm, C = ctx) {
       C.globalAlpha = a; C.fillStyle = crashHit ? '#ffd5da' : (gold || burstHit) ? GOLD : '#f4f6f8'; C.beginPath(); C.roundRect(W / 2 - w / 2 + xoff, 160 + yo, w, h, 22); C.fill(); C.restore();
       lines.forEach((ln, k) => { wb += drawWords(C, ln, W / 2 + xoff, 160 + yo + 60 + k * 60, '800 46px Inter', 1, INK, a, 0, tStart, clock, wb, 46); });
     }
-    const by = 160 + yo + Math.max(1, lines.length) * 60 + 30;
+    const by = 160 + yo + Math.max(1, lines.length) * 60 + 30; cY = by + 46;
     if (counter && tm.kind !== 'hook' && tm.kind !== 'rewind') spaced(C, counter, W / 2, by + 46, '700 32px Inter', '#9aa3ad', 5, 1, 0, true);
     bottom = by + 46;
   } else {
     const lines = text ? wrapText(text, '700 50px Inter', 4, 740) : [];
     lines.forEach((ln, k) => { wb += drawWords(C, ln, W / 2 + xoff, 210 + yo + k * 62, '700 50px Inter', 4, capColor(color), a, gold || burstHit ? 16 : 4, tStart, clock, wb); });
-    const n = Math.max(1, lines.length);
+    const n = Math.max(1, lines.length); cY = 210 + yo + n * 62 - 2;
     if (counter && tm.kind !== 'rewind') spaced(C, counter, W / 2, 210 + yo + n * 62 - 2, '700 32px Inter', '#9aa3ad', 6, a, 0, true);
     bottom = 210 + yo + n * 62;
   }
   if (st.transition === 'dayzoom' && st.captionStyle !== 'bold' && B.bi > 0 && counter && tm.kind !== 'hook') {
     const du = (t - B.t0) / 0.45;
-    if (du >= 0 && du < 1) { const sc2 = lerp(2.0, 1, easeOut(du)), y = lerp(470, 240 + yo, easeIO(du)); C.save(); C.translate(W / 2, y); C.scale(sc2, sc2); spaced(C, counter, 0, 0, '800 64px Inter', '#ffffff', 2, 1 - ss(0.6, 1, du), 24); C.restore(); }
+    if (du >= 0 && du < 1) { const sc2 = lerp(1.8, 1, easeOut(du)), y = lerp(cY + 230, cY, easeIO(du)); C.save(); C.translate(W / 2, y); C.scale(sc2, sc2); spaced(C, counter, 0, 0, '800 64px Inter', '#ffffff', 2, 1 - ss(0.6, 1, du), 24); C.restore(); }
   }
   if (q && tm.kind !== 'endcard') { const L = T.chars.map((_, k) => String.fromCharCode(65 + k)).join(' · '); spaced(C, 'COMMENT ' + L, W / 2, bottom + 42, '800 32px Inter', '#ffffff', 4, ss(B.t0 + 0.4, B.t0 + 0.8, t)); if (C === scratchC) CAPRECTS.push({ x0: 300, x1: 780, y0: bottom + 42 - 26, y1: bottom + 48, text: 'COMMENT' }); bottom += 42; }
   if (T.spec.footnote) { const ft = T.beats[Math.max(0, T.beats.length - 2)].t0; const fl = wrapText(T.spec.footnote.toUpperCase(), '700 28px Inter', 1, 860); fl.forEach((ln, k) => { spaced(C, ln, W / 2, bottom + 40 + k * 34, '700 28px Inter', '#9aa3ad', 1, ss(ft + .2, ft + 1, t), 0, true); if (C === scratchC && t > ft + .4) { C.font = '700 28px Inter'; const w = C.measureText(ln).width; CAPRECTS.push({ x0: 540 - w / 2, x1: 540 + w / 2, y0: bottom + 40 + k * 34 - 22, y1: bottom + 40 + k * 34 + 6, text: ln }); } }); bottom += 40 + (fl.length - 1) * 34; }
@@ -629,7 +630,7 @@ function drawLabels(t, P, boardTop) {
   const board = T.style.labels === 'board', nonum = noNum(), fw = focusWeights(t);
   const meas = (text, font, sp) => { sc.font = font; sc.letterSpacing = sp + 'px'; return sc.measureText(text).width; };
   const L = T.chars.map((ch, i) => {
-    const p = { ...P[i], s: clamp(T.__z || 1, 0.92, 1.08) * (T.style.labelScale || 1) }, s = p.s, rate = fracRate(i, t), grow = (1 + 0.16 * fw[i]) * (1 + 0.25 * clamp(Math.abs(rate) * 2.2)) * (1 + 0.35 * Math.max(0, ...T.milestones.filter(m => m.i === i).map(m => bump(m.t, m.t + 0.45, t)))) * (1 + 0.3 * rollPop(i, t));
+    const p = { ...P[i], s: clamp(T.__z || 1, 0.92, 1.08) * (T.style.labelScale || 1) }, s = p.s, rate = fracRate(i, t), grow = (1 + 0.16 * fw[i]) * (1 + 0.25 * clamp(Math.abs(rate) * 2.2)) * (1 + 0.35 * Math.max(0, ...T.milestones.filter(m => m.i === i).map(m => bump(m.t, m.t + 0.45, t)))) * (1 + 0.3 * rollPop(i, t)) * (T.scene.sideLabels ? 0.9 : 1);
     const numW = nonum ? 0 : meas(fmt(value(i, t)), `800 ${(60 * s * grow).toFixed(1)}px Inter`, 0);
     const nf0 = `800 ${(34 * s * grow).toFixed(1)}px Inter`, nameW = meas(ch.name, nf0, 2), words = ch.name.split(' ');
     let split = null; if (words.length > 1) { let best = null; for (let k = 1; k < words.length; k++) { if (/^[=&+]$/.test(words[k]) || /^[=&+]$/.test(words[k - 1])) continue; const l1 = words.slice(0, k).join(' '), l2 = words.slice(k).join(' '), w2 = Math.max(meas(l1, nf0, 2), meas(l2, nf0, 2)) + (Math.min(l1.length, l2.length) <= 2 ? 999 : 0); if (!best || w2 < best[0]) best = [w2, l1, l2]; } split = best && best[0] < 900 ? best : null; }
@@ -655,18 +656,19 @@ function drawLabels(t, P, boardTop) {
     blk.sort((u, v) => u[0] - v[0]); const free = []; let cur = 40; for (const [u0, u1] of blk) { if (u0 > cur) free.push([cur, Math.min(u0, 950)]); cur = Math.max(cur, u1); } if (cur < 950) free.push([cur, 950]);
     const own = bodyBox(q.i, 0), cx = own ? (own.x0 + own.x1) / 2 : q.x;
     const fitW = () => q.w * q.f;
-    const tryFit = () => { let best = null; for (const [f0, f1] of free) { if (f1 - f0 < fitW()) continue; const x = clamp(cx, f0 + fitW() / 2, f1 - fitW() / 2), d = Math.abs(x - cx); if (!best || d < best[0]) best = [d, x]; } return best; };
+    const tryFit = () => { let best = null; for (const [f0, f1] of free) { if (f1 - f0 < fitW()) continue; const x = clamp(cx, f0 + fitW() / 2, f1 - fitW() / 2), d = Math.abs(x - cx); if (d > 140) continue; if (!best || d < best[0]) best = [d, x]; } return best; };   // never drift far from its owner
     let got = tryFit();
     if ((!got || got[0] > 160) && q.split && q.lines.length === 1) { const keep = [q.lines, q.w]; q.lines = [q.split[1], q.split[2]]; q.w = Math.max(q.numW, q.split[0], q.tagW); const g2 = tryFit(); if (g2 && (!got || g2[0] < got[0])) got = g2; else [q.lines, q.w] = keep; }
     if (!got) { const f0 = q.f; for (const [a0, a1] of free) { const k = (a1 - a0) / q.w; if (k >= 0.85 && k < q.f && Math.abs((a0 + a1) / 2 - cx) < 260) { q.f = Math.min(q.f, k); got = [0, (a0 + a1) / 2]; break; } } if (!got) q.f = f0; }
     if (got) q.x = got[1];
+    else { let topB = 1e9; for (const [u0, u1] of blk) if (q.x + q.w * q.f / 2 > u0 && q.x - q.w * q.f / 2 < u1) T.chars.forEach((_, o) => { const bx = o === q.i ? null : bodyBox(o, 10); if (bx && bx.x0 <= u1 && bx.x1 >= u0) topB = Math.min(topB, bx.y0); }); if (topB < 1e9) q.lift += Math.max(0, yb - (topB - 12)); }   // no room beside: rise above the obstacle
   }
   if (T.scene.sideLabels) for (const q of L) { const p = P[q.i], off = (70 + (T.scene.labelGap || 0)) * p.s + 18, maxR = T.scene.labelMaxX ? T.__X(T.scene.labelMaxX) : 950, pad = ((T.question || T.spec.question) ? 90 : 10) * q.s;
     q.lift = 0; q.top = p.floor - 0.3 * (p.floor - p.top);
-    const fit = () => { const half = q.w * q.f / 2, rightX = p.x + off + half, leftX = p.x - off - 26 * q.s - half; if (rightX + half + pad <= maxR) return [1, rightX]; if (leftX - half >= 40) return [-1, leftX]; return null; };
+    const fit = () => { const half = q.w * q.f / 2, rightX = Math.max(p.x + off, ((bodyBox(q.i, 12) || {}).x1 || -1e9)) + half, leftX = (T.scene.labelSide === -1 ? Math.min(p.x - (64 * p.s + 18), ((bodyBox(q.i, 12) || {}).x0 || 1e9)) : p.x - off - 26 * q.s) - half, R = rightX + half + pad <= maxR, Lf = leftX - half >= 40; if (T.scene.labelSide === -1) { if (Lf) return [-1, leftX]; if (R) return [1, rightX]; return null; } if (R) return [1, rightX]; if (Lf) return [-1, leftX]; return null; };
     let got = fit();
     if (!got && q.split && q.lines.length === 1) { q.lines = [q.split[1], q.split[2]]; q.w = Math.max(q.numW, q.split[0], q.tagW); got = fit(); }   // tight spot: wrap the name first
-    if (!got) { const half = q.w * q.f / 2; got = [1, Math.min(p.x + off + half, maxR + 60 - half)]; }
+    if (!got) { const x0 = Math.max(p.x + off, ((bodyBox(q.i, 12) || {}).x1 || -1e9)), room = maxR + 60 - x0; q.f = clamp(room / q.w, 0.75, q.f); got = [1, x0 + q.w * q.f / 2]; }   // last resort: shrink to fit beside, never on the body
     q.side = got[0]; q.x = got[1]; }
   T.__labels = L;
   T.chars.forEach((ch, i) => {
@@ -696,25 +698,37 @@ function drawLabels(t, P, boardTop) {
       sc.font = '800 32px Inter'; sc.letterSpacing = '1px'; sc.textAlign = 'left'; sc.fillText(ch.name, x0 + 24, y); sc.textAlign = 'right'; sc.letterSpacing = '0px'; sc.font = '800 38px Inter'; sc.fillText(fmt(value(i, t)), x1, y + 2); RECTS.push({ owner: 300 + i, text: 'leaderboard ' + ch.name, x0: x0, x1: x1, y0: y - 32, y1: y + 8 }); sc.restore();
     });
   }
-  for (const bb of T.bubbles) {
+  for (const bb of T.bubbles) {   // speech: a plate with a tail to the speaker's head, beside the head (never on the name label)
     if (t < bb.t0 || t > bb.t1) continue;
-    const q = L[bb.i], s = q.s, a = ss(bb.t0, bb.t0 + .2, t) * (1 - ss(bb.t1 - .25, bb.t1, t));
-    const y = q.stackTop - 14 * s - 6 * (1 - a);
-    const gap = yTop => { const R0 = (y > 860 && y < 1720) ? 950 : W - 24, blk = [];
-      for (const o of L) { if (o.i === bb.i && !T.scene.sideLabels) continue; const b = bodyBox(o.i, 10); if (o.i === bb.i) { if (b && !(y + 8 < b.y0 || yTop > b.y1)) blk.push([b.x0, b.x1]); continue; } if (b && !(y + 8 < b.y0 || yTop > b.y1)) blk.push([b.x0, b.x1]);
-        const oy0 = o.stackTop - 4, oy1 = o.top - o.lift; if (!(y + 6 < oy0 || yTop > oy1)) blk.push([o.x - o.w * o.f / 2 - 12, o.x + o.w * o.f / 2 + 12]); }
-      const own = bodyBox(bb.i, 0), cx = own ? (own.x0 + own.x1) / 2 : q.x; blk.sort((u, v) => u[0] - v[0]);
-      const free = []; let cur = 24; for (const [u0, u1] of blk) { if (u0 > cur) free.push([cur, Math.min(u0, R0)]); cur = Math.max(cur, u1); } if (cur < R0) free.push([cur, R0]);
-      let best = null; for (const f of free) { const d = cx < f[0] ? f[0] - cx : cx > f[1] ? cx - f[1] : 0, w = f[1] - f[0]; const sc0 = d - Math.min(w, 400) * 0.6; if (!best || sc0 < best[0]) best = [sc0, f]; }
-      return best ? best[1] : [24, R0]; };
-    let [left, right] = gap(y - 28 * s);
-    const bf0 = `italic 700 ${(36 * s).toFixed(1)}px Inter`, w0 = meas(bb.text, bf0, 0);
-    let lines = [bb.text], wl = w0;
-    if (w0 * 0.85 > right - left && bb.text.includes(' ')) { [left, right] = gap(y - 28 * s - 38 * s); /* two lines: clear the taller box */ const ws = bb.text.split(' '); let best = null; for (let k = 1; k < ws.length; k++) { const a1 = ws.slice(0, k).join(' '), a2 = ws.slice(k).join(' '), m = Math.max(meas(a1, bf0, 0), meas(a2, bf0, 0)); if (!best || m < best[0]) best = [m, a1, a2]; } lines = [best[1], best[2]]; wl = best[0]; }   // too wide for the gap: two lines
-    const kf = clamp((right - left) / wl, 0.85, 1), w = wl * kf, bf = `italic 700 ${(36 * s * kf).toFixed(1)}px Inter`, lh = 36 * s * kf * 1.05;
-    const x = right - left >= w ? clamp(q.x, left + w / 2, right - w / 2) : (left + right) / 2;
+    const q = L[bb.i], s = q.s, a = ss(bb.t0, bb.t0 + .2, t) * (1 - ss(bb.t1 - .25, bb.t1, t)), J = T.__joints[bb.i];
+    const hx = J ? T.__X(J.head[0]) : q.x, hy = J ? T.__Y(J.head[1]) : q.stackTop, hr = J ? J.hr * (T.__z || 1) : 30 * s;
+    const bf0 = `italic 700 ${(34 * s).toFixed(1)}px Inter`, PAD = 14 * s, LH = 34 * s * 1.08;
+    const blockers = (y0, y1) => { const blk = [];
+      for (const o of L) { const ob = o.i === bb.i ? null : bodyBox(o.i, 10); if (ob && !(y1 < ob.y0 || y0 > ob.y1)) blk.push([ob.x0, ob.x1]);
+        const oy0 = (o.stackTop != null ? o.stackTop : o.top - o.lift - 80) - 6, oy1 = o.top - o.lift + 8; if (!(y1 < oy0 || y0 > oy1)) blk.push([o.x - o.w * o.f / 2 - 12, o.x + o.w * o.f / 2 + 12]); }
+      if (J) { if (!(y1 < hy - hr - 8 || y0 > hy + hr + 8)) blk.push([hx - hr - 14, hx + hr + 14]); for (const hd of J.hands) { const X = T.__X(hd[0]), Y = T.__Y(hd[1]); if (!(y1 < Y - 14 || y0 > Y + 14)) blk.push([X - 16, X + 16]); } }
+      for (const C of CAPRECTS) if (!(y1 < C.y0 || y0 > C.y1)) blk.push([C.x0, C.x1]);
+      return blk.sort((u, v) => u[0] - v[0]); };
+    const freeAt = (y0, y1) => { const R0 = (y1 > 860 && y0 < 1720) ? 950 : W - 24, out = []; let cur = 24; for (const [u0, u1] of blockers(y0, y1)) { if (u0 > cur) out.push([cur, Math.min(u0, R0)]); cur = Math.max(cur, u1); } if (cur < R0) out.push([cur, R0]); return out; };
+    const layouts = [[bb.text]]; if (bb.text.includes(' ')) { const ws = bb.text.split(' '); let best = null; for (let k = 1; k < ws.length; k++) { const a1 = ws.slice(0, k).join(' '), a2 = ws.slice(k).join(' '), m = Math.max(meas(a1, bf0, 0), meas(a2, bf0, 0)); if (!best || m < best[0]) best = [m, a1, a2]; } layouts.push([best[1], best[2]]); }
+    let pick = null;
+    for (const lines of layouts) {   // beside the head first (one line, then two), nearest side wins
+      const tw = Math.max(...lines.map(ln => meas(ln, bf0, 0))), bw = tw + 2 * PAD, bh = lines.length * LH + 2 * PAD * 0.7, yc = hy - hr * 0.35, y0 = yc - bh / 2, y1 = yc + bh / 2;
+      for (const [f0, f1] of freeAt(y0, y1)) { if (f1 - f0 < bw) continue; const x = clamp(hx, f0 + bw / 2, f1 - bw / 2), d = Math.abs(x - hx); if (Math.abs(x - hx) > hr + 18 + bw / 2 + 140) continue; if (!pick || d < pick.d) pick = { lines, x, yc, bw, bh, d, tw }; }
+      if (pick) break;
+    }
+    if (!pick) { const lines = layouts[layouts.length - 1], tw = Math.max(...lines.map(ln => meas(ln, bf0, 0))), bw = tw + 2 * PAD, bh = lines.length * LH + 2 * PAD * 0.7; let yc = q.stackTop - 18 * s - bh / 2, x = clamp(q.x, bw / 2 + 30, 950 - bw / 2);   // fallback: above the label stack, in the nearest free gap
+      for (let tries = 0; tries < 4; tries++) { let best = null; for (const [f0, f1] of freeAt(yc - bh / 2, yc + bh / 2)) { if (f1 - f0 < bw) continue; const xx = clamp(q.x, f0 + bw / 2, f1 - bw / 2); if (!best || Math.abs(xx - q.x) < Math.abs(best - q.x)) best = xx; } if (best != null && Math.abs(best - q.x) < 260) { x = best; break; } yc -= bh * 0.6; }
+      pick = { lines, x, yc, bw, bh, tw, above: true }; }
+    const { lines, x, yc, bw, bh } = pick, col = T.chars[bb.i].color, bx0 = x - bw / 2, by0 = yc - bh / 2;
+    sc.save(); sc.globalAlpha = a * 0.92; sc.fillStyle = 'rgba(8,10,14,0.9)'; sc.strokeStyle = col; sc.lineWidth = 2.5;
+    // tail: from the plate edge toward the head
+    const tx = pick.above ? clamp(hx, bx0 + 18, bx0 + bw - 18) : (x < hx ? bx0 + bw : bx0), ty = pick.above ? by0 + bh : yc + bh * 0.15, ang = Math.atan2(hy - ty, hx - tx), tl = Math.max(0, Math.min(46 * s, Math.hypot(hx - tx, hy - ty) - hr - 6));
+    sc.beginPath(); sc.roundRect(bx0, by0, bw, bh, 16 * s); sc.fill(); sc.stroke();
+    if (tl > 6) { const nx = -Math.sin(ang), ny = Math.cos(ang), b0 = 9 * s; sc.beginPath(); sc.moveTo(tx + nx * b0 - Math.cos(ang) * 3, ty + ny * b0 - Math.sin(ang) * 3); sc.lineTo(tx + Math.cos(ang) * tl, ty + Math.sin(ang) * tl); sc.lineTo(tx - nx * b0 - Math.cos(ang) * 3, ty - ny * b0 - Math.sin(ang) * 3); sc.closePath(); sc.fill(); sc.beginPath(); sc.moveTo(tx + nx * b0, ty + ny * b0); sc.lineTo(tx + Math.cos(ang) * tl, ty + Math.sin(ang) * tl); sc.lineTo(tx - nx * b0, ty - ny * b0); sc.stroke(); }
+    sc.restore();
     let shown = Math.ceil(bb.text.length * clamp((t - bb.t0) / 0.45));
-    lines.forEach((ln, k) => { const yy = y - (lines.length - 1 - k) * lh, part = ln.slice(0, Math.max(0, shown)); shown -= ln.length + 1; spaced(sc, part, x, yy, bf, T.chars[bb.i].color, 0, a); if (a > 0.5) rectOf(bb.i, ln, x, yy, bf, 0); });
+    lines.forEach((ln, k) => { const yy = by0 + PAD * 0.7 + LH * (k + 0.78), part = ln.slice(0, Math.max(0, shown)); shown -= ln.length + 1; spaced(sc, part, x, yy, bf0, '#f2f5f8', 0, a, 0, true, false); if (a > 0.5) RECTS.push({ owner: bb.i, text: ln, x0: bx0, x1: bx0 + bw, y0: by0 + k * LH, y1: by0 + (k + 1) * LH + PAD, bubble: true }); });
   }
   for (const e of T.events) if (e.type === 'marker') {
     const a = ss(e.t, e.t + .3, t) * (1 - ss(e.t + (e.dur || 2) - .3, e.t + (e.dur || 2), t)); if (a <= 0) continue;
@@ -724,7 +738,7 @@ function drawLabels(t, P, boardTop) {
 function drawEndcard(u) {
   const ec = T.brand.endcard ? { ...T.brand.endcard, ...(T.spec.endcard || {}) } : null; if (!ec) return;
   const a = ss(0, 0.22, u);
-  ctx.fillStyle = `rgba(6,8,14,${0.93 * a})`; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = `rgba(6,8,14,${0.975 * a})`; ctx.fillRect(0, 0, W, H);
   const ma = ss(0.14, 0.3, u), pop = 0.75 + 0.25 * easeBack(ss(0.14, 0.4, u)), cx = 540, cy = 860 - Math.abs(Math.sin(u * Math.PI * 3)) * 40 * ss(0.3, 0.5, u), r = 150 * pop;
   ctx.save(); ctx.globalAlpha = ma;
   ctx.strokeStyle = 'rgba(160,190,255,0.25)'; ctx.lineWidth = 1.5; ctx.beginPath();

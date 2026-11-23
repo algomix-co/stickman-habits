@@ -33,7 +33,7 @@
   }
  ],
  "metric": {
-  "max": 100,
+  "max": 116,
   "scale": 1.0
  },
  "counter": {
@@ -43,7 +43,7 @@
  "startProps": {
   "SOMEDAY": {
    "pack": 0,
-   "regret": 0
+   "regret": 0.16
   },
   "ALL OR NONE": {
    "pack": 0,
@@ -305,19 +305,36 @@
      "color": "#36e0c8"
     },
     "SOMEDAY": "PAID LATE",
-    "ALL OR NONE": "PAID LATE"
+    "ALL OR NONE": "PAID LATE",
+    "ON AND OFF": "PAID HALF"
    }
   },
   {
    "dur": 3.0,
    "caption": "BOTH HURT. ONLY ONE PAYS YOU BACK.",
-   "counter": 5
+   "counter": 5,
+   "values": {
+    "DAILY 1%": 108,
+    "ON AND OFF": 42
+   },
+   "states": {
+    "DAILY 1%": "active",
+    "ON AND OFF": "active"
+   },
+   "stateAt": {
+    "DAILY 1%": 0.6,
+    "ON AND OFF": 0.8
+   }
   },
   {
    "dur": 2.0,
    "caption": "PICK YOUR PAIN.",
    "style": "closing",
-   "counter": 5
+   "counter": 5,
+   "values": {
+    "DAILY 1%": 116,
+    "ON AND OFF": 46
+   }
   }
  ],
  "endcard": {

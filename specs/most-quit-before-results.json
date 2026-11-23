@@ -45,7 +45,6 @@
   "label": "MONTH",
   "start": 1
  },
- "question": "WHO REACHES THE TOP?",
  "footnote": "Illustrative · metres climbed",
  "upload": {
   "title": "Most Quit Right Before Results",
@@ -171,7 +170,8 @@
    "values": {
     "NEXT GRIP": 26,
     "COMPARER": 15,
-    "OVERTHINKER": 1
+    "OVERTHINKER": 1,
+    "QUITS AT 80%": 3
    },
    "curves": {
     "OVERTHINKER": "late"

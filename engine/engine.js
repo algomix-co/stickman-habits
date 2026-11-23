@@ -351,7 +351,7 @@ const ACTION_STATES = ['win', 'boast', 'cheer', 'fall', 'throw', 'shock'];
 function workAt(i, t) { const st = stateAt(i, t).state; if (st === 'active') return T.scene.workAt ? T.scene.workAt(i, t) : moving(i, t); return ACTION_STATES.includes(st) ? 0.6 : 0; }
 const alphaAt = (i, t) => (T.question && t >= T.question.t0 + 0.2) ? 1 : 1 - 0.62 * ss(T.dimTL[i], T.dimTL[i] + 1, t);
 function tagAt(i, t) { let cur = null; for (const [tk, v] of T.tagTL[i]) if (tk <= t) cur = { v, tk }; return cur && cur.v ? { ...cur.v, a: ss(cur.tk, cur.tk + 0.4, t) } : null; }
-function fmt(v) { const m = T.spec.metric, d = m.decimals || 0, crowded = T.chars.length >= 5 && m.compact !== false; v = Math.max(0, v); let s; if ((m.compact || crowded) && v >= 1e6) s = (v / 1e6).toFixed(2) + 'M'; else if ((m.compact || crowded) && v >= 1e4) s = Math.round(v / 1000) + 'K'; else if (crowded && v >= 1000) s = (v / 1000).toFixed(1) + 'K'; else s = d ? v.toFixed(d) : Math.round(v).toLocaleString('en-US'); return (m.prefix || '') + s + (m.suffix || ''); }
+function fmt(v) { const m = T.spec.metric, d = m.decimals || 0, crowded = T.chars.length >= 5 && m.compact !== false; v = Math.max(0, v); let s; if ((m.compact || crowded) && v >= 1e6) s = (v / 1e6).toFixed(2) + 'M'; else if ((m.compact || crowded) && v >= 1e4) s = Math.round(v / 1000) + 'K'; else if (crowded && v >= 1000) s = (v / 1000).toFixed(1) + 'K'; else s = d ? v.toFixed(d) : Math.round(v).toLocaleString('en-US'); let suf = m.suffix || ''; if (s === '1' && /[A-Z]{2,}S$/.test(suf.trim())) suf = suf.replace(/S$/, ''); return (m.prefix || '') + s + suf; }
 // columns stay left of the Shorts like/comment button strip on the right edge
 function colsX(n, max = 240, total = 860) { const sp = Math.min(max, total / n); return [...Array(n)].map((_, i) => 515 + (i - (n - 1) / 2) * sp); }
 function flyingCoin(c, color, x, y, spin, alpha, s = 1) { c.save(); c.globalAlpha = alpha; c.strokeStyle = color; c.fillStyle = color + '40'; c.lineWidth = 2.5 * s; c.beginPath(); c.ellipse(x, y, (3 + 11 * Math.abs(Math.cos(spin))) * s, 13 * s, 0, 0, 7); c.fill(); c.stroke(); c.restore(); }
@@ -571,13 +571,13 @@ function captionBlock(t, tm, C = ctx) {
       lines.forEach((ln, k) => { wb += drawWords(C, ln, W / 2 + xoff, 160 + yo + 60 + k * 60, '800 46px Inter', 1, INK, a, 0, tStart, clock, wb, 46); });
     }
     const by = 160 + yo + Math.max(1, lines.length) * 60 + 30; cY = by + 46;
-    if (counter && tm.kind !== 'hook' && tm.kind !== 'rewind') spaced(C, counter, W / 2, by + 46, '700 32px Inter', '#9aa3ad', 5, 1, 0, true);
+    if (counter && tm.kind !== 'hook' && tm.kind !== 'rewind') spaced(C, counter, W / 2, by + 46, '700 32px Inter', '#9aa3ad', 5, (st.transition === 'dayzoom' && st.captionStyle !== 'bold' && B.bi > 0 && tm.kind !== 'hook' ? ss(0.8, 1, (t - B.t0) / 0.45) : 1), 0, true);   /* hidden while the big day-zoom counter lands, so it never reads doubled */
     bottom = by + 46;
   } else {
     const lines = text ? wrapText(text, '700 50px Inter', 4, 740) : [];
     lines.forEach((ln, k) => { wb += drawWords(C, ln, W / 2 + xoff, 210 + yo + k * 62, '700 50px Inter', 4, capColor(color), a, gold || burstHit ? 16 : 4, tStart, clock, wb); });
     const n = Math.max(1, lines.length); cY = 210 + yo + n * 62 - 2;
-    if (counter && tm.kind !== 'rewind') spaced(C, counter, W / 2, 210 + yo + n * 62 - 2, '700 32px Inter', '#9aa3ad', 6, a, 0, true);
+    if (counter && tm.kind !== 'rewind') spaced(C, counter, W / 2, 210 + yo + n * 62 - 2, '700 32px Inter', '#9aa3ad', 6, a * (st.transition === 'dayzoom' && st.captionStyle !== 'bold' && B.bi > 0 && tm.kind !== 'hook' ? ss(0.8, 1, (t - B.t0) / 0.45) : 1), 0, true);
     bottom = 210 + yo + n * 62;
   }
   if (st.transition === 'dayzoom' && st.captionStyle !== 'bold' && B.bi > 0 && counter && tm.kind !== 'hook') {

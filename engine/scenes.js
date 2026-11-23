@@ -162,7 +162,7 @@ const ROCKS = (() => { const r = rng(21); return [...Array(160)].map(() => ({ x:
 SCENES.dig = {
   facing: 'right', K: 1.35,
   workAt(i, t) { return Math.max(moving(i, t), 0.8 * energyAt(t)); },
-  setup(T) { this.xs = colsX(T.chars.length, 270, 1000); this.G = T.style.labels === 'board' ? 740 : T.spec.question ? 780 : 600; this.D = 1400 - this.G; this.HW = 70 * this.K; },
+  setup(T) { this.xs = colsX(T.chars.length, 270, 1000); this.G = T.style.labels === 'board' ? 740 : T.spec.question ? 780 : 600; this.D = 1290 - this.G;   /* the gold sits well above the Shorts overlay */ this.HW = 70 * this.K; },
   foot(i, t) { return this.G + fracAt(i, t) * this.D; },
   extent(t) { return { x0: this.xs[0] - this.HW - 10, x1: this.xs[this.xs.length - 1] + this.HW + 10, y0: this.G - 40, y1: Math.max(...T.chars.map((_, i) => this.foot(i, t))) + 70 }; },
   place(i, t) { const y = this.foot(i, t); return { x: this.xs[i], top: y - figH() * this.K, s: this.K, floor: y }; },
@@ -178,8 +178,10 @@ SCENES.dig = {
       const x = this.xs[i], d = this.foot(i, t) - this.G, rr = rng(i * 31 + 7), hw = this.HW;
       c.fillStyle = '#08090b'; c.fillRect(x - hw, this.G + 1, 2 * hw, d); c.strokeStyle = ch.color + '55'; c.lineWidth = 2;
       for (const side of [-1, 1]) { c.beginPath(); c.moveTo(x + side * hw, this.G); for (let y = this.G; y < this.G + d; y += 22) c.lineTo(x + side * (hw + (rr() - .5) * 10), y); c.lineTo(x + side * hw, this.G + d); c.stroke(); }
-      const reached = fracAt(i, t) > 0.985; c.save(); c.globalAlpha = reached ? 1 : 0.35; c.strokeStyle = GOLD; c.fillStyle = reached ? 'rgba(255,197,61,0.35)' : 'rgba(255,197,61,0.06)'; c.lineWidth = 3;
-      c.beginPath(); c.moveTo(x, goalY - 26); c.lineTo(x + 26, goalY); c.lineTo(x, goalY + 30); c.lineTo(x - 26, goalY); c.closePath(); c.fill(); c.stroke(); c.restore();
+      const reached = fracAt(i, t) > 0.985, since = reached ? (() => { let a = t; while (a > 0 && fracAt(i, a - 0.05) > 0.985) a -= 0.05; return a; })() : t, gw = reached ? 1 + 0.9 * easeOut(clamp((t - since) / 0.35)) + 0.06 * Math.sin(t * 9) : 1;
+      c.save(); c.globalAlpha = reached ? 1 : 0.45; c.strokeStyle = GOLD; c.fillStyle = reached ? GOLD : 'rgba(255,197,61,0.08)'; c.lineWidth = 3; if (reached) { c.shadowColor = GOLD; c.shadowBlur = 40; }
+      c.translate(x, goalY); c.scale(gw, gw); c.beginPath(); c.moveTo(0, -26); c.lineTo(26, 0); c.lineTo(0, 30); c.lineTo(-26, 0); c.closePath(); c.fill(); c.stroke();
+      if (reached) { c.shadowBlur = 0; c.fillStyle = 'rgba(255,255,255,0.85)'; c.beginPath(); c.moveTo(-6, -14); c.lineTo(4, -4); c.lineTo(-8, 0); c.closePath(); c.fill(); } c.restore();   /* the payoff: a big glowing gold nugget, not a faint outline */
     });
     return charsDo((ch, i) => {
       const y = this.foot(i, t), a = alphaAt(i, t), st = stateAt(i, t).state, mv = moving(i, t);

@@ -111,16 +111,8 @@
    "values": {
     "+1 REP": 4,
     "MOOD LIFTER": 4,
-    "EGO": 15
-   },
-   "states": {
-    "NEW YEAR": "quit"
-   },
-   "stateAt": {
-    "NEW YEAR": 0.9
-   },
-   "tags": {
-    "NEW YEAR": "QUIT"
+    "EGO": 15,
+    "NEW YEAR": 2
    },
    "bubbles": [
     {
@@ -128,7 +120,10 @@
      "text": "too busy this month",
      "at": 0.2
     }
-   ]
+   ],
+   "curves": {
+    "NEW YEAR": "ease"
+   }
   },
   {
    "dur": 3.0,
@@ -137,7 +132,8 @@
    "values": {
     "EGO": 0,
     "+1 REP": 6,
-    "MOOD LIFTER": 2
+    "MOOD LIFTER": 2,
+    "NEW YEAR": 2
    },
    "events": [
     {
@@ -148,6 +144,12 @@
    ],
    "tags": {
     "EGO": "INJURED"
+   },
+   "states": {
+    "NEW YEAR": "quit"
+   },
+   "stateAt": {
+    "NEW YEAR": 2.0
    }
   },
   {
@@ -156,7 +158,8 @@
    "counter": 22,
    "values": {
     "MOOD LIFTER": 6,
-    "+1 REP": 11
+    "+1 REP": 11,
+    "EGO": 1
    },
    "curves": {
     "MOOD LIFTER": "late"
@@ -168,11 +171,21 @@
      "at": 0.3
     },
     {
-     "who": "NEW YEAR",
-     "text": "next January.",
-     "at": 1.8
+     "who": "EGO",
+     "text": "back at it. slowly.",
+     "at": 1.5
     }
-   ]
+   ],
+   "states": {
+    "EGO": "active"
+   },
+   "stateAt": {
+    "EGO": 1.0
+   },
+   "tags": {
+    "NEW YEAR": "QUIT",
+    "EGO": "REHAB"
+   }
   },
   {
    "dur": 3.5,
@@ -181,13 +194,8 @@
    "curve": "linear",
    "values": {
     "+1 REP": 17,
-    "MOOD LIFTER": 4
-   },
-   "states": {
-    "EGO": "active"
-   },
-   "stateAt": {
-    "EGO": 0.4
+    "MOOD LIFTER": 4,
+    "EGO": 2
    },
    "bubbles": [
     {
@@ -196,8 +204,8 @@
      "at": 0.4
     },
     {
-     "who": "EGO",
-     "text": "back at it. slowly.",
+     "who": "NEW YEAR",
+     "text": "next January.",
      "at": 1.9
     }
    ]
@@ -230,7 +238,8 @@
    ],
    "tags": {
     "MOOD LIFTER": "UP AND DOWN",
-    "EGO": "STARTING OVER"
+    "EGO": "STARTING OVER",
+    "NEW YEAR": "BACK AGAIN"
    },
    "bubbles": [
     {

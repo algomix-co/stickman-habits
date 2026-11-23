@@ -114,8 +114,7 @@
      "at": 0.3,
      "dur": 1.6,
      "color": "#ffc53d",
-     "dx": 125,
-     "dy": 70
+     "side": "right"
     },
     {
      "type": "marker",
@@ -124,8 +123,7 @@
      "at": 1.1,
      "dur": 1.6,
      "color": "#b98cff",
-     "dx": 125,
-     "dy": 70
+     "side": "right"
     }
    ]
   },
@@ -155,8 +153,7 @@
      "at": 1.0,
      "dur": 1.6,
      "color": "#ff4d5e",
-     "dx": 125,
-     "dy": 70
+     "side": "right"
     }
    ],
    "states": {

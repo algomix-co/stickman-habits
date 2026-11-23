@@ -216,7 +216,7 @@ SCENES.bricks = {
     const hangY = Math.min(this.BEAM + 95 + r, p.top - labelRoom - r), d = this.drop(i);
     if (!d || t < d.t - 0.34) return { x, y: hangY, r, rope: true };
     const small = d.type === 'shake', J = T.__joints[i], handsY = J ? Math.min(J.hands[0][1], J.hands[1][1]) : p.top, ground = small ? p.footY - r : handsY - r * 0.8, u = clamp((t - (d.t - 0.34)) / 0.34), y = lerp(hangY, ground, u * u);
-    return { x: small ? x + 64 - r : x, y: Math.min(y, ground), r, rope: false, landed: u >= 1 };
+    return { x: small ? x + 70 - r * 0.7 : x, y: Math.min(y, ground), r, rope: false, landed: u >= 1 };
   },
   draw(c, t) {
     const K = this.K, BW = 128, BH = 20;
@@ -251,7 +251,7 @@ SCENES.bricks = {
         for (let k = 0; k < 11; k++) { const an = k / 11 * 6.283, q = b.r * (0.86 + 0.18 * rr()); k ? c.lineTo(b.x + Math.cos(an) * q, b.y + Math.sin(an) * q * 0.92) : c.moveTo(b.x + Math.cos(an) * q, b.y + Math.sin(an) * q * 0.92); }
         c.closePath(); c.fill(); c.stroke();
         c.strokeStyle = 'rgba(255,255,255,0.12)'; c.lineWidth = 3; c.beginPath(); c.arc(b.x - b.r * 0.3, b.y - b.r * 0.3, b.r * 0.35, 3.6, 5.2); c.stroke();
-        if (!b.rope && T.__joints && T.__joints[i]) T.__joints[i].minY = Math.min(T.__joints[i].minY, b.y - b.r);   // labels go above a landed rock
+        if (b.landed && T.__joints && T.__joints[i]) T.__joints[i].minY = Math.min(T.__joints[i].minY, b.y - b.r);   // labels go above a landed rock
         c.restore();
       }
       return p;
@@ -340,7 +340,7 @@ SCENES.buckets = {
 // strike is the character's crash / shake / burst event (crash on gold = the blade snaps; crash on shiny =
 // the sword slips out of their hands; shake = a chip; burst = the rock splits clean).
 const SW_UP = { la: [-0.4, -0.2], ra: [1.95, 2.65], ll: [-0.25, -0.1], rl: [0.25, 0.1], lean: -0.05, drop: -0.25 };
-const SW_DOWN = { la: [-0.4, -0.2], ra: [0.45, 0.7], ll: [-0.35, 0.2], rl: [0.3, 0.05], lean: 0.12, drop: 0.2 };
+const SW_DOWN = { la: [-0.4, -0.2], ra: [0.45, 0.7], ll: [-0.25, 0.05], rl: [0.25, -0.05], lean: 0.12, drop: 0.2 };
 const SW_GUARD = { la: [-0.35, -0.15], ra: [0.45, 0.95], ll: [-0.3, -0.12], rl: [0.3, 0.12], lean: 0, drop: 0 };
 SCENES.swords = {
   facing: 'front', foley: 'blade', K: 1.7, labelRoom: 250, upperBodyFree: false,   // sword hand never waves or pumps toward a neighbour
@@ -424,6 +424,7 @@ SCENES.doors = {
   xAt(i, t) { return this.x0 + fracAt(i, t) * (this.DOOR - 70 - this.x0) + propAt(i, 'through', t) * 190; },
   head(i, t) { return 1 + 1.6 * propAt(i, 'ego', t); },
   beyond(i, t) { return propAt(i, 'through', t) > 0.55; },
+  get lightX() { return this.DOOR + 23 + this.DH * 0.42 + 14; },
   extent() { return { x0: 40, x1: this.DOOR + 220, y0: this.y0 - this.gap * 0.95 - 140, y1: this.y0 + (T.chars.length - 1) * this.gap + 50 }; },
   place(i, t) { const y = this.laneY(i), hs = this.head(i, t), extra = (hs - 1) * 2 * 27 * this.s; return { x: this.xAt(i, t), top: y - figH() * this.s - extra, s: this.s, floor: y, footY: y }; },
   activePose(i, t) { const w = moving(i, t, 0.002, 0.02); return blendPose(POSES.stand, WALK(this.xAt(i, t) / (13 * this.s)), Math.max(w, 0)); },

@@ -253,11 +253,11 @@
      "color": "#36e0c8"
     },
     "STARTS LATE": {
-     "text": "LATE, BUT READY",
+     "text": "CAUGHT IT",
      "color": "#ffc53d"
     },
-    "WAITS": "EMPTY HANDS",
-    "QUITS EARLY": "NOTHING LEFT"
+    "WAITS": "EMPTY",
+    "QUITS EARLY": "GAVE UP"
    }
   },
   {

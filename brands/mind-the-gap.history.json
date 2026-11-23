@@ -1,203 +1,5 @@
 [
  {
-  "id": "that-sale-price-fooled-you",
-  "scene": "towers",
-  "date": "2026-11-22T23:40:54.569Z",
-  "style": {
-   "theme": "grid",
-   "captionStyle": "tracked",
-   "transition": "fade",
-   "camera": "drift",
-   "labels": "above",
-   "hook": "flashforward",
-   "speed": "none",
-   "outro": "loop",
-   "instrument": "epiano",
-   "impact": "tapestop",
-   "root": 55,
-   "bpm": 72,
-   "boost": [
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ]
-   ]
-  }
- },
- {
-  "id": "why-new-things-stop-working",
-  "scene": "climb",
-  "date": "2026-11-22T23:43:43.066Z",
-  "style": {
-   "theme": "navy",
-   "captionStyle": "boxed",
-   "transition": "cut",
-   "camera": "push",
-   "labels": "board",
-   "hook": "straight",
-   "speed": "slowmo",
-   "outro": "question",
-   "instrument": "lofi",
-   "impact": "boom",
-   "root": 57,
-   "bpm": 90,
-   "boost": [
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     16.5578947368421,
-     18.157894736842103
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     3.7,
-     5.3
-    ],
-    [
-     16.5578947368421,
-     18.157894736842103
-    ],
-    [
-     16.5578947368421,
-     18.157894736842103
-    ],
-    [
-     16.5578947368421,
-     18.157894736842103
-    ],
-    [
-     16.5578947368421,
-     18.157894736842103
-    ],
-    [
-     16.5578947368421,
-     18.157894736842103
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ],
-    [
-     21.6,
-     22.8
-    ]
-   ]
-  }
- },
- {
   "id": "why-you-cant-quit",
   "scene": "dig",
   "date": "2026-11-22T23:46:38.557Z",
@@ -340,6 +142,66 @@
     [
      13.557894736842103,
      15.157894736842104
+    ]
+   ]
+  }
+ },
+ {
+  "id": "that-sale-price-fooled-you",
+  "scene": "towers",
+  "date": "2026-11-23T12:03:13.690Z",
+  "style": {
+   "theme": "navy",
+   "captionStyle": "boxed",
+   "transition": "fade",
+   "labels": "above",
+   "hook": "straight",
+   "speed": "slowmo",
+   "outro": "question",
+   "instrument": "epiano",
+   "impact": "tapestop",
+   "root": 55,
+   "bpm": 72,
+   "boost": [
+    [
+     21.6,
+     22.8
+    ],
+    [
+     21.6,
+     22.8
+    ]
+   ]
+  }
+ },
+ {
+  "id": "why-new-things-stop-working",
+  "scene": "climb",
+  "date": "2026-11-23T12:06:39.904Z",
+  "style": {
+   "theme": "dusk",
+   "captionStyle": "tracked",
+   "transition": "cut",
+   "labels": "board",
+   "hook": "straight",
+   "speed": "none",
+   "outro": "question",
+   "instrument": "lofi",
+   "impact": "boom",
+   "root": 53,
+   "bpm": 90,
+   "boost": [
+    [
+     21.6,
+     22.8
+    ],
+    [
+     15.7,
+     17.3
+    ],
+    [
+     21.6,
+     22.8
     ]
    ]
   }

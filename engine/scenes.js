@@ -44,21 +44,21 @@ function runPose(ph) {
   return { la: arm(ph + Math.PI), ra: arm(ph), ll: leg(ph), rl: leg(ph + Math.PI), lean: 0.3, drop: -0.1 };
 }
 SCENES.race = {
-  facing: 'right',
+  facing: 'right', sideLabels: true,
   setup(T) {
     const n = T.chars.length; this.gap = Math.min(380, 1100 / n); this.s = clamp((this.gap - 120) / 165, 0.85, 1.5);
     this.y0 = 1440 - (n - 1) * this.gap; this.x0 = 120; this.x1 = 800;
     const fin = T.beats[T.beats.length - 1].to; this.lane = []; T.chars.map((_, i) => i).sort((a, b) => fin[b] - fin[a]).forEach((ci, k) => { this.lane[ci] = k; });
   },
   laneY(i) { return this.y0 + this.lane[i] * this.gap; },
-  extent() { return { x0: this.x0 - 50, x1: this.x1 + 90, y0: this.y0 - figH() * this.s - 40, y1: this.y0 + (T.chars.length - 1) * this.gap + 60 }; },
+  extent() { return { x0: this.x0 - 50, x1: this.x1 + 90, y0: this.y0 - figH() * this.s - 90, y1: this.y0 + (T.chars.length - 1) * this.gap + 60 }; },
   xAt(i, t) { return this.x0 + fracAt(i, t) * (this.x1 - this.x0); },
   place(i, t) { const y = this.laneY(i); return { x: this.xAt(i, t), top: y - figH() * this.s, s: this.s, floor: y, footY: y }; },
   activePose(i, t) { return blendPose(POSES.stand, runPose(this.xAt(i, t) / (15 * this.s)), moving(i, t, 0.003, 0.03)); },
   draw(c, t) {
-    const yTop = this.y0 - figH() * this.s - 20, yBot = this.y0 + (T.chars.length - 1) * this.gap, fx = this.x1 - 40;   // the winner ends past the line
+    const yTop = this.y0 - figH() * this.s - 20, yBot = this.y0 + (T.chars.length - 1) * this.gap, fx = this.x1 - 80;   // the winner ends past the line
     c.save(); c.setLineDash([14, 12]); c.strokeStyle = 'rgba(255,255,255,0.4)'; c.lineWidth = 3; c.beginPath(); c.moveTo(fx, yTop); c.lineTo(fx, yBot + 4); c.stroke(); c.restore();
-    spaced(c, 'FINISH', fx - 20, yBot + 56, '800 44px Inter', '#dfe4e9', 3, 0.9);
+    spaced(c, 'FINISH', fx, yTop - 22, '800 44px Inter', '#dfe4e9', 3, 0.9);
     c.fillStyle = 'rgba(255,255,255,0.12)'; c.fillRect(this.x0 - 30, yTop, 2, yBot - yTop);
     return charsDo((ch, i) => { const y = this.laneY(i); floorLine(c, y, -200, W + 200, 0.16); const p = this.place(i, t); drawChar(c, i, t, tt => ({ mode: 'feet', x: this.xAt(i, tt), y }), { s: this.s, speed: speedFx(i, t, 0.12, 0.35), sweat: speedFx(i, t, 0.08, 0.2) }); return p; });
   },
@@ -166,7 +166,7 @@ SCENES.dig = {
     const K = this.K;
     c.fillStyle = 'rgba(70,58,48,0.22)'; c.fillRect(-3000, this.G, W + 6000, 6000);   // earth fills the frame at any zoom
     for (const k of ROCKS) { c.strokeStyle = k.gem ? 'rgba(110,200,255,0.35)' : 'rgba(255,255,255,0.08)'; c.lineWidth = 2; c.beginPath(); for (let j = 0; j < 6; j++) { const an = j / 6 * 6.28 + k.k * 3, rr = k.s * (0.7 + 0.3 * Math.sin(j * 2.3 + k.k * 9)); const px = k.x + Math.cos(an) * rr, py = k.y + Math.sin(an) * rr * (k.gem ? 1.4 : 0.8); j ? c.lineTo(px, py) : c.moveTo(px, py); } c.closePath(); c.stroke(); }
-    floorLine(c, this.G, -3000, W + 3000, 0.35);
+    floorLine(c, this.G, -3000, W + 3000, 0.35); if (T.__lines) T.__lines.push({ y: this.G, x0: -3000, x1: W + 3000 });
     const goalY = this.G + this.D + 34;
     charsDo((ch, i) => {
       const x = this.xs[i], d = this.foot(i, t) - this.G, rr = rng(i * 31 + 7), hw = this.HW;

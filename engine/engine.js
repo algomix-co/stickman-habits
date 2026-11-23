@@ -406,7 +406,7 @@ function charBox(i, t) {
   const p = T.scene.place(i, Math.max(0, t)), s = p.s, ch = T.chars[i];
   const half = Math.max(80 * s, fmt(value(i, t)).length * 19, ch.name.length * 13.5 + 10);
   const bottom = Math.max(p.floor != null ? p.floor : 0, p.top + figH() * s) + 14;
-  return { x0: p.x - half, x1: p.x + half, y0: p.top - 420, y1: bottom, cx: p.x, cy: p.top + 85 * s };
+  return { x0: p.x - half, x1: p.x + half, y0: p.top - (T.scene.sideLabels ? 120 : 420), y1: bottom, cx: p.x, cy: p.top + 85 * s };
 }
 function frameFor(t, safeTop, focus, zWant) {
   const b = T.scene.extent ? { ...T.scene.extent(t) } : { x0: 1e9, x1: -1e9, y0: 1e9, y1: -1e9 };
@@ -560,7 +560,7 @@ function captionBlock(t, tm, C = ctx) {
     if (counter && tm.kind !== 'hook' && tm.kind !== 'rewind') spaced(C, counter, W / 2, by + 46, '700 32px Inter', '#9aa3ad', 5, 1, 0, true);
     bottom = by + 46;
   } else {
-    const lines = text ? wrapText(text, '700 50px Inter', 4, 800) : [];
+    const lines = text ? wrapText(text, '700 50px Inter', 4, 740) : [];
     lines.forEach((ln, k) => { wb += drawWords(C, ln, W / 2 + xoff, 210 + yo + k * 62, '700 50px Inter', 4, capColor(color), a, gold || burstHit ? 16 : 4, tStart, clock, wb); });
     const n = Math.max(1, lines.length);
     if (counter && tm.kind !== 'rewind') spaced(C, counter, W / 2, 210 + yo + n * 62 - 2, '700 32px Inter', '#9aa3ad', 6, a, 0, true);
@@ -609,6 +609,7 @@ const hitBox = (b, x0, x1, y0, y1) => b && x1 > b.x0 && x0 < b.x1 && y1 > b.y0 &
 // badge goes above the label stack, unless that covers another character's head: then beside the name (left, else right)
 const stackH = Z => ((Z.lines.length > 1 ? 72 : 38) + (T.style.labels === 'board' ? 0 : 60) + (Z.tagW ? 50 : 0)) * Z.s * Z.grow;
 function badgeSpot(i, q, yAbove, r, yName, nameW, L) {
+  if (q.side) return [q.side > 0 ? q.x + nameW / 2 + 14 + r : q.x - nameW / 2 - 14 - r, yName];
   const hits = (x, y) => T.chars.some((_, o) => o !== i && hitBox(bodyBox(o, 4), x - r, x + r, y - r, y + r))
     || L.some(o => { if (o.i === i) return false; const hw = o.w * o.f / 2 + 8, yb = o.top - o.lift + 8, yt = yb - stackH(o) - 30 - 2 * r; return x + r > o.x - hw && x - r < o.x + hw && y + r > yt && y - r < yb; });
   if (!hits(q.x, yAbove)) return [q.x, yAbove];
@@ -654,6 +655,8 @@ function drawLabels(t, P, boardTop) {
     if (!got) { const f0 = q.f; for (const [a0, a1] of free) { const k = (a1 - a0) / q.w; if (k >= 0.85 && k < q.f && Math.abs((a0 + a1) / 2 - cx) < 260) { q.f = Math.min(q.f, k); got = [0, (a0 + a1) / 2]; break; } } if (!got) q.f = f0; }
     if (got) q.x = got[1];
   }
+  if (T.scene.sideLabels) for (const q of L) { const p = P[q.i], half = q.w * q.f / 2, off = 70 * p.s + 18;
+    q.lift = 0; q.top = p.floor - 0.3 * (p.floor - p.top); const right = p.x + off + 2 * half + 90 * q.s <= 950; /* room for the label and its badge */ q.side = right ? 1 : -1; q.x = right ? p.x + off + half : Math.max(half + 40, p.x - off - half); }
   T.__labels = L;
   T.chars.forEach((ch, i) => {
     const q = L[i], s = q.s, f = q.f * q.grow, a = Math.max(alphaAt(i, t), pickTurn(i, t), 0.75, T.question && t >= T.question.t0 ? 1 : 0), y0 = q.top - q.lift, CAP = 0.73;   // options stay readable even when the character is dimmed
@@ -687,7 +690,7 @@ function drawLabels(t, P, boardTop) {
     const q = L[bb.i], s = q.s, a = ss(bb.t0, bb.t0 + .2, t) * (1 - ss(bb.t1 - .25, bb.t1, t));
     const y = q.stackTop - 14 * s - 6 * (1 - a);
     const gap = yTop => { const R0 = (y > 860 && y < 1720) ? 950 : W - 24, blk = [];
-      for (const o of L) { if (o.i === bb.i) continue; const b = bodyBox(o.i, 10); if (b && !(y + 8 < b.y0 || yTop > b.y1)) blk.push([b.x0, b.x1]);
+      for (const o of L) { if (o.i === bb.i && !T.scene.sideLabels) continue; const b = bodyBox(o.i, 10); if (o.i === bb.i) { if (b && !(y + 8 < b.y0 || yTop > b.y1)) blk.push([b.x0, b.x1]); continue; } if (b && !(y + 8 < b.y0 || yTop > b.y1)) blk.push([b.x0, b.x1]);
         const oy0 = o.stackTop - 4, oy1 = o.top - o.lift; if (!(y + 6 < oy0 || yTop > oy1)) blk.push([o.x - o.w * o.f / 2 - 12, o.x + o.w * o.f / 2 + 12]); }
       const own = bodyBox(bb.i, 0), cx = own ? (own.x0 + own.x1) / 2 : q.x; blk.sort((u, v) => u[0] - v[0]);
       const free = []; let cur = 24; for (const [u0, u1] of blk) { if (u0 > cur) free.push([cur, Math.min(u0, R0)]); cur = Math.max(cur, u1); } if (cur < R0) free.push([cur, R0]);

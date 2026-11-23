@@ -113,7 +113,7 @@ function drawAccessory(c, kind, x, y, r, fx, t, color) {
 }
 // anchor: {mode:'feet'|'hip'|'hands', x, y}
 function drawFigure(c, ch, anchor, p, t, alpha, s = 1, opt = {}) {
-  const L = lookOf(ch), hr = R * L.head, r = rig(p, t, ch.i * 1.7, hr);
+  const L = lookOf(ch), hr = R * L.head * (opt.headScale || 1), r = rig(p, t, ch.i * 1.7, hr);
   let ox = 0, oy = 0;
   if (anchor.mode === 'feet') oy = -r.low;
   else if (anchor.mode === 'hands') { ox = -(r.la[2][0] + r.ra[2][0]) / 2; oy = -(r.la[2][1] + r.ra[2][1]) / 2; }
@@ -274,10 +274,11 @@ function compile(spec, brand, style) {
     for (const name of b.dim || []) T.dimTL[idx(name)] = Math.min(T.dimTL[idx(name)], t0);
     const bubs = b.bubbles || [];
     bubs.forEach((bb, k) => { const slot = (b.dur - 0.4) / bubs.length, s0 = t0 + (bb.at != null ? bb.at : 0.4 + k * slot); T.bubbles.push({ i: idx(bb.who), text: bb.text, t0: s0, t1: bb.dur != null ? s0 + bb.dur : Math.min(t1 - 0.1, s0 + slot - 0.15) }); });
-    T.beats.push({ bi, t0, t1, b, from: prev.slice(), to, curves, crashAt, c0: cnt, c1: b.counter != null ? b.counter : cnt, mood: b.mood || ((b.events || []).some(e => e.type === 'burst') ? 'climax' : b.style === 'question' ? 'end' : (b.events || []).some(e => e.type === 'crash') ? 'crash' : b.curve === 'accel' ? 'build' : 'normal') });
+    T.beats.push({ bi, t0, t1, b, from: prev.slice(), to, curves, crashAt, c0: cnt, c1: b.counter != null ? b.counter : cnt, mood: b.mood || ((b.events || []).some(e => e.type === 'burst') ? 'climax' : (b.style === 'question' || b.style === 'closing') ? 'end' : (b.events || []).some(e => e.type === 'crash') ? 'crash' : b.curve === 'accel' ? 'build' : 'normal') });
     prev = to; if (b.counter != null) cnt = b.counter; t = t1;
   });
   T.dur = t;
+  { let pv = chars.map(c => ({ ...((spec.startProps || {})[c.name] || {}) })); T.beats.forEach(B => { B.pfrom = pv.map(o => ({ ...o })); pv = pv.map((o, i) => ({ ...o, ...(((B.b.props || {})[chars[i].name]) || {}) })); B.pto = pv.map(o => ({ ...o })); }); }
   let mx = 0; T.beats.forEach(B => B.from.concat(B.to).forEach(v => { mx = Math.max(mx, v); }));
   T.maxV = spec.metric.max || mx || 1; T.pow = spec.metric.scale != null ? spec.metric.scale : 0.7;
   for (const tl of T.stateTL) tl.sort((a, b) => a[0] - b[0]);
@@ -306,13 +307,15 @@ function buildTimeMap() {
   let s = 0; const RATE = 0.38;
   for (const [a, b] of merged) { if (a > s) { segs.push({ r0: r, r1: r + a - s, s0: s, s1: a, kind: 'play' }); r += a - s; } segs.push({ r0: r, r1: r + (b - a) / RATE, s0: a, s1: b, kind: 'slow' }); r += (b - a) / RATE; s = b; }
   segs.push({ r0: r, r1: r + D - s, s0: s, s1: D, kind: 'play' }); r += D - s;
-  if (st.outro === 'endcard' && T.brand.endcard) { segs.push({ r0: r, r1: r + 1.6, s0: D - 0.001, s1: D - 0.001, kind: 'endcard' }); r += 1.6; }
+  if (st.outro === 'endcard' && T.brand.endcard) { const ed = T.spec.endcard ? 2.4 : 1.6; segs.push({ r0: r, r1: r + ed, s0: D - 0.001, s1: D - 0.001, kind: 'endcard' }); r += ed; }
   if (st.outro === 'loop') { segs.push({ r0: r, r1: r + 0.7, s0: D - 0.001, s1: 0, kind: 'rewind' }); r += 0.7; }
   T.segs = segs; T.realDur = r;
 }
 function storyAt(r) { for (const g of T.segs) if (r < g.r1 || g === T.segs[T.segs.length - 1]) { const u = clamp((r - g.r0) / (g.r1 - g.r0)); return { s: lerp(g.s0, g.s1, g.kind === 'rewind' ? easeIO(u) : u), kind: g.kind, u, g }; } }
 function realOf(s) { for (const g of T.segs) if ((g.kind === 'play' || g.kind === 'slow') && s >= g.s0 - 1e-6 && s <= g.s1 + 1e-6) return g.r0 + (s - g.s0) / Math.max(1e-6, g.s1 - g.s0) * (g.r1 - g.r0); return s; }
 
+// a character's scene prop (backpack size, ego, rust...) at time t, eased within the beat
+function propAt(i, key, t, dflt = 0) { const B = beatAt(Math.max(0, t)), a = B.pfrom[i][key], b = B.pto[i][key]; if (a == null && b == null) return dflt; const u = (B.b.propCurve === 'linear' ? (x => x) : easeIO)(clamp((t - B.t0) / (B.t1 - B.t0))); return lerp(a != null ? a : b, b != null ? b : a, u); }
 function beatAt(t) { for (const B of T.beats) if (t < B.t1) return B; return T.beats[T.beats.length - 1]; }
 function value(i, t) {
   const B = beatAt(t), u = clamp((t - B.t0) / (B.t1 - B.t0)), c = B.curves[i];
@@ -337,7 +340,7 @@ function poseOf(state, i, t) {
   return POSES[state] || POSES.stand;
 }
 function cheerAnim(t, i) { const k = Math.sin(t * 7 + i * 1.3), up = Math.max(0, k); return { la: [-2.45 + 0.4 * k, -2.85 + 0.35 * k], ra: [2.45 - 0.4 * k, 2.85 - 0.35 * k], ll: [-0.3, -0.1 - 0.5 * up], rl: [0.3, 0.1 + 0.5 * up], lean: 0, drop: -0.35 }; }
-function poseAt(i, t) { const tl = T.stateTL[i]; let p = poseOf(tl[0][1], i, t); for (let k = 1; k < tl.length; k++) { const [tk, st] = tl[k]; if (t < tk) break; p = blendPose(p, poseOf(st, i, t), ss(tk, tk + (st === 'fall' ? 0.15 : 0.35), t)); } return gestureLayer(i, t, p); }
+function poseAt(i, t) { const tl = T.stateTL[i]; let p = poseOf(tl[0][1], i, t); for (let k = 1; k < tl.length; k++) { const [tk, st] = tl[k]; if (t < tk) break; p = blendPose(p, poseOf(st, i, t), ss(tk, tk + (st === 'fall' ? 0.15 : 0.35), t)); } if (T.scene.poseOverride) p = T.scene.poseOverride(i, t, p); return gestureLayer(i, t, p); }
 const moving = (i, t, lo = 0.002, hi = 0.02) => ss(lo, hi, Math.abs(fracRate(i, t)));
 const alphaAt = (i, t) => (T.question && t >= T.question.t0 + 0.2) ? 1 : 1 - 0.62 * ss(T.dimTL[i], T.dimTL[i] + 1, t);
 function tagAt(i, t) { let cur = null; for (const [tk, v] of T.tagTL[i]) if (tk <= t) cur = { v, tk }; return cur && cur.v ? { ...cur.v, a: ss(cur.tk, cur.tk + 0.4, t) } : null; }
@@ -406,7 +409,7 @@ function charBox(i, t) {
   const p = T.scene.place(i, Math.max(0, t)), s = p.s, ch = T.chars[i];
   const half = Math.max(80 * s, fmt(value(i, t)).length * 19, ch.name.length * 13.5 + 10);
   const bottom = Math.max(p.floor != null ? p.floor : 0, p.top + figH() * s) + 14;
-  return { x0: p.x - half, x1: p.x + half, y0: p.top - (T.scene.sideLabels ? 120 : 420), y1: bottom, cx: p.x, cy: p.top + 85 * s };
+  return { x0: p.x - half, x1: p.x + half, y0: p.top - (T.scene.sideLabels ? 120 : T.scene.labelRoom || 420), y1: bottom, cx: p.x, cy: p.top + 85 * s };
 }
 function frameFor(t, safeTop, focus, zWant) {
   const b = T.scene.extent ? { ...T.scene.extent(t) } : { x0: 1e9, x1: -1e9, y0: 1e9, y1: -1e9 };
@@ -465,12 +468,14 @@ function drawEffects(c, t, P) {
     const dt = t - e.t; if (dt < 0) continue;
     if (e.type === 'crash' && dt < 2.4) {
       const span = T.scene.debrisSpan ? T.scene.debrisSpan(e.i, e.t) : (() => { const p = T.scene.place(e.i, e.t); return { x: p.x, y0: p.top, y1: p.top + 160 * p.s, floor: p.floor }; })();
+      if (!span) continue;
       const floorNow = T.scene.place(e.i, t).floor || span.floor, dy0 = floorNow - span.floor, coins = T.scene.debris === 'coins';
       for (const d of DEBRIS) {
         const tt = dt - d.e * 0.25; if (tt < 0) continue;
         const x = span.x + (d.a - .5) * 900 * tt, y = Math.min(floorNow - (coins ? 13 : 3), dy0 + lerp(span.y1, span.y0, d.b) - (150 + d.c * 650) * tt + 1400 * tt * tt);
         const landed = y >= floorNow - (coins ? 14 : 4), al = 1 - ss(1.2, 2.2, tt);
         if (coins) flyingCoin(c, T.chars[e.i].color, x, y, landed ? 1.57 : tt * (4 + 12 * d.d), al);
+        else if (T.scene.debris === 'bricks') { c.save(); c.globalAlpha = al; c.translate(x, Math.min(y, floorNow - 9)); c.rotate(landed ? 0 : tt * (5 + 10 * d.d)); c.fillStyle = T.chars[e.i].color + '40'; c.strokeStyle = T.chars[e.i].color; c.lineWidth = 2; c.beginPath(); c.roundRect(-14, -8, 28, 16, 3); c.fill(); c.stroke(); c.restore(); }
         else { const an = landed ? 0 : tt * (6 + 14 * d.d), L = 8 + 14 * d.c; c.save(); c.globalAlpha = al; c.strokeStyle = T.chars[e.i].color; c.lineWidth = 3; c.lineCap = 'round'; c.beginPath(); c.moveTo(x - Math.cos(an) * L / 2, y - Math.sin(an) * L / 2); c.lineTo(x + Math.cos(an) * L / 2, y + Math.sin(an) * L / 2); c.stroke(); c.restore(); }
       }
     }
@@ -529,7 +534,7 @@ function captionBlock(t, tm, C = ctx) {
   let a = (B.bi === 0 || tm.kind !== 'play' && tm.kind !== 'slow') ? 1 : ss(B.t0, B.t0 + .05, t);
   if (st.transition === 'cut') a = 1;
   let xoff = 0; if (st.transition === 'slide' && tm.kind !== 'hook') xoff = (1 - ss(B.t0, B.t0 + .35, t)) * 160 * (B.bi ? 1 : 0) - (last ? 0 : ss(B.t1 - .22, B.t1, t) * 160);
-  const gold = q || tm.kind === 'hook', color = gold ? GOLD : '#dfe4e9';
+  const gold = q || B.b.style === 'closing' || tm.kind === 'hook', color = gold ? GOLD : '#dfe4e9';
   const counter = T.spec.counter.label ? T.spec.counter.label + ' ' + Math.round(counterAt(t)) + (T.spec.counter.suffix || '') : '';
   const clock = tm.kind === 'hook' ? tm.u * 1.3 : t, tStart = tm.kind === 'hook' ? 0 : (B.bi === 0 ? -0.3 : B.t0);
   // open loop: a question at the top from the first frame, answered at the climax
@@ -607,7 +612,8 @@ function bodyBox(o, pad = 8) { const j = T.__joints[o]; if (!j) return null; con
   return { x0: Math.min(hx - r, ...pts.map(q => q[0])) - pad, x1: Math.max(hx + r, ...pts.map(q => q[0])) + pad, y0: Math.min(hy - r, ...pts.map(q => q[1])) - pad, y1: Math.max(hy + r, ...pts.map(q => q[1])) + pad }; }
 const hitBox = (b, x0, x1, y0, y1) => b && x1 > b.x0 && x0 < b.x1 && y1 > b.y0 && y0 < b.y1;
 // badge goes above the label stack, unless that covers another character's head: then beside the name (left, else right)
-const stackH = Z => ((Z.lines.length > 1 ? 72 : 38) + (T.style.labels === 'board' ? 0 : 60) + (Z.tagW ? 50 : 0)) * Z.s * Z.grow;
+const noNum = () => T.style.labels === 'board' || T.spec.showValues === false;   // metaphor videos show names, not numbers
+const stackH = Z => ((Z.lines.length > 1 ? 72 : 38) + (noNum() ? 0 : 60) + (Z.tagW ? 50 : 0)) * Z.s * Z.grow;
 function badgeSpot(i, q, yAbove, r, yName, nameW, L) {
   if (q.side) return [q.side > 0 ? q.x + nameW / 2 + 14 + r : q.x - nameW / 2 - 14 - r, yName];
   const hits = (x, y) => T.chars.some((_, o) => o !== i && hitBox(bodyBox(o, 4), x - r, x + r, y - r, y + r))
@@ -620,11 +626,11 @@ function badgeSpot(i, q, yAbove, r, yName, nameW, L) {
 }
 function drawLabels(t, P, boardTop) {
   RECTS.length = 0;
-  const board = T.style.labels === 'board', fw = focusWeights(t);
+  const board = T.style.labels === 'board', nonum = noNum(), fw = focusWeights(t);
   const meas = (text, font, sp) => { sc.font = font; sc.letterSpacing = sp + 'px'; return sc.measureText(text).width; };
   const L = T.chars.map((ch, i) => {
     const p = { ...P[i], s: clamp(T.__z || 1, 0.92, 1.08) * (T.style.labelScale || 1) }, s = p.s, rate = fracRate(i, t), grow = (1 + 0.16 * fw[i]) * (1 + 0.25 * clamp(Math.abs(rate) * 2.2)) * (1 + 0.35 * Math.max(0, ...T.milestones.filter(m => m.i === i).map(m => bump(m.t, m.t + 0.45, t)))) * (1 + 0.3 * rollPop(i, t));
-    const numW = board ? 0 : meas(fmt(value(i, t)), `800 ${(60 * s * grow).toFixed(1)}px Inter`, 0);
+    const numW = nonum ? 0 : meas(fmt(value(i, t)), `800 ${(60 * s * grow).toFixed(1)}px Inter`, 0);
     const nf0 = `800 ${(34 * s * grow).toFixed(1)}px Inter`, nameW = meas(ch.name, nf0, 2), words = ch.name.split(' ');
     let split = null; if (words.length > 1) { let best = null; for (let k = 1; k < words.length; k++) { if (/^[=&+]$/.test(words[k]) || /^[=&+]$/.test(words[k - 1])) continue; const l1 = words.slice(0, k).join(' '), l2 = words.slice(k).join(' '), w2 = Math.max(meas(l1, nf0, 2), meas(l2, nf0, 2)) + (Math.min(l1.length, l2.length) <= 2 ? 999 : 0); if (!best || w2 < best[0]) best = [w2, l1, l2]; } split = best && best[0] < 900 ? best : null; }
     const tg = tagAt(i, t), tagW = tg ? meas(tg.text, `800 ${(34 * s).toFixed(1)}px Inter`, 2) : 0;
@@ -633,7 +639,7 @@ function drawLabels(t, P, boardTop) {
   const sorted = L.slice().sort((a, b) => a.x - b.x);
   if (!window.__disableSolver) for (let pass = 0; pass < 3; pass++) for (let k = 0; k < sorted.length - 1; k++) {
     const A = sorted[k], Bq = sorted[k + 1];
-    const hOf = Z => ((Z.lines.length > 1 ? 72 : 38) + (board ? 0 : 60) + (Z.tagW ? 50 : 0)) * Z.s * Z.grow, aB = A.top - A.lift, bB = Bq.top - Bq.lift;   // real stack heights, not a fixed guess
+    const hOf = Z => ((Z.lines.length > 1 ? 72 : 38) + (nonum ? 0 : 60) + (Z.tagW ? 50 : 0)) * Z.s * Z.grow, aB = A.top - A.lift, bB = Bq.top - Bq.lift;   // real stack heights, not a fixed guess
     if (aB + 10 < bB - hOf(Bq) || bB + 10 < aB - hOf(A)) continue;
     const dx = Bq.x - A.x, GAP = 44; if ((A.w * A.f + Bq.w * Bq.f) / 2 + GAP <= dx) continue;
     for (const Z of [A, Bq]) if (Z.split && Z.lines.length === 1) { Z.lines = [Z.split[1], Z.split[2]]; Z.w = Math.max(Z.numW, Z.split[0], Z.tagW); }   // 1) wrap long names
@@ -655,16 +661,21 @@ function drawLabels(t, P, boardTop) {
     if (!got) { const f0 = q.f; for (const [a0, a1] of free) { const k = (a1 - a0) / q.w; if (k >= 0.85 && k < q.f && Math.abs((a0 + a1) / 2 - cx) < 260) { q.f = Math.min(q.f, k); got = [0, (a0 + a1) / 2]; break; } } if (!got) q.f = f0; }
     if (got) q.x = got[1];
   }
-  if (T.scene.sideLabels) for (const q of L) { const p = P[q.i], half = q.w * q.f / 2, off = 70 * p.s + 18;
-    q.lift = 0; q.top = p.floor - 0.3 * (p.floor - p.top); const right = p.x + off + 2 * half + 90 * q.s <= 950; /* room for the label and its badge */ q.side = right ? 1 : -1; q.x = right ? p.x + off + half : Math.max(half + 40, p.x - off - half); }
+  if (T.scene.sideLabels) for (const q of L) { const p = P[q.i], off = (70 + (T.scene.labelGap || 0)) * p.s + 18, maxR = T.scene.labelMaxX ? T.__X(T.scene.labelMaxX) : 950, pad = ((T.question || T.spec.question) ? 90 : 10) * q.s;
+    q.lift = 0; q.top = p.floor - 0.3 * (p.floor - p.top);
+    const fit = () => { const half = q.w * q.f / 2, rightX = p.x + off + half, leftX = p.x - off - 26 * q.s - half; if (rightX + half + pad <= maxR) return [1, rightX]; if (leftX - half >= 40) return [-1, leftX]; return null; };
+    let got = fit();
+    if (!got && q.split && q.lines.length === 1) { q.lines = [q.split[1], q.split[2]]; q.w = Math.max(q.numW, q.split[0], q.tagW); got = fit(); }   // tight spot: wrap the name first
+    if (!got) { const half = q.w * q.f / 2; got = [1, Math.min(p.x + off + half, maxR + 60 - half)]; }
+    q.side = got[0]; q.x = got[1]; }
   T.__labels = L;
   T.chars.forEach((ch, i) => {
     const q = L[i], s = q.s, f = q.f * q.grow, a = Math.max(alphaAt(i, t), pickTurn(i, t), 0.75, T.question && t >= T.question.t0 ? 1 : 0), y0 = q.top - q.lift, CAP = 0.73;   // options stay readable even when the character is dimmed
     const namePx = 34 * s * f, nameBase = y0 - 6 * s, mf = `800 ${namePx.toFixed(1)}px Inter`, lineH = namePx * 1.02;
-    q.lines.slice().reverse().forEach((ln, k) => { spaced(sc, ln, q.x, nameBase - k * lineH, mf, board ? ch.color : '#eef1f4', 2, a, 0, true); if (a > 0.3) rectOf(i, ln, q.x, nameBase - k * lineH, mf, 2); });
+    q.lines.slice().reverse().forEach((ln, k) => { spaced(sc, ln, q.x, nameBase - k * lineH, mf, nonum ? ch.color : '#eef1f4', 2, a, 0, true); if (a > 0.3) rectOf(i, ln, q.x, nameBase - k * lineH, mf, 2); });
     const nameTop = nameBase - (q.lines.length - 1) * lineH - CAP * namePx;
     let top = nameTop;
-    if (!board) {
+    if (!nonum) {
       const numPx = 60 * s * f, numBase = nameTop - 16 * s, nf = `800 ${numPx.toFixed(1)}px Inter`;
       spaced(sc, fmt(value(i, t)), q.x, numBase, nf, q.rate < -0.05 ? RED : ch.color, 0, a, q.rate > 0.1 || fw[i] > 0.5 ? 12 : 0, true); if (a > 0.3) rectOf(i, fmt(value(i, t)), q.x, numBase, nf, 0);
       top = numBase - CAP * numPx;
@@ -711,7 +722,7 @@ function drawLabels(t, P, boardTop) {
   }
 }
 function drawEndcard(u) {
-  const ec = T.brand.endcard; if (!ec) return;
+  const ec = T.brand.endcard ? { ...T.brand.endcard, ...(T.spec.endcard || {}) } : null; if (!ec) return;
   const a = ss(0, 0.22, u);
   ctx.fillStyle = `rgba(6,8,14,${0.93 * a})`; ctx.fillRect(0, 0, W, H);
   const ma = ss(0.14, 0.3, u), pop = 0.75 + 0.25 * easeBack(ss(0.14, 0.4, u)), cx = 540, cy = 860 - Math.abs(Math.sin(u * Math.PI * 3)) * 40 * ss(0.3, 0.5, u), r = 150 * pop;
@@ -728,13 +739,13 @@ function drawEndcard(u) {
   drawAccessory(ctx, ec.accessory || look.accessory, cx, cy, r * 0.86, 0, u * 3, ec.accent || look.accent || col);
   ctx.restore();
   ctx.save(); ctx.translate(540, 1180); const tp = lerp(1.6, 1, easeBack(ss(0.15, 0.45, u))); ctx.scale(tp, tp); spaced(ctx, ec.title || '', 0, 0, '800 66px Inter', '#ffffff', 3, ss(0.15, 0.3, u), 10); ctx.restore();
-  const pa = ss(0.4, 0.6, u), pp = 1 + 0.06 * Math.sin(u * 30); if (pa > 0) { ctx.save(); ctx.globalAlpha = pa; ctx.translate(540, 1320); ctx.scale(pp, pp); const cta = ec.cta || 'FOLLOW FOR MORE'; ctx.font = '800 26px Inter'; ctx.letterSpacing = '2px'; const pw = ctx.measureText(cta).width + 64; ctx.fillStyle = ec.color || GOLD; ctx.beginPath(); ctx.roundRect(-pw / 2, -34, pw, 64, 32); ctx.fill(); ctx.restore(); spaced(ctx, cta, 540, 1330, '800 26px Inter', INK, 2, pa); }
-  spaced(ctx, ec.tagline || '', 540, 1236, '500 26px Inter', '#9aa7b8', 4, ss(0.25, 0.5, u));
+  const pa = ss(0.4, 0.6, u), pp = 1 + 0.06 * Math.sin(u * 30), ctaY = 1320 + (wrapText((T.spec.endcard || {}).tagline || ec.tagline || '', '700 36px Inter', 3, 860).length > 1 ? 70 : 30); if (pa > 0) { ctx.save(); ctx.globalAlpha = pa; ctx.translate(540, ctaY); ctx.scale(pp, pp); const cta = ec.cta || 'FOLLOW FOR MORE'; ctx.font = '800 26px Inter'; ctx.letterSpacing = '2px'; const pw = ctx.measureText(cta).width + 64; ctx.fillStyle = ec.color || GOLD; ctx.beginPath(); ctx.roundRect(-pw / 2, -34, pw, 64, 32); ctx.fill(); ctx.restore(); spaced(ctx, cta, 540, ctaY + 10, '800 26px Inter', INK, 2, pa); }
+  wrapText(ec.tagline || '', '700 36px Inter', 3, 860).forEach((ln, k) => spaced(ctx, ln, 540, 1250 + k * 46, '700 36px Inter', '#e6ecf2', 3, ss(0.22, 0.42, u)));
 }
 
 // =====================================================================================  frame
 // rough height of a character's label stack right now (screen px): name line(s), number, tag, bubble
-function stackEstimate(i, t) { const board = T.style.labels === 'board', nm = T.chars[i].name; return 50 + (nm.includes(' ') ? 36 : 0) + (board ? 0 : 76) + (tagAt(i, t) ? 46 : 0) + (T.bubbles.some(b => b.i === i && t > b.t0 - 0.2 && t < b.t1) ? 58 : 0); }
+function stackEstimate(i, t) { const board = noNum(), nm = T.chars[i].name; return 50 + (nm.includes(' ') ? 36 : 0) + (board ? 0 : 76) + (tagAt(i, t) ? 46 : 0) + (T.bubbles.some(b => b.i === i && t > b.t0 - 0.2 && t < b.t1) ? 58 : 0); }
 function renderFrame(r) {
   const tm = storyAt(r), t = tm.s, st = T.style;
   const capCanvasBottom = captionBlock(t, tm, scratchC), boardOn = T.style.labels === 'board';
@@ -826,6 +837,9 @@ function buildCues() {
   for (const g of T.segs) { if (g.kind === 'slow') out.slow.push([g.r0, g.r1]); if (g.kind === 'hook') out.hook = [g.r0, g.r1]; if (g.kind === 'rewind') out.rewind.push([g.r0, g.r1]); if (g.kind === 'endcard') out.endcard = g.r0; }
   out.milestones = T.milestones.map(m => [R2(m.t), m.i, T.chars.length]);
   if (T.scene.rainCues) out.rain = T.scene.rainCues().map(([t, ci, n]) => [R2(t), ci, n]);
+  // foley: the scene's work sound (hammer, footsteps, blade...) is played on the music grid while anyone works
+  out.foley = { kind: T.scene.foley || T.spec.foley || null, active: [] };
+  for (let tt = 0; tt < T.dur; tt += 0.1) { const on = T.chars.some((_, i) => stateAt(i, tt).state === 'active' && moving(i, tt, 0.001, 0.01) > 0.3); const L = out.foley.active[out.foley.active.length - 1]; if (on) { if (L && Math.abs(L[1] - R2(tt)) < 0.15) L[1] = R2(tt + 0.1); else out.foley.active.push([R2(tt), R2(tt + 0.1)]); } }
   return out;
 }
 const SCENES = {};

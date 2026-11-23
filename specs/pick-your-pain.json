@@ -1,0 +1,337 @@
+{
+ "id": "pick-your-pain",
+ "brand": "mind-the-gap",
+ "scene": "bricks",
+ "showValues": false,
+ "keywords": [
+  "discipline",
+  "pain",
+  "choices",
+  "consistency",
+  "results"
+ ],
+ "characters": [
+  {
+   "name": "SOMEDAY",
+   "color": "#ff5a6e",
+   "accessory": "headphones"
+  },
+  {
+   "name": "ALL OR NONE",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  },
+  {
+   "name": "ON AND OFF",
+   "color": "#b98cff",
+   "accessory": "beanie"
+  },
+  {
+   "name": "DAILY 1%",
+   "color": "#36e0c8",
+   "accessory": "headband"
+  }
+ ],
+ "metric": {
+  "max": 100,
+  "scale": 1.0
+ },
+ "counter": {
+  "label": "YEAR",
+  "start": 0
+ },
+ "startProps": {
+  "SOMEDAY": {
+   "pack": 0,
+   "regret": 0
+  },
+  "ALL OR NONE": {
+   "pack": 0,
+   "regret": 0
+  },
+  "ON AND OFF": {
+   "pack": 0,
+   "regret": 0
+  },
+  "DAILY 1%": {
+   "pack": 0,
+   "regret": 0
+  }
+ },
+ "beats": [
+  {
+   "dur": 2.8,
+   "caption": "EVERYONE PAYS. PICK WHEN.",
+   "counter": 0,
+   "values": {
+    "DAILY 1%": 5,
+    "ALL OR NONE": 8,
+    "ON AND OFF": 4
+   },
+   "props": {
+    "DAILY 1%": {
+     "pack": 0.55
+    },
+    "ALL OR NONE": {
+     "pack": 1.6
+    },
+    "ON AND OFF": {
+     "pack": 0.7
+    }
+   },
+   "states": {
+    "SOMEDAY": "idle"
+   },
+   "bubbles": [
+    {
+     "who": "ALL OR NONE",
+     "text": "new year, new me!",
+     "at": 0.6,
+     "dur": 1.0
+    },
+    {
+     "who": "SOMEDAY",
+     "text": "I'll start tomorrow",
+     "at": 1.7,
+     "dur": 1.0
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "DISCIPLINE WEIGHS OUNCES.",
+   "counter": 1,
+   "values": {
+    "DAILY 1%": 16,
+    "ALL OR NONE": 30,
+    "ON AND OFF": 14
+   },
+   "props": {
+    "SOMEDAY": {
+     "regret": 0.12
+    }
+   },
+   "bubbles": [
+    {
+     "who": "DAILY 1%",
+     "text": "just one more brick",
+     "at": 0.4,
+     "dur": 1.2
+    },
+    {
+     "who": "ON AND OFF",
+     "text": "this time for real",
+     "at": 1.7,
+     "dur": 1.1
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "TOO HEAVY. TOO FAST.",
+   "counter": 1,
+   "values": {
+    "DAILY 1%": 24,
+    "ALL OR NONE": 0,
+    "ON AND OFF": 20
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "ALL OR NONE",
+     "at": 0.7
+    }
+   ],
+   "props": {
+    "ALL OR NONE": {
+     "pack": 0
+    }
+   },
+   "tags": {
+    "ALL OR NONE": "BURNT OUT"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "REGRET WEIGHS TONS.",
+   "counter": 2,
+   "values": {
+    "DAILY 1%": 38,
+    "ON AND OFF": 11
+   },
+   "props": {
+    "SOMEDAY": {
+     "regret": 0.45
+    },
+    "ALL OR NONE": {
+     "regret": 0.35
+    },
+    "ON AND OFF": {
+     "pack": 0,
+     "regret": 0.12
+    }
+   },
+   "states": {
+    "ON AND OFF": "idle",
+    "ALL OR NONE": "sad"
+   },
+   "tags": {
+    "ON AND OFF": "OFF AGAIN",
+    "ALL OR NONE": null
+   },
+   "bubbles": [
+    {
+     "who": "SOMEDAY",
+     "text": "still got time",
+     "at": 0.5,
+     "dur": 1.3
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THE BILL ARRIVES LATE.",
+   "counter": 3,
+   "values": {
+    "DAILY 1%": 60,
+    "ON AND OFF": 30
+   },
+   "props": {
+    "SOMEDAY": {
+     "regret": 0.75
+    },
+    "ALL OR NONE": {
+     "regret": 0.6
+    },
+    "ON AND OFF": {
+     "pack": 0.7,
+     "regret": 0.22
+    }
+   },
+   "states": {
+    "ON AND OFF": "active"
+   },
+   "tags": {
+    "ON AND OFF": {
+     "text": "ON AGAIN",
+     "color": "#b98cff"
+    }
+   },
+   "bubbles": [
+    {
+     "who": "ALL OR NONE",
+     "text": "maybe next year",
+     "at": 0.6,
+     "dur": 1.3
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "BUT IT ALWAYS ARRIVES.",
+   "counter": 5,
+   "curve": "accel",
+   "values": {
+    "DAILY 1%": 86,
+    "ON AND OFF": 36
+   },
+   "props": {
+    "SOMEDAY": {
+     "regret": 1.0
+    },
+    "ALL OR NONE": {
+     "regret": 0.85
+    },
+    "ON AND OFF": {
+     "regret": 0.3
+    }
+   },
+   "tags": {
+    "ON AND OFF": null
+   },
+   "states": {
+    "SOMEDAY": "shock"
+   },
+   "stateAt": {
+    "SOMEDAY": 1.6
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "PAY NOW, OR PAY LATER.",
+   "counter": 5,
+   "values": {
+    "DAILY 1%": 100
+   },
+   "props": {
+    "DAILY 1%": {
+     "pack": 0
+    }
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "SOMEDAY",
+     "at": 0.35
+    },
+    {
+     "type": "crash",
+     "who": "ALL OR NONE",
+     "at": 0.6
+    },
+    {
+     "type": "shake",
+     "who": "ON AND OFF",
+     "at": 0.85,
+     "strength": 8
+    },
+    {
+     "type": "burst",
+     "who": "DAILY 1%",
+     "at": 1.1
+    }
+   ],
+   "states": {
+    "DAILY 1%": "win",
+    "ON AND OFF": "sad"
+   },
+   "stateAt": {
+    "DAILY 1%": 1.1,
+    "ON AND OFF": 1.0
+   },
+   "tags": {
+    "DAILY 1%": {
+     "text": "PAID EARLY",
+     "color": "#36e0c8"
+    },
+    "SOMEDAY": "PAID LATE",
+    "ALL OR NONE": "PAID LATE"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "BOTH HURT. ONLY ONE PAYS YOU BACK.",
+   "counter": 5
+  },
+  {
+   "dur": 2.0,
+   "caption": "PICK YOUR PAIN.",
+   "style": "closing",
+   "counter": 5
+  }
+ ],
+ "endcard": {
+  "tagline": "DISCIPLINE NOW, OR REGRET LATER."
+ },
+ "upload": {
+  "title": "Pick Your Pain",
+  "description": "Everyone pays. Discipline costs a little every day; regret costs everything at once. Which one are you carrying? #discipline #motivation #selfimprovement",
+  "hashtags": [
+   "discipline",
+   "motivation",
+   "selfimprovement",
+   "mindset",
+   "shorts"
+  ]
+ }
+}

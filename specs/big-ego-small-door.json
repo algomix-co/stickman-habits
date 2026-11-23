@@ -1,0 +1,305 @@
+{
+ "id": "big-ego-small-door",
+ "brand": "mind-the-gap",
+ "scene": "doors",
+ "showValues": false,
+ "keywords": [
+  "ego",
+  "success",
+  "mindset",
+  "failure",
+  "progress"
+ ],
+ "characters": [
+  {
+   "name": "KNOW-IT-ALL",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  },
+  {
+   "name": "NEEDS PRAISE",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "THIN SKIN",
+   "color": "#ff5a6e",
+   "accessory": "beanie"
+  },
+  {
+   "name": "KEEPS ASKING",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  }
+ ],
+ "metric": {
+  "max": 100,
+  "scale": 1.0
+ },
+ "counter": {
+  "label": "DAY",
+  "start": 1
+ },
+ "startProps": {
+  "KNOW-IT-ALL": {
+   "ego": 0,
+   "through": 0,
+   "stuck": 0
+  },
+  "NEEDS PRAISE": {
+   "ego": 0,
+   "through": 0,
+   "stuck": 0
+  },
+  "THIN SKIN": {
+   "ego": 0,
+   "through": 0,
+   "stuck": 0
+  },
+  "KEEPS ASKING": {
+   "ego": 0,
+   "through": 0,
+   "stuck": 0
+  }
+ },
+ "beats": [
+  {
+   "dur": 2.8,
+   "caption": "THE DOOR IS SMALL ON PURPOSE.",
+   "counter": 1,
+   "values": {
+    "KNOW-IT-ALL": 12,
+    "NEEDS PRAISE": 10,
+    "THIN SKIN": 11,
+    "KEEPS ASKING": 9
+   },
+   "bubbles": [
+    {
+     "who": "KNOW-IT-ALL",
+     "text": "I know, I know",
+     "at": 0.6,
+     "dur": 1.0
+    },
+    {
+     "who": "KEEPS ASKING",
+     "text": "how does it work?",
+     "at": 1.7,
+     "dur": 1.0
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "PRAISE FEELS LIKE PROGRESS.",
+   "counter": 30,
+   "values": {
+    "KNOW-IT-ALL": 30,
+    "NEEDS PRAISE": 27,
+    "THIN SKIN": 26,
+    "KEEPS ASKING": 24
+   },
+   "props": {
+    "KNOW-IT-ALL": {
+     "ego": 0.35
+    },
+    "NEEDS PRAISE": {
+     "ego": 0.3
+    }
+   },
+   "events": [
+    {
+     "type": "marker",
+     "who": "KNOW-IT-ALL",
+     "text": "GENIUS!",
+     "at": 0.3,
+     "dur": 1.6,
+     "color": "#ffc53d",
+     "dx": 95,
+     "dy": 40
+    },
+    {
+     "type": "marker",
+     "who": "NEEDS PRAISE",
+     "text": "+1K LIKES",
+     "at": 1.1,
+     "dur": 1.6,
+     "color": "#b98cff",
+     "dx": 95,
+     "dy": 40
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "EGO STOPS LEARNING.",
+   "counter": 90,
+   "values": {
+    "KNOW-IT-ALL": 50,
+    "NEEDS PRAISE": 45,
+    "THIN SKIN": 40,
+    "KEEPS ASKING": 42
+   },
+   "props": {
+    "KNOW-IT-ALL": {
+     "ego": 0.7
+    },
+    "NEEDS PRAISE": {
+     "ego": 0.6
+    }
+   },
+   "events": [
+    {
+     "type": "marker",
+     "who": "THIN SKIN",
+     "text": "NEEDS WORK",
+     "at": 1.0,
+     "dur": 1.6,
+     "color": "#ff4d5e",
+     "dx": 95,
+     "dy": 40
+    }
+   ],
+   "states": {
+    "THIN SKIN": "shock"
+   },
+   "stateAt": {
+    "THIN SKIN": 1.1
+   },
+   "bubbles": [
+    {
+     "who": "KNOW-IT-ALL",
+     "text": "don't need advice",
+     "at": 0.3,
+     "dur": 1.2
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "FEEDBACK ISN'T AN ATTACK.",
+   "counter": 150,
+   "values": {
+    "KNOW-IT-ALL": 68,
+    "NEEDS PRAISE": 62,
+    "KEEPS ASKING": 62
+   },
+   "states": {
+    "THIN SKIN": "sit"
+   },
+   "stateAt": {
+    "THIN SKIN": 0.3
+   },
+   "tags": {
+    "THIN SKIN": "GAVE UP"
+   },
+   "bubbles": [
+    {
+     "who": "KEEPS ASKING",
+     "text": "how do I improve?",
+     "at": 0.5,
+     "dur": 1.4
+    },
+    {
+     "who": "NEEDS PRAISE",
+     "text": "but did they like it?",
+     "at": 1.9,
+     "dur": 1.0
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "EVERYONE REACHES THE DOOR.",
+   "counter": 240,
+   "values": {
+    "KNOW-IT-ALL": 100,
+    "NEEDS PRAISE": 100,
+    "KEEPS ASKING": 100
+   },
+   "props": {
+    "KNOW-IT-ALL": {
+     "ego": 1.0
+    },
+    "NEEDS PRAISE": {
+     "ego": 0.9
+    }
+   },
+   "events": [
+    {
+     "type": "shake",
+     "who": "KNOW-IT-ALL",
+     "at": 2.3,
+     "strength": 7
+    }
+   ]
+  },
+  {
+   "dur": 3.2,
+   "caption": "ONLY ONE FITS THROUGH.",
+   "counter": 365,
+   "props": {
+    "KEEPS ASKING": {
+     "through": 1
+    },
+    "KNOW-IT-ALL": {
+     "stuck": 1
+    },
+    "NEEDS PRAISE": {
+     "stuck": 1
+    }
+   },
+   "events": [
+    {
+     "type": "shake",
+     "who": "NEEDS PRAISE",
+     "at": 0.3,
+     "strength": 7
+    },
+    {
+     "type": "burst",
+     "who": "KEEPS ASKING",
+     "at": 1.6
+    }
+   ],
+   "states": {
+    "KEEPS ASKING": "win"
+   },
+   "stateAt": {
+    "KEEPS ASKING": 1.6
+   },
+   "tags": {
+    "KNOW-IT-ALL": "TOO BIG",
+    "NEEDS PRAISE": "STUCK",
+    "KEEPS ASKING": {
+     "text": "NEXT LEVEL",
+     "color": "#36e0c8"
+    }
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "THE GAP ISN'T TALENT. IT'S EGO.",
+   "counter": 365
+  },
+  {
+   "dur": 2.0,
+   "caption": "BIG EGO, SMALL DOOR.",
+   "style": "closing",
+   "counter": 365
+  }
+ ],
+ "endcard": {
+  "tagline": "STAY HUNGRY ENOUGH TO FIT THROUGH."
+ },
+ "upload": {
+  "title": "Big Ego, Small Door",
+  "description": "Praise inflates. Feedback shrinks you back to a size that fits through the next door. Keep asking. #ego #mindset #success",
+  "hashtags": [
+   "ego",
+   "mindset",
+   "success",
+   "motivation",
+   "shorts"
+  ]
+ }
+}

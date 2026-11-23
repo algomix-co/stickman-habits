@@ -17,6 +17,7 @@ music = np.zeros((N, 2)); fx = np.zeros((N, 2))
 INST, IMPACT = ST.get('instrument', 'piano'), ST.get('impact', 'boom')
 root = int(ST.get('root', 57)); bpm = float(ST.get('bpm', 80)); E8 = 30.0 / bpm
 
+def lerp(a, b, u): return a + (b - a) * u
 def midi(m): return 440.0 * 2 ** ((m - 69) / 12)
 def tvec(d): return np.arange(int(max(d, 0) * SR)) / SR
 def add(buf, start, sig, pan=0.0, gain=1.0):
@@ -106,54 +107,103 @@ def clap(vel=0.3):
     _clap[vel] = lp(n * e, 3800) * vel * 1.3; return _clap[vel]
 def tick(vel=0.05):
     t = tvec(0.03); return (np.sin(2 * np.pi * 3400 * t) + 0.5 * np.sin(2 * np.pi * 5100 * t)) * np.exp(-t / 0.006) * vel
+def hp(x, fc):
+    n = len(x); X = np.fft.rfft(x); f = np.fft.rfftfreq(n, 1 / SR); return np.fft.irfft(X * (f / fc) ** 4 / (1 + (f / fc) ** 4), n)
+_fol = {}
+def foley(kind, vel=1.0):   # rhythmic work sounds that sit on the music grid
+    if kind not in _fol:
+        t = tvec(0.25)
+        if kind == 'brick': s = lp(rng.standard_normal(len(t)), 2200) * np.exp(-t / 0.018) * 0.9 + np.sin(2 * np.pi * 170 * t) * np.exp(-t / 0.04) * 0.6
+        elif kind == 'hammer': s = (np.sin(2 * np.pi * 1850 * t) + 0.6 * np.sin(2 * np.pi * 2730 * t)) * np.exp(-t / 0.035) * 0.5 + hp(rng.standard_normal(len(t)), 3000) * np.exp(-t / 0.006) * 0.6
+        elif kind == 'blade': s = sum(np.sin(2 * np.pi * f * t) * np.exp(-t / d) for f, d in ((2350, 0.12), (3710, 0.08), (5230, 0.05))) * 0.3 + hp(rng.standard_normal(len(t)), 5000) * np.exp(-t / 0.01) * 0.5
+        elif kind == 'step': s = lp(rng.standard_normal(len(t)), 900) * np.exp(-t / 0.03) * 0.8 + np.sin(2 * np.pi * 90 * t) * np.exp(-t / 0.05) * 0.7
+        else: s = (np.sin(2 * np.pi * 2600 * t) + 0.4 * np.sin(2 * np.pi * 3900 * t)) * np.exp(-t / 0.05) * 0.4   # coin
+        _fol[kind] = s * np.minimum(1, t / 0.002)
+    return _fol[kind] * vel
+def shaker(vel=0.03):
+    t = tvec(0.06); return hp(rng.standard_normal(len(t)), 6000) * np.sin(np.pi * t / 0.06) ** 2 * vel
+def tom(f, vel=0.4):
+    t = tvec(0.35); ff = f * (1 + 0.6 * np.exp(-t / 0.02)); return np.sin(2 * np.pi * np.cumsum(ff) / SR) * np.exp(-t / 0.16) * vel
+def cymbal(vel=0.18, dec=1.2):
+    t = tvec(dec * 2); return hp(rng.standard_normal(len(t)), 5000) * np.exp(-t / dec) * vel
+def swell(t0, t1, vol=0.16):   # reverse-cymbal swell that lands exactly on the next downbeat
+    L = int((t1 - t0) * SR)
+    if L < 200: return
+    u = np.arange(L) / L; add(fx, t0, hp(rng.standard_normal(L), 3000) * u ** 2.5 * vol)
 if MUSIC == 'drive':
+    if IMPACT == 'tapestop': IMPACT = 'boom'   # never stop the music: a tape-stop leaves a hole
     climax = burst_t[0] if burst_t else DUR * 0.78
     calm_at = min([x for x in [cues.get('question'), cues.get('endcard')] if x is not None] or [DUR])
-    B0 = float(ST.get('driveBpm', 108 + (bpm - 72))); B1 = B0 + float(ST.get('driveRamp', 24))
-    grid = []; t = 0.0
-    while t < DUR: p = min(1.0, t / climax); grid.append(t); t += 60.0 / (B0 + (B1 - B0) * p ** 1.2)
-    grid = np.array(grid); PROG = [[0, 8, 3, 10], [0, 10, 8, 7], [0, 5, 8, 10]][seed % 3]
+    closing = [b['t0'] for b in cues['beats'] if b['mood'] == 'end']; calm_at = min([calm_at] + closing)
+    B0 = float(ST.get('driveBpm', 108 + (bpm - 72))); B1 = B0 + float(ST.get('driveRamp', 22))
+    # grid locked to the story: every caption change is a downbeat; tempo rises beat by beat
+    segs = [(b['t0'], b['t1']) for b in cues['beats']]
+    if segs[-1][1] < DUR - 0.05: segs.append((segs[-1][1], DUR))
+    grid = []   # (time, beat length, index in segment, segment length, segment start)
+    for (a, b) in segs:
+        mid = (a + b) / 2; tgt = B0 + (B1 - B0) * min(1.0, mid / climax) ** 1.2
+        n = max(2, int(round((b - a) * tgt / 60 / 2)) * 2); d = (b - a) / n
+        for k in range(n): grid.append((a + k * d, d, k, n, a))
+    PROG = [[0, 8, 3, 10], [0, 10, 8, 7], [0, 5, 8, 10]][seed % 3]
     def stage(t):
         if t >= calm_at: return 6
         if t >= climax: return 5
         p = t / climax
         return 1 if p < 0.25 else 2 if p < 0.5 else 3 if p < 0.8 else 4
-    for bi, t in enumerate(grid):
-        nxt = grid[bi + 1] if bi + 1 < len(grid) else t + 60 / B1; beat = nxt - t; st = stage(t)
-        if climax - 0.5 * beat <= t < climax: continue          # one-beat drop-out right before the climax
-        bar, pos = divmod(bi, 4); key = root + (1 if t >= climax * 0.5 else 0) + (2 if st >= 5 else 0)
+    fol = (cues.get('foley') or {}); fkind = fol.get('kind'); fwin = fol.get('active', [])
+    working = lambda t: any(a0 - 0.05 <= t <= a1 + 0.05 for a0, a1 in fwin)
+    seg_i = -1; bar_global = 0
+    for gi, (t, beat, k, n, s0) in enumerate(grid):
+        st = stage(t); p = min(1.0, t / climax); ramp = 0.55 + 0.45 * p
+        if k == 0: seg_i += 1
+        pos = k % 4; bar = seg_i * 4 + k // 4
+        key = root + (1 if t >= climax * 0.5 else 0) + (2 if st >= 5 else 0)
         deg = PROG[bar % 4]; r = key + deg - (12 if deg > 7 else 0); fifth, oct_ = r + 7, r + 12
-        p = min(1.0, t / climax); ramp = 0.55 + 0.45 * p
-        if st == 6:   # closing line: half-time pulse only, so the question lands
-            if pos % 2 == 0: add(fx, t, kick(0.45, low=44, dec=0.3)); add(music, t, saw(midi(r - 12), beat * 1.8, 6, 0.5) * 0.10)
-            continue
-        # kick: four on the floor from the first beat
-        add(fx, t, kick((0.5 if st == 1 else 0.68) * (1.1 if st == 5 else 1), low=44, dec=0.22 if st < 5 else 0.32))
-        if st >= 2 and pos in (1, 3): add(fx, t, clap(0.26 + 0.1 * (st >= 3)), pan=0.05)
-        # clock ticks: 8ths, then 16ths from stage 3 (time running out)
-        div = 4 if st >= 3 else 2
-        for j in range(div): add(fx, t + j * beat / div, tick(0.022 + 0.015 * (j % div == 0) + 0.01 * (st >= 4)), pan=0.35 * (1 if j % 2 else -1))
-        if st >= 3: add(fx, t + beat / 2, lp(hat(0.07 + 0.03 * (st >= 4)), 9000), pan=-0.2)   # open off-beat hat
-        # bass: driving 8th-note pulse on the root, octave jumps from stage 3
+        calm = st == 6
+        # --- drums: four on the floor all the way through (softer on the closing line, never silent)
+        add(fx, t, kick((0.42 if calm else 0.5 if st == 1 else 0.68) * (1.1 if st == 5 else 1), low=44, dec=0.22 if st < 5 else 0.32))
+        if (st >= 2 or calm) and pos in (1, 3): add(fx, t, clap(0.22 if calm else 0.26 + 0.1 * (st >= 3)), pan=0.05)
+        div = 2 if (st <= 2 or calm) else 4
+        for j in range(div): add(fx, t + j * beat / div, tick(0.022 + 0.015 * (j == 0) + 0.01 * (st >= 4)), pan=0.35 * (1 if j % 2 else -1))
+        for j in range(4): add(fx, t + j * beat / 4, shaker(0.02 + 0.015 * (st >= 3) + 0.01 * (j % 2)), pan=0.5)   # continuous 16th shaker glue
+        if st >= 3 and not calm: add(fx, t + beat / 2, lp(hat(0.07 + 0.03 * (st >= 4)), 9000), pan=-0.2)
+        # --- fill into every caption change + a crash on the new downbeat (sections feel joined, not cut)
+        if k == n - 1 and gi + 1 < len(grid):
+            nxt = grid[gi + 1][0]
+            if st >= 2 and not calm: [add(fx, t + j * beat / 4, tom(lerp(150, 260, j / 3), 0.22 + 0.06 * j), pan=-0.3 + 0.2 * j) for j in range(4)]
+            else: [add(fx, t + j * beat / 4, snare(0.08 + 0.05 * j)) for j in range(4)]
+            swell(t, nxt, 0.08 + 0.08 * (st >= 3))
+        if k == 0 and t > 0.1: add(fx, t, cymbal(0.06 + 0.06 * (st >= 3) + 0.08 * (st == 5), 0.9 if st < 5 else 1.6), pan=0.2)
+        # --- bass: legato 8ths (each note runs into the next), plus a sub that holds the bar
         for j in range(2):
             m = r - 24 + (12 if st >= 3 and j == 1 else 0)
-            add(music, t + j * beat / 2, saw(midi(m), beat * 0.45, 5 + 3 * (st >= 3), beat * 0.18) * (0.16 + 0.04 * (st >= 4)))
-        # string ostinato: 8ths, then 16ths; brightness grows with progress
-        sub = 2 if st == 1 else 4; pat = [m + 12 for m in (r, fifth, oct_, fifth, r + 3, fifth, oct_ + 3, fifth)]
+            add(music, t + j * beat / 2, saw(midi(m), beat * 0.62, 5 + 3 * (st >= 3), beat * 0.5) * (0.13 if calm else 0.16 + 0.04 * (st >= 4)))
+        if pos == 0 or k == 0: add(music, t, np.sin(2 * np.pi * midi(r - 24) * tvec(beat * 4.2)) * np.minimum(1, tvec(beat * 4.2) / 0.02) * np.exp(-tvec(beat * 4.2) / (beat * 6)) * 0.17)
+        # --- string ostinato: 8ths then 16ths, longer tails so notes overlap; brightness grows with progress
+        sub = 2 if (st == 1 or calm) else 4; pat = [m + 12 for m in (r, fifth, oct_, fifth, r + 3, fifth, oct_ + 3, fifth)]
         for j in range(sub):
             n_ = pat[(pos * sub + j) % 8]; K = 3 + int(9 * p) + (4 if st >= 5 else 0)
-            add(music, t + j * beat / sub, saw(midi(n_), beat / sub * 0.9, K, beat / sub * 0.35) * (0.2 * ramp + 0.06 * (st >= 5)), pan=0.3 * np.sin(bi * 1.7 + j))
-        # brass stabs on the bar from stage 3; on every beat in the drop
-        if (st >= 3 and pos == 0) or st == 5:
-            for m in (r, r + 3, fifth, oct_): add(music, t, saw(midi(m), beat * 0.6, 12, beat * 0.3, att=0.012) * (0.12 + 0.05 * (st == 5)), pan=-0.15)
-        # sustained pad underneath, swelling
-        if pos == 0: add(music, t, pad([midi(m) for m in (r - 12, r - 9, r - 5)], beat * 4, vel=0.5 + 0.9 * p, att=0.3, rel=0.4, bright=1.6))
-    # snare roll over the last 2 bars before the climax: 8ths -> 16ths -> 32nds, crescendo
-    roll0 = grid[max(0, int(np.searchsorted(grid, climax)) - 8)]
+            add(music, t + j * beat / sub, saw(midi(n_), beat / sub * 1.8, K, beat / sub * 1.0) * ((0.12 if calm else 0.2 * ramp) + 0.06 * (st >= 5)), pan=0.3 * np.sin(gi * 1.7 + j))
+        # --- brass stabs on the bar from stage 3, every beat in the drop
+        if ((st >= 3 and pos == 0) or st == 5) and not calm:
+            for m in (r, r + 3, fifth, oct_): add(music, t, saw(midi(m), beat * 0.7, 12, beat * 0.35, att=0.012) * (0.12 + 0.05 * (st == 5)), pan=-0.15)
+        # --- pad: a new chord each bar, overlapping the last one
+        if pos == 0: add(music, t, pad([midi(m) for m in (r - 12, r - 9, r - 5)], beat * 4.3, vel=1.0 + 0.7 * p, att=0.2, rel=0.6, bright=1.6))
+        # --- filler foley on the grid while the characters work (bricks, hammers, blades, steps)
+        if fkind and working(t) and not calm:
+            if fkind in ('brick', 'step'): add(fx, t, foley(fkind, 0.5 + 0.2 * (st >= 3)), pan=-0.25)
+            elif fkind == 'hammer':
+                for j in range(2): add(fx, t + j * beat / 2, foley('hammer', 0.35 + 0.15 * (j == 0)), pan=0.25)
+            elif fkind == 'blade':
+                if pos in (1, 3): add(fx, t, foley('blade', 0.45), pan=0.2)
+            else: add(fx, t + beat / 2, foley(fkind, 0.4), pan=0.3)
+    # snare roll over the last 2 bars before the climax, crescendo; a swell lands on the climax itself (no gap)
+    roll0 = max([g[0] for g in grid if g[0] < climax][-8:] or [max(0, climax - 2)])
     t = roll0
-    while t < climax - 0.06:
+    while t < climax - 0.02:
         u = (t - roll0) / max(1e-3, climax - roll0); bt = 60 / B1; step = bt / 2 if u < 0.4 else bt / 4 if u < 0.75 else bt / 8
         add(fx, t, snare(0.08 + 0.3 * u ** 1.5)); t += step
+    swell(max(0, climax - 1.2), climax, 0.25)
 k = 0
 for b in (cues['beats'] if MUSIC != 'drive' else []):
     t0, t1, mood = b['t0'], b['t1'], b['mood']

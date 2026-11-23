@@ -1,0 +1,301 @@
+{
+ "id": "talent-rusts-without-practice",
+ "brand": "mind-the-gap",
+ "scene": "swords",
+ "showValues": false,
+ "keywords": [
+  "talent",
+  "practice",
+  "consistency",
+  "obsession",
+  "success"
+ ],
+ "characters": [
+  {
+   "name": "BORN GIFTED",
+   "color": "#ffc53d",
+   "accessory": "crown",
+   "blade": "gold"
+  },
+  {
+   "name": "NEW GEAR",
+   "color": "#b98cff",
+   "accessory": "cap",
+   "blade": "shiny"
+  },
+  {
+   "name": "WEEKENDS",
+   "color": "#ff5a6e",
+   "accessory": "beanie",
+   "blade": "steel"
+  },
+  {
+   "name": "DAILY REPS",
+   "color": "#36e0c8",
+   "accessory": "headband",
+   "blade": "wood"
+  }
+ ],
+ "metric": {
+  "max": 100,
+  "scale": 1.0
+ },
+ "start": {
+  "BORN GIFTED": 60
+ },
+ "counter": {
+  "label": "DAY",
+  "start": 1
+ },
+ "startProps": {
+  "BORN GIFTED": {
+   "rust": 0,
+   "rock": 0
+  },
+  "NEW GEAR": {
+   "rock": 0
+  },
+  "WEEKENDS": {
+   "rock": 0
+  },
+  "DAILY REPS": {
+   "mat": 0,
+   "rock": 0
+  }
+ },
+ "beats": [
+  {
+   "dur": 2.8,
+   "caption": "HE WAS BORN WITH IT.",
+   "counter": 1,
+   "values": {
+    "DAILY REPS": 4,
+    "WEEKENDS": 3
+   },
+   "states": {
+    "BORN GIFTED": "boast",
+    "NEW GEAR": "idle"
+   },
+   "bubbles": [
+    {
+     "who": "BORN GIFTED",
+     "text": "natural talent",
+     "at": 0.5,
+     "dur": 1.1
+    },
+    {
+     "who": "DAILY REPS",
+     "text": "I've got a stick",
+     "at": 1.7,
+     "dur": 1.0
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "TALENT GETS APPLAUSE.",
+   "counter": 30,
+   "values": {
+    "DAILY REPS": 18,
+    "WEEKENDS": 8
+   },
+   "props": {
+    "DAILY REPS": {
+     "mat": 0.25
+    }
+   },
+   "states": {
+    "BORN GIFTED": "idle"
+   },
+   "bubbles": [
+    {
+     "who": "NEW GEAR",
+     "text": "need a better sword",
+     "at": 0.4,
+     "dur": 1.3
+    },
+    {
+     "who": "WEEKENDS",
+     "text": "Saturdays only",
+     "at": 1.8,
+     "dur": 1.1
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "PRACTICE GETS SHARPER.",
+   "counter": 90,
+   "values": {
+    "DAILY REPS": 42,
+    "WEEKENDS": 14
+   },
+   "props": {
+    "DAILY REPS": {
+     "mat": 0.6
+    },
+    "BORN GIFTED": {
+     "rust": 0.3
+    }
+   },
+   "states": {
+    "BORN GIFTED": "sit"
+   },
+   "stateAt": {
+    "BORN GIFTED": 0.4
+   },
+   "tags": {
+    "NEW GEAR": {
+     "text": "SWORD #3",
+     "color": "#b98cff"
+    }
+   },
+   "bubbles": [
+    {
+     "who": "BORN GIFTED",
+     "text": "I'll train later",
+     "at": 1.2,
+     "dur": 1.4
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "RUST IS SILENT.",
+   "counter": 180,
+   "values": {
+    "DAILY REPS": 70,
+    "WEEKENDS": 24
+   },
+   "props": {
+    "DAILY REPS": {
+     "mat": 0.85
+    },
+    "BORN GIFTED": {
+     "rust": 0.7
+    }
+   },
+   "tags": {
+    "NEW GEAR": {
+     "text": "SWORD #6",
+     "color": "#b98cff"
+    }
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "THEN COMES THE TEST.",
+   "counter": 365,
+   "values": {
+    "DAILY REPS": 92,
+    "WEEKENDS": 28
+   },
+   "props": {
+    "DAILY REPS": {
+     "mat": 1,
+     "rock": 1
+    },
+    "BORN GIFTED": {
+     "rust": 0.85,
+     "rock": 1
+    },
+    "NEW GEAR": {
+     "rock": 1
+    },
+    "WEEKENDS": {
+     "rock": 1
+    }
+   },
+   "states": {
+    "BORN GIFTED": "idle"
+   },
+   "stateAt": {
+    "BORN GIFTED": 0.3
+   },
+   "tags": {
+    "NEW GEAR": null
+   },
+   "bubbles": [
+    {
+     "who": "BORN GIFTED",
+     "text": "easy.",
+     "at": 1.6,
+     "dur": 1.0
+    }
+   ]
+  },
+  {
+   "dur": 3.2,
+   "caption": "ONE SWING EACH.",
+   "counter": 365,
+   "values": {
+    "DAILY REPS": 100
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "NEW GEAR",
+     "at": 0.55
+    },
+    {
+     "type": "shake",
+     "who": "WEEKENDS",
+     "at": 0.95,
+     "strength": 6
+    },
+    {
+     "type": "crash",
+     "who": "BORN GIFTED",
+     "at": 1.35
+    },
+    {
+     "type": "burst",
+     "who": "DAILY REPS",
+     "at": 1.85
+    }
+   ],
+   "states": {
+    "DAILY REPS": "win",
+    "WEEKENDS": "sad"
+   },
+   "stateAt": {
+    "DAILY REPS": 2.3,
+    "WEEKENDS": 1.5
+   },
+   "tags": {
+    "NEW GEAR": "SLIPPED",
+    "WEEKENDS": "A SCRATCH",
+    "BORN GIFTED": "SNAPPED",
+    "DAILY REPS": {
+     "text": "CLEAN CUT",
+     "color": "#36e0c8"
+    }
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "TALENT IS A HEAD START, NOT A FINISH.",
+   "counter": 365
+  },
+  {
+   "dur": 2.0,
+   "caption": "TALENT RUSTS WITHOUT PRACTICE.",
+   "style": "closing",
+   "counter": 365
+  }
+ ],
+ "endcard": {
+  "tagline": "SHARPEN IT DAILY, OR LOSE IT SLOWLY."
+ },
+ "upload": {
+  "title": "Talent Rusts Without Practice",
+  "description": "Talent gets the applause. Practice gets the results. Whatever you were born with rusts if you never use it. #talent #discipline #consistency",
+  "hashtags": [
+   "talent",
+   "discipline",
+   "consistency",
+   "motivation",
+   "shorts"
+  ]
+ }
+}

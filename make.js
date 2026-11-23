@@ -16,7 +16,7 @@ const CHECK = flag('--check'), REVIEW = flag('--review'), SKIP_REVIEW = flag('--
 const WORKERS = +(opt('--workers') || 4) || 4;
 const specs = args.filter(a => a.endsWith('.json') && a !== opt('--brand') && a !== SHEET);
 const FPS = +(opt('--fps') || 60) || 60, ROOT = __dirname, PAGE = 'file://' + path.join(ROOT, 'engine', 'page.html');
-const SCENES = ['towers', 'race', 'climb', 'pullup', 'lift', 'dig'];
+const SCENES = ['towers', 'race', 'climb', 'pullup', 'lift', 'dig', 'bricks', 'buckets', 'swords', 'doors'];
 const STATES = ['active', 'idle', 'boast', 'win', 'quit', 'sad', 'shock', 'fall', 'throw', 'cheer', 'stand', 'sit'];
 const EVENTS = ['crash', 'shake', 'marker', 'burst', 'rain', 'fling', 'flash'];
 
@@ -38,7 +38,7 @@ const DIMS = {
 function seededRand(str) { let h = crypto.createHash('sha1').update(str).digest().readUInt32LE(0); return () => { h = (h + 0x6D2B79F5) | 0; let t = Math.imul(h ^ h >>> 15, 1 | h); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 function compatible(dim, v, spec, brand) {
   const n = spec.characters.length, hasBurst = spec.beats.some(b => (b.events || []).some(e => e.type === 'burst'));
-  if (dim === 'labels' && v === 'board') return !['towers'].includes(spec.scene) && !(spec.scene === 'climb' && n > 3);
+  if (dim === 'labels' && v === 'board') return spec.showValues !== false && !['towers'].includes(spec.scene) && !(spec.scene === 'climb' && n > 3);
   if (dim === 'hook' && v === 'flashforward') return hasBurst && !spec.question;   // a flashforward would reveal the open-loop answer
   if (dim === 'outro' && v === 'endcard') return !!brand.endcard;
   return true;
@@ -69,7 +69,8 @@ function validate(s, brand = {}) {
   const E = [], Wn = [], need = (c, m) => { if (!c) E.push(m); };
   need(s.id && /^[a-z0-9-]+$/.test(s.id), 'id must be lowercase-kebab');
   need(SCENES.includes(s.scene), `scene must be one of ${SCENES.join(', ')}`);
-  need(Array.isArray(s.characters) && s.characters.length >= 2 && s.characters.length <= 5, '2-5 characters');
+  const minC = (brand.rules && brand.rules.minCharacters) || 2;
+  need(Array.isArray(s.characters) && s.characters.length >= minC && s.characters.length <= 5, `${minC}-5 characters (LEARNINGS.md)`);
   const names = (s.characters || []).map(c => c.name);
   names.forEach(n => { need(typeof n === 'string' && n.length <= 12, `character name "${n}" must be <= 12 chars`); if (n !== n.toUpperCase()) Wn.push(`name "${n}" is not uppercase`); });
   need(new Set(names).size === names.length, 'character names must be unique');
@@ -89,7 +90,8 @@ function validate(s, brand = {}) {
     for (const e of b.events || []) { need(EVENTS.includes(e.type), `${at}: event type "${e.type}"`); if (e.who) need(names.includes(e.who), `${at}: event who "${e.who}"`); }
   });
   const last = (s.beats || [])[s.beats.length - 1];
-  if (last && last.style !== 'question') Wn.push('last beat is not style:"question"');
+  if (last && last.style !== 'question' && last.style !== 'closing') Wn.push('last beat is not style:"question" or "closing"');
+  if (brand.rules && brand.rules.storyTagline) need(s.endcard && s.endcard.tagline && s.endcard.tagline.length <= 40, 'endcard.tagline required (written for this story, <= 40 chars)');
   need(s.upload && s.upload.title && s.upload.title.length <= 100, 'upload.title required (<= 100 chars)');
   if (s.upload && s.upload.title && brand.titleMaxWords) { const words = s.upload.title.split(/\s+/).filter(w => /[A-Za-z0-9]/.test(w)).length; need(words <= brand.titleMaxWords, `title "${s.upload.title}" has ${words} words; the ${brand.name} brand allows ${brand.titleMaxWords}`); }
   // brand rules learned from owner feedback (LEARNINGS.md): banned title shapes, the title ledger, keywords

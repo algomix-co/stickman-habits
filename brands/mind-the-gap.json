@@ -11,7 +11,7 @@
  },
  "endcard": {
   "title": "MIND THE GAP",
-  "tagline": "OUTSMART YOUR OWN BRAIN",
+  "tagline": "CLOSE THE GAP.",
   "cta": "FOLLOW @mindDgap",
   "color": "#36e0c8",
   "accessory": "glasses",
@@ -44,14 +44,11 @@
    "accessory": "cap"
   }
  ],
- "storyRules": {
-  "roles": true,
-  "nameEffect": true,
-  "oneChange": true,
-  "question": true
- },
+ "storyRules": {},
  "fixed": {
-  "music": "drive"
+  "music": "drive",
+  "hook": "straight",
+  "outro": "endcard"
  },
  "rules": {
   "ledger": "brands/mind-the-gap.titles.json",
@@ -98,6 +95,8 @@
    "pain",
    "silence",
    "results"
-  ]
+  ],
+  "minCharacters": 4,
+  "storyTagline": true
  }
 }

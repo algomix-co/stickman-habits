@@ -189,3 +189,256 @@ SCENES.dig = {
     });
   },
 };
+
+// ---------------------------------------------------------------- bricks ("Pick Your Pain")
+// Each character lays bricks and rises on their own wall. props: pack (backpack size 0..1.6, the pain of
+// discipline) and regret (0..1, a boulder that hangs from the beam above their head and grows).
+// A crash on someone with regret > 0.3 is the boulder dropping; a shake drops a small rock.
+const BRICK_DOWN = { la: [-0.45, 0.35], ra: [0.45, -0.35], ll: [-0.75, 0.5], rl: [0.75, -0.5], lean: 0, drop: 0.35 };
+const BRICK_UP = { la: [-1.55, -2.65], ra: [1.55, 2.65], ll: [-0.14, -0.08], rl: [0.14, 0.08], lean: 0, drop: -0.25 };
+SCENES.bricks = {
+  facing: 'front', debris: 'bricks', foley: 'brick', K: 1.3, HMAX: 560,
+  setup(T) { this.xs = colsX(T.chars.length, 235, 920); this.F = FLOOR_MAX; this.BEAM = this.F - this.HMAX - figH() * this.K - 175; },
+  floorY() { return this.F; },
+  h(i, t) { return this.HMAX * fracAt(i, t); },
+  extent() { return { x0: this.xs[0] - 110, x1: this.xs[this.xs.length - 1] + 110, y0: this.BEAM - 30, y1: this.F + 12 }; },
+  place(i, t) { const y = this.F - this.h(i, t); return { x: this.xs[i], top: y - figH() * this.K, s: this.K, floor: this.F, footY: y }; },
+  debrisSpan(i, tc) { const h = this.h(i, tc - 0.02); if (h < 30) return null; return { x: this.xs[i], y0: this.F - h, y1: this.F, floor: this.F }; },
+  cyc(i, t) { const u = ((phaseInt(i, t, 7, 0.55, 2.2) + i * 0.31) % 1 + 1) % 1; return 0.5 - 0.5 * Math.cos(2 * Math.PI * u); },
+  activePose(i, t) { const pk = propAt(i, 'pack', t), w = Math.max(moving(i, t, 0.001, 0.01), 0.75 * energyAt(t)); const p = blendPose(POSES.stand, blendPose(BRICK_DOWN, BRICK_UP, this.cyc(i, t)), w); return { ...p, lean: p.lean + 0.1 * Math.max(0, pk - 0.9) * Math.sin(t * 3.1 + i) }; },
+  idlePose(i, t) { return POSES.stand; },
+  drop(i) { return T.events.find(e => (e.type === 'crash' || e.type === 'shake') && e.i === i && propAt(i, 'regret', e.t - 0.05) > 0.08); },
+  boulder(i, t) {   // where the regret boulder is: hanging, falling or landed
+    const r = 26 + 92 * propAt(i, 'regret', t), x = this.xs[i] + (i % 2 ? -8 : 8), p = this.place(i, t), labelRoom = 200;
+    const hangY = Math.min(this.BEAM + 70 + r, p.top - labelRoom - r), d = this.drop(i);
+    if (!d || t < d.t - 0.34) return { x, y: hangY, r, rope: true };
+    const small = d.type === 'shake', ground = small ? p.footY - r : this.F - r, u = clamp((t - (d.t - 0.34)) / 0.34), y = lerp(hangY, ground, u * u);
+    return { x: small ? x + 62 * this.K : x + 0.55 * r, y: Math.min(y, ground), r, rope: false, landed: u >= 1 };
+  },
+  draw(c, t) {
+    const K = this.K, BW = 128, BH = 20;
+    c.fillStyle = 'rgba(255,255,255,0.55)'; c.fillRect(this.xs[0] - 120, this.BEAM - 4, this.xs[this.xs.length - 1] - this.xs[0] + 240, 8);   // the beam
+    if (T.__lines) T.__lines.push({ y: this.BEAM, x0: this.xs[0] - 120, x1: this.xs[this.xs.length - 1] + 120 });
+    floorLine(c, this.F);
+    charsDo((ch, i) => {   // brick walls
+      const h = this.h(i, t), n = Math.ceil(h / BH), a = alphaAt(i, t), x = this.xs[i];
+      c.save(); c.globalAlpha = a;
+      for (let k = 0; k < n; k++) { const top = Math.max(this.F - h, this.F - (k + 1) * BH), bot = this.F - k * BH, hh = bot - top; if (hh < 1) continue; const off = (k % 2) * BW / 4;
+        for (let j = -1; j < 2; j++) { const bx0 = Math.max(x - BW / 2, x - BW / 2 + off + j * BW / 2), bx1 = Math.min(x + BW / 2, x - BW / 2 + off + (j + 1) * BW / 2); if (bx1 - bx0 < 2) continue; c.fillStyle = ch.color + '2e'; c.strokeStyle = ch.color + 'c0'; c.lineWidth = 2; c.beginPath(); c.roundRect(bx0 + 1.5, top + 1.5, bx1 - bx0 - 3, hh - 3, 3); c.fill(); c.stroke(); } }
+      c.restore();
+    });
+    return charsDo((ch, i) => {
+      const p = this.place(i, t), a = alphaAt(i, t), st = stateAt(i, t).state, pk = propAt(i, 'pack', t);
+      const J = drawChar(c, i, t, tt => ({ mode: 'feet', x: this.xs[i], y: this.place(i, tt).footY }), { s: K, sweat: moving(i, t) * clamp(pk) });
+      if (pk > 0.05 && st !== 'fall') {   // backpack behind the body, straps in front
+        const j = T.__joints[i], nx = j.neck[0], ny = j.neck[1], hx = j.hip[0], hy = j.hip[1], w = (22 + 20 * pk) * K, hgt = (40 + 30 * pk) * K;
+        c.save(); c.globalAlpha = a; c.globalCompositeOperation = 'destination-over'; c.fillStyle = ch.color; c.strokeStyle = mixWhite(ch.color, 0.5); c.lineWidth = 3;
+        c.beginPath(); c.roundRect((nx + hx) / 2 - w, ny - 6 * K, 2 * w, hgt, 12 * K); c.fill(); c.stroke(); c.restore();
+        c.save(); c.globalAlpha = a; c.strokeStyle = INK; c.lineWidth = 4 * K; c.beginPath(); c.moveTo(nx - 12 * K, ny + 2 * K); c.lineTo(hx - 8 * K, hy - 6 * K); c.moveTo(nx + 12 * K, ny + 2 * K); c.lineTo(hx + 8 * K, hy - 6 * K); c.stroke(); c.restore();
+      }
+      if (st === 'active' && moving(i, t) > 0.2) { const mx = (J.lhand[0] + J.rhand[0]) / 2, my = (J.lhand[1] + J.rhand[1]) / 2; c.save(); c.globalAlpha = a; c.fillStyle = ch.color + '55'; c.strokeStyle = ch.color; c.lineWidth = 2.5; c.beginPath(); c.roundRect(mx - 26, my - 9, 52, 18, 3); c.fill(); c.stroke(); c.restore(); }
+      const rg = propAt(i, 'regret', t);
+      if (rg > 0.02) {   // the regret boulder
+        const b = this.boulder(i, t), rr = rng(i * 13 + 5);
+        c.save();
+        if (b.rope) { c.strokeStyle = 'rgba(214,180,130,0.8)'; c.lineWidth = 4; c.beginPath(); c.moveTo(b.x, this.BEAM); c.lineTo(b.x, b.y - b.r * 0.9); c.stroke(); }
+        c.fillStyle = '#2a2d33'; c.strokeStyle = '#8b929c'; c.lineWidth = 4; c.beginPath();
+        for (let k = 0; k < 11; k++) { const an = k / 11 * 6.283, q = b.r * (0.86 + 0.18 * rr()); k ? c.lineTo(b.x + Math.cos(an) * q, b.y + Math.sin(an) * q * 0.92) : c.moveTo(b.x + Math.cos(an) * q, b.y + Math.sin(an) * q * 0.92); }
+        c.closePath(); c.fill(); c.stroke();
+        c.strokeStyle = 'rgba(255,255,255,0.12)'; c.lineWidth = 3; c.beginPath(); c.arc(b.x - b.r * 0.3, b.y - b.r * 0.3, b.r * 0.35, 3.6, 5.2); c.stroke();
+        if (b.r > 70) spaced(c, 'REGRET', b.x, b.y + 14, '800 40px Inter', '#c3cad3', 3, 1, 0, false, false);
+        c.restore();
+      }
+      return p;
+    });
+  },
+};
+
+// ---------------------------------------------------------------- buckets ("Luck Needs A Bucket")
+// value = how much container each character has built (0 = nothing). props: gold (fill, 0..1.4 of the
+// container; above 1 it overflows), sky (on character 0: gold clouds gathering). A 'rain' event drops
+// coins on everyone equally; containers catch them, empty hands don't.
+const HAM_UP = { la: [-0.9, 1.5], ra: [2.3, 2.9], ll: [-0.18, -0.1], rl: [0.18, 0.1], lean: 0.05, drop: -0.1 };
+const HAM_DOWN = { la: [-0.9, 1.5], ra: [1.25, 1.75], ll: [-0.22, -0.12], rl: [0.22, 0.12], lean: 0.1, drop: 0.1 };
+SCENES.buckets = {
+  facing: 'front', foley: 'hammer', K: 1.35, labelRoom: 250,
+  setup(T) { this.xs = colsX(T.chars.length, 235, 920); this.F = FLOOR_MAX; this.SKY = this.F - 600; },
+  floorY() { return this.F; },
+  cx(i) { return this.xs[i] - 46; }, bx(i) { return this.xs[i] + 44; },
+  dims(i, t) { const f = clamp(value(i, t) / T.maxV); return { f, h: f > 0.01 ? 34 + 240 * f : 0, w: f > 0.01 ? 46 + 84 * f : 0 }; },
+  extent() { return { x0: this.xs[0] - 120, x1: this.xs[this.xs.length - 1] + 120, y0: this.SKY - 60, y1: this.F + 12 }; },
+  place(i, t) { return { x: this.cx(i), top: this.F - figH() * this.K, s: this.K, floor: this.F }; },
+  labelTop(i, top, t) { const d = this.dims(i, t); return Math.min(top, this.F - d.h - 30); },
+  cyc(i, t) { const u = ((phaseInt(i, t, 9, 0.7, 2.6) + i * 0.29) % 1 + 1) % 1; return u < 0.6 ? ss(0, 0.6, u) : 1 - ss(0.6, 0.75, u); },
+  activePose(i, t) { return blendPose(POSES.stand, blendPose(HAM_UP, HAM_DOWN, this.cyc(i, t)), Math.max(moving(i, t, 0.001, 0.01), 0.7 * energyAt(t))); },
+  idlePose(i, t) { const k = Math.sin(t * 2 + i); return { la: [-2.5, -2.9 + 0.1 * k], ra: [2.5, 2.9 - 0.1 * k], ll: [-0.14, -0.08], rl: [0.14, 0.08], lean: 0, drop: -0.45 }; },   // looking up, hands raised: wishing
+  rainTimes() { const out = []; for (const e of T.events) if (e.type === 'rain') for (let ci = 0; ci < T.chars.length; ci++) for (let k = 0; k < (e.count || 14); k++) out.push({ ci, t0: e.t + k * (e.interval || 0.16) + ((ci * 7 + k * 3) % 5) * 0.03, dx: ((k * 37 + ci * 11) % 9 - 4) * 9 }); return out; },
+  coinY(r, t) { const dt = t - r.t0; return this.SKY + 40 + 1700 * dt * dt; },
+  landY(r, t) { const d = this.dims(r.ci, t); return d.h > 0 ? this.F - d.h + 6 : this.F - 12; },
+  rainCues() { return this.rainTimes().map(r => { let dt = 0; while (dt < 2) { if (this.coinY(r, r.t0 + dt) >= this.landY(r, r.t0 + dt)) break; dt += 1 / 240; } return [r.t0 + dt, r.ci, T.chars.length]; }); },
+  draw(c, t) {
+    const K = this.K, sky = propAt(0, 'sky', t);
+    floorLine(c, this.F);
+    if (sky > 0.01) {   // gold clouds of opportunity
+      c.save(); c.globalAlpha = sky;
+      for (let k = 0; k < 7; k++) { const x = this.xs[0] - 120 + k * (this.xs[this.xs.length - 1] - this.xs[0] + 240) / 6, y = this.SKY + 10 * Math.sin(t * 1.3 + k); const g = c.createRadialGradient(x, y, 10, x, y, 120); g.addColorStop(0, 'rgba(255,214,110,0.55)'); g.addColorStop(1, 'rgba(255,214,110,0)'); c.fillStyle = g; c.beginPath(); c.ellipse(x, y, 140, 60, 0, 0, 7); c.fill(); }
+      if (sky > 0.6) spaced(c, 'OPPORTUNITY', 540, this.SKY + 16, '800 50px Inter', '#fff1c9', 8, (sky - 0.6) / 0.4, 0, false, false);
+      c.restore();
+    }
+    const rains = this.rainTimes();
+    charsDo((ch, i) => {   // containers
+      const d = this.dims(i, t), a = alphaAt(i, t), x = this.bx(i), gold = propAt(i, 'gold', t);
+      if (d.h <= 0) return;
+      const top = this.F - d.h, wt = d.w / 2, wb = d.w * 0.4;
+      c.save(); c.globalAlpha = a;
+      if (gold > 0.01) {   // gold inside
+        const lvl = Math.min(1, gold), gy = this.F - d.h * lvl + 4, ww = lerp(wb, wt, lvl);
+        const g = c.createLinearGradient(0, gy, 0, this.F); g.addColorStop(0, 'rgba(255,212,90,0.95)'); g.addColorStop(1, 'rgba(210,150,40,0.85)');
+        c.fillStyle = g; c.beginPath(); c.moveTo(x - ww, gy); c.lineTo(x + ww, gy); c.lineTo(x + wb, this.F - 3); c.lineTo(x - wb, this.F - 3); c.closePath(); c.fill();
+        if (gold > 1) { c.shadowColor = GOLD; c.shadowBlur = 30 * Math.min(1, gold - 1); c.beginPath(); c.ellipse(x, top + 2, wt * 1.05, 14 + 30 * (gold - 1), 0, Math.PI, 2 * Math.PI); c.fill(); c.shadowBlur = 0; }
+      }
+      c.strokeStyle = ch.color; c.fillStyle = ch.color + '22'; c.lineWidth = 4;
+      c.beginPath(); c.moveTo(x - wt, top); c.lineTo(x + wt, top); c.lineTo(x + wb, this.F - 2); c.lineTo(x - wb, this.F - 2); c.closePath(); c.fill(); c.stroke();
+      c.lineWidth = 2; c.strokeStyle = ch.color + '99';
+      for (let k = 1; k < 4; k++) { const u = k / 4; c.beginPath(); c.moveTo(lerp(x - wt, x - wb, u), lerp(top, this.F, u)); c.lineTo(lerp(x + wt, x + wb, u), lerp(top, this.F, u)); c.stroke(); }   // hoops
+      for (let k = -2; k <= 2; k++) { const u = k / 5; c.beginPath(); c.moveTo(x + u * 2 * wt, top); c.lineTo(x + u * 2 * wb, this.F - 2); c.stroke(); }   // planks
+      c.restore();
+    });
+    for (const r of rains) {   // falling coins: caught by containers, bouncing off empty hands
+      const dt = t - r.t0; if (dt < 0) continue; const x = this.bx(r.ci) + r.dx * (this.dims(r.ci, t).h > 0 ? 0.6 : 1) - (this.dims(r.ci, t).h > 0 ? 0 : 60), y = this.coinY(r, t), land = this.landY(r, t);
+      if (y < land) flyingCoin(c, GOLD, x, y, dt * 11 + r.ci, 1, 1.7);
+      else if (this.dims(r.ci, t).h <= 0) { const bt = dt - Math.sqrt((land - this.SKY - 40) / 1700); if (bt < 0.6) flyingCoin(c, GOLD, x + 90 * bt, land - 160 * bt + 400 * bt * bt, 1.57, 1 - ss(0.3, 0.6, bt), 1.7); }
+    }
+    return charsDo((ch, i) => {
+      const p = this.place(i, t), a = alphaAt(i, t), st = stateAt(i, t).state;
+      if (st === 'sit') {   // deck chair
+        c.save(); c.globalAlpha = a; c.strokeStyle = '#c9b48f'; c.lineWidth = 6; c.lineCap = 'round'; const x = this.cx(i);
+        c.beginPath(); c.moveTo(x - 50, this.F); c.lineTo(x + 30, this.F - 95); c.moveTo(x + 40, this.F); c.lineTo(x - 30, this.F - 60); c.moveTo(x - 40, this.F - 62); c.lineTo(x + 35, this.F - 60); c.stroke(); c.restore();
+      }
+      const J = drawChar(c, i, t, () => ({ mode: 'feet', x: this.cx(i), y: st === 'sit' ? this.F - 40 : this.F }), { s: K, sweat: moving(i, t) * 0.6 });
+      if (st === 'active') {   // hammer
+        const dx = J.rhand[0] - J.relbow[0], dy = J.rhand[1] - J.relbow[1], L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, ex = J.rhand[0] + ux * 36 * K, ey = J.rhand[1] + uy * 36 * K;
+        c.save(); c.globalAlpha = a; c.strokeStyle = '#c9b48f'; c.lineWidth = 5 * K; c.lineCap = 'round'; c.beginPath(); c.moveTo(J.rhand[0] - ux * 6, J.rhand[1] - uy * 6); c.lineTo(ex, ey); c.stroke();
+        c.fillStyle = '#d7dde4'; c.save(); c.translate(ex, ey); c.rotate(Math.atan2(uy, ux)); c.fillRect(-6 * K, -13 * K, 12 * K, 26 * K); c.restore(); c.restore();
+      }
+      return p;
+    });
+  },
+};
+
+// ---------------------------------------------------------------- swords ("Talent Rusts Without Practice")
+// Each character holds a blade. characters[].blade: gold | wood | steel | shiny. props: rust (0..1 on gold),
+// mat (wood -> steel, 0..1), rock (0..1: the test boulder appears). Climax: each strikes their rock; the
+// strike is the character's crash / shake / burst event (crash on gold = the blade snaps; crash on shiny =
+// the sword slips out of their hands; shake = a chip; burst = the rock splits clean).
+const SW_UP = { la: [-2.6, -2.95], ra: [2.6, 2.95], ll: [-0.25, -0.1], rl: [0.25, 0.1], lean: -0.08, drop: -0.3 };
+const SW_DOWN = { la: [0.75, 1.3], ra: [1.0, 1.45], ll: [-0.35, 0.2], rl: [0.3, 0.05], lean: 0.18, drop: 0.25 };
+const SW_GUARD = { la: [0.45, 2.55], ra: [0.6, 2.95], ll: [-0.3, -0.12], rl: [0.3, 0.12], lean: 0, drop: 0 };
+SCENES.swords = {
+  facing: 'front', foley: 'blade', K: 1.35, labelRoom: 250,
+  debrisSpan() { return null; },   // shards and chips are drawn by the scene itself
+  setup(T) { this.xs = colsX(T.chars.length, 235, 920); this.F = FLOOR_MAX; },
+  floorY() { return this.F; },
+  extent() { return { x0: this.xs[0] - 120, x1: this.xs[this.xs.length - 1] + 120, y0: this.F - 330, y1: this.F + 12 }; },
+  cx(i) { return this.xs[i] - 30; }, rx(i) { return this.xs[i] + 62; },
+  place(i, t) { return { x: this.cx(i), top: this.F - figH() * this.K, s: this.K, floor: this.F }; },
+  hit(i) { return T.events.find(e => e.i === i && ['crash', 'shake', 'burst'].includes(e.type) && propAt(i, 'rock', e.t) > 0.5); },
+  cyc(i, t) { const u = ((phaseInt(i, t, 8, 0.6, 2.4) + i * 0.41) % 1 + 1) % 1; return u < 0.55 ? ss(0, 0.55, u) : 1 - ss(0.55, 0.7, u); },
+  activePose(i, t) { return blendPose(SW_GUARD, blendPose(SW_UP, SW_DOWN, this.cyc(i, t)), Math.max(moving(i, t, 0.001, 0.01), 0.75 * energyAt(t))); },
+  idlePose() { return SW_GUARD; },
+  winPose(i, t) { const k = Math.sin(t * 6 + i); return { la: [-0.4, -0.2], ra: [2.7, 3.0 + 0.1 * k], ll: [-0.2, -0.1], rl: [0.2, 0.1], lean: 0, drop: -0.3 }; },   // blade raised
+  poseOverride(i, t, p) { const h = this.hit(i); if (!h) return p; const w = ss(h.t - 0.55, h.t - 0.25, t) * (1 - ss(h.t + 0.5, h.t + 0.8, t)); if (w <= 0) return p; return blendPose(p, t < h.t ? SW_UP : SW_DOWN, t < h.t ? w : 1 - ss(h.t, h.t + 0.6, t) * 0.0); },
+  bladeColor(ch, i, t) {
+    const kind = ch.blade || 'steel', mix = (a, b, u) => { const A = parseInt(a.slice(1), 16), B = parseInt(b.slice(1), 16); return '#' + [16, 8, 0].map(s => Math.round(lerp(A >> s & 255, B >> s & 255, clamp(u))).toString(16).padStart(2, '0')).join(''); };
+    if (kind === 'gold') return mix('#ffd45a', '#8a4b2a', propAt(i, 'rust', t));
+    if (kind === 'wood') return mix('#b48a5a', '#e4ecf3', propAt(i, 'mat', t));
+    if (kind === 'shiny') return '#efeaff';
+    return '#a7b0ba';
+  },
+  draw(c, t) {
+    const K = this.K;
+    floorLine(c, this.F);
+    charsDo((ch, i) => {   // the test rocks
+      const rk = propAt(i, 'rock', t); if (rk < 0.01) return;
+      const h = this.hit(i), x = this.rx(i), r = 50 * K * easeBack(rk), rr = rng(i * 17 + 3), a = Math.min(1, rk * 2);
+      const split = h && h.type === 'burst' && t > h.t ? easeOut((t - h.t) / 0.6) : 0;
+      c.save(); c.globalAlpha = a;
+      for (const side of split > 0 ? [-1, 1] : [0]) {
+        c.save(); c.translate(x + side * 34 * split, this.F - r * 0.9); c.rotate(side * 0.35 * split);
+        c.fillStyle = '#3a3f47'; c.strokeStyle = '#9aa2ac'; c.lineWidth = 4; c.beginPath();
+        const a0 = side < 0 ? Math.PI / 2 : side > 0 ? -Math.PI / 2 : 0, a1 = side ? a0 + Math.PI : Math.PI * 2, rr2 = rng(i * 17 + 3);
+        for (let k = 0; k <= 10; k++) { const an = a0 + (a1 - a0) * k / 10, q = r * (0.85 + 0.2 * rr2()); const px = Math.cos(an) * q, py = Math.sin(an) * q * 0.9; k ? c.lineTo(px, py) : c.moveTo(px, py); }
+        c.closePath(); c.fill(); c.stroke(); c.restore();
+      }
+      if (h && h.type === 'shake' && t > h.t && t < h.t + 1.2) for (let k = 0; k < 6; k++) { const dt = t - h.t, px = x - 20 + (rr() - 0.5) * 30 + 120 * dt * (rr() - 0.3), py = this.F - r * 1.5 - 300 * dt * rr() + 900 * dt * dt; c.fillStyle = '#9aa2ac'; c.fillRect(px, Math.min(py, this.F - 6), 8, 6); }
+      c.restore();
+      if (split > 0 && split < 1) { c.save(); c.globalAlpha = 1 - split; c.strokeStyle = GOLD; c.lineWidth = 5; c.beginPath(); c.moveTo(x, this.F - 2.1 * r); c.lineTo(x, this.F); c.stroke(); c.restore(); }
+    });
+    return charsDo((ch, i) => {
+      const p = this.place(i, t), a = alphaAt(i, t), st = stateAt(i, t).state, h = this.hit(i);
+      const J = drawChar(c, i, t, () => ({ mode: 'feet', x: this.cx(i), y: this.F }), { s: K, sweat: moving(i, t) * 0.7 });
+      const col = this.bladeColor(ch, i, t), kind = ch.blade || 'steel';
+      const dropped = h && h.type === 'crash' && kind !== 'gold' && t > h.t, snapped = h && h.type === 'crash' && kind === 'gold' && t > h.t;
+      const lying = dropped || (st === 'sit' && !h) || st === 'quit' && !snapped;
+      let hx, hy, ux, uy;
+      if (lying) { hx = this.cx(i) + 30 * K; hy = this.F - 6; ux = 1; uy = -0.06; const n = Math.hypot(ux, uy); ux /= n; uy /= n; }
+      else { const dx = J.rhand[0] - J.relbow[0], dy = J.rhand[1] - J.relbow[1], L = Math.hypot(dx, dy) || 1; ux = dx / L; uy = dy / L; hx = J.rhand[0]; hy = J.rhand[1]; }
+      let len = (kind === 'wood' ? 74 : 84) * K * (snapped ? 0.45 : 1); const wid = (kind === 'wood' ? 9 : 7) * K;
+      c.save(); c.globalAlpha = a; c.lineCap = 'round';
+      c.strokeStyle = '#5b4632'; c.lineWidth = 7 * K; c.beginPath(); c.moveTo(hx - ux * 14 * K, hy - uy * 14 * K); c.lineTo(hx + ux * 8 * K, hy + uy * 8 * K); c.stroke();   // grip
+      if (kind !== 'wood' || propAt(i, 'mat', t) > 0.35) { c.strokeStyle = '#c9ced6'; c.lineWidth = 5 * K; c.beginPath(); c.moveTo(hx + ux * 8 * K - uy * 16 * K, hy + uy * 8 * K + ux * 16 * K); c.lineTo(hx + ux * 8 * K + uy * 16 * K, hy + uy * 8 * K - ux * 16 * K); c.stroke(); }   // guard
+      const bx0 = hx + ux * 10 * K, by0 = hy + uy * 10 * K, bx1 = bx0 + ux * len, by1 = by0 + uy * len;
+      c.strokeStyle = col; c.lineWidth = wid; if (kind === 'shiny' || (kind === 'wood' && propAt(i, 'mat', t) > 0.8) || (kind === 'gold' && propAt(i, 'rust', t) < 0.3)) { c.shadowColor = col; c.shadowBlur = 14; }
+      c.beginPath(); c.moveTo(bx0, by0); c.lineTo(bx1, by1); c.stroke(); c.shadowBlur = 0;
+      if (kind === 'gold' && propAt(i, 'rust', t) > 0.15) { const rr = rng(i * 7 + 1), n = Math.round(10 * propAt(i, 'rust', t)); c.fillStyle = '#6b3519'; for (let k = 0; k < n; k++) { const u = 0.15 + 0.8 * rr(); c.beginPath(); c.arc(bx0 + ux * len * u + (rr() - .5) * 4, by0 + uy * len * u + (rr() - .5) * 4, 2.5 + 3 * rr(), 0, 7); c.fill(); } }
+      if (kind === 'shiny' && !lying) { const sp = (t * 1.7 + i) % 1; c.fillStyle = '#ffffff'; c.globalAlpha = a * Math.sin(Math.PI * sp); c.beginPath(); c.arc(bx0 + ux * len * sp, by0 + uy * len * sp, 5, 0, 7); c.fill(); }
+      c.restore();
+      if (snapped && t < h.t + 1.4) { const dt = t - h.t, fx = bx1 + 160 * dt, fy = by1 - 380 * dt + 1100 * dt * dt; if (fy < this.F) { c.save(); c.translate(fx, fy); c.rotate(dt * 14); c.strokeStyle = col; c.lineWidth = wid; c.beginPath(); c.moveTo(-len * 0.6, 0); c.lineTo(len * 0.6, 0); c.stroke(); c.restore(); } }
+      else if (snapped) { c.save(); c.globalAlpha = a; c.strokeStyle = col; c.lineWidth = wid; c.beginPath(); c.moveTo(this.rx(i) + 40, this.F - 5); c.lineTo(this.rx(i) + 40 + len * 1.2, this.F - 9); c.stroke(); c.restore(); }
+      return p;
+    });
+  },
+};
+
+// ---------------------------------------------------------------- doors ("Big Ego, Small Door")
+// Side view, one lane per character, a wall with a doorway at the end of each lane (NEXT LEVEL).
+// value = how close they get to the door (100 = at the door). props: ego (0..1, inflates the head),
+// through (0..1, walks through the doorway into the light). A head too big for the doorway hits the lintel.
+const WALK = ph => { const leg = p => { const th = 0.55 * Math.sin(p); return [th, th - 0.15 - 0.7 * Math.max(0, Math.cos(p))]; }, arm = p => { const u = -0.6 * Math.sin(p); return [u, u + 0.9]; }; return { la: arm(ph + Math.PI), ra: arm(ph), ll: leg(ph), rl: leg(ph + Math.PI), lean: 0.12, drop: -0.05 }; };
+SCENES.doors = {
+  facing: 'right', sideLabels: true, foley: 'step', labelMaxX: 772, labelGap: 72,
+  setup(T) {
+    const n = T.chars.length; this.gap = Math.min(330, 1150 / n); this.s = clamp((this.gap - 110) / 175, 0.85, 1.25);
+    this.y0 = 1450 - (n - 1) * this.gap; this.x0 = 105; this.DOOR = 800; this.DH = (figH() + 22) * this.s;
+  },
+  laneY(i) { return this.y0 + i * this.gap; },
+  xAt(i, t) { return this.x0 + fracAt(i, t) * (this.DOOR - 70 - this.x0) + propAt(i, 'through', t) * 190; },
+  head(i, t) { return 1 + 1.6 * propAt(i, 'ego', t); },
+  extent() { return { x0: this.x0 - 60, x1: this.DOOR + 220, y0: this.y0 - this.DH - 120, y1: this.y0 + (T.chars.length - 1) * this.gap + 50 }; },
+  place(i, t) { const y = this.laneY(i), hs = this.head(i, t), extra = (hs - 1) * 2 * 27 * this.s; return { x: this.xAt(i, t), top: y - figH() * this.s - extra, s: this.s, floor: y, footY: y }; },
+  activePose(i, t) { const w = moving(i, t, 0.002, 0.02); return blendPose(POSES.stand, WALK(this.xAt(i, t) / (13 * this.s)), Math.max(w, 0)); },
+  idlePose() { return POSES.stand; },
+  stuckPose(i, t) { const k = Math.sin(t * 13 + i); return { la: [0.9, 1.9 + 0.2 * k], ra: [1.2, 2.2 - 0.2 * k], ll: [-0.35, -0.15], rl: [0.4, 0.2], lean: -0.25, drop: 0.1 }; },
+  poseOverride(i, t, p) { const stuck = propAt(i, 'stuck', t); return stuck > 0.01 ? blendPose(p, this.stuckPose(i, t), stuck) : p; },
+  draw(c, t) {
+    const n = T.chars.length, top = this.y0 - this.gap * 0.95, bot = this.y0 + (n - 1) * this.gap + 6, D = this.DOOR;
+    const g = c.createLinearGradient(D, 0, D + 260, 0); g.addColorStop(0, 'rgba(255,214,120,0.30)'); g.addColorStop(1, 'rgba(255,214,120,0)'); c.fillStyle = g; c.fillRect(D, top, 260, bot - top);   // light beyond the doors
+    spaced(c, 'NEXT LEVEL', D + 70, top - 26, '800 44px Inter', '#ffe3a1', 6, 0.95, 10, false, false);
+    charsDo((ch, i) => floorLine(c, this.laneY(i), -200, W + 200, 0.16));
+    const P = charsDo((ch, i) => {
+      const y = this.laneY(i), st = stateAt(i, t).state;
+      drawChar(c, i, t, tt => ({ mode: 'feet', x: this.xAt(i, tt), y }), { s: this.s, headScale: this.head(i, t), speed: speedFx(i, t, 0.12, 0.35) * 0.6 });
+      return this.place(i, t);
+    });
+    for (let i = 0; i < n; i++) {   // the wall: solid between lanes, one lit doorway per lane (the lintel is drawn over heads that don't fit)
+      const y = this.laneY(i), ly = y - this.DH, nextTop = i > 0 ? this.laneY(i - 1) + 4 : top, WW = 46;
+      c.fillStyle = '#2b3038'; c.fillRect(D - WW / 2, nextTop, WW, ly - nextTop);
+      c.strokeStyle = 'rgba(255,255,255,0.10)'; c.lineWidth = 2; for (let yy = nextTop + 18; yy < ly - 4; yy += 18) { c.beginPath(); c.moveTo(D - WW / 2, yy); c.lineTo(D + WW / 2, yy); c.stroke(); }
+      const lg = c.createLinearGradient(D - WW / 2, 0, D + WW / 2, 0); lg.addColorStop(0, 'rgba(255,220,130,0.25)'); lg.addColorStop(1, 'rgba(255,220,130,0.6)'); c.fillStyle = lg; c.fillRect(D - WW / 2, ly, WW, y - ly);
+      c.strokeStyle = GOLD; c.lineWidth = 4; c.beginPath(); c.moveTo(D - WW / 2, y); c.lineTo(D - WW / 2, ly); c.lineTo(D + WW / 2, ly); c.lineTo(D + WW / 2, y); c.stroke();
+      if (T.__lines) T.__lines.push({ y: ly, x0: D - WW / 2, x1: D + WW / 2 });
+    }
+    if (T.__vlines) T.__vlines.push({ x: D, y0: top, y1: bot });
+    return P;
+  },
+};

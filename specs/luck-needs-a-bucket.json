@@ -1,0 +1,280 @@
+{
+ "id": "luck-needs-a-bucket",
+ "brand": "mind-the-gap",
+ "scene": "buckets",
+ "showValues": false,
+ "keywords": [
+  "luck",
+  "success",
+  "goal",
+  "progress",
+  "consistency"
+ ],
+ "characters": [
+  {
+   "name": "WAITS",
+   "color": "#ff5a6e",
+   "accessory": "headphones"
+  },
+  {
+   "name": "WISHES",
+   "color": "#b98cff",
+   "accessory": "beanie"
+  },
+  {
+   "name": "STARTS LATE",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  },
+  {
+   "name": "BUILDS DAILY",
+   "color": "#36e0c8",
+   "accessory": "headband"
+  }
+ ],
+ "metric": {
+  "max": 100,
+  "scale": 1.0
+ },
+ "start": {
+  "WISHES": 6
+ },
+ "counter": {
+  "label": "DAY",
+  "start": 1
+ },
+ "startProps": {
+  "WAITS": {
+   "sky": 0
+  }
+ },
+ "beats": [
+  {
+   "dur": 2.8,
+   "caption": "LUCK WILL FIND YOU. THEN WHAT?",
+   "counter": 1,
+   "values": {
+    "BUILDS DAILY": 6
+   },
+   "states": {
+    "WAITS": "sit",
+    "WISHES": "idle",
+    "STARTS LATE": "stand"
+   },
+   "bubbles": [
+    {
+     "who": "WAITS",
+     "text": "any day now",
+     "at": 0.7,
+     "dur": 1.0
+    },
+    {
+     "who": "WISHES",
+     "text": "please, universe",
+     "at": 1.7,
+     "dur": 1.0
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "SOME WAIT. SOME BUILD.",
+   "counter": 30,
+   "values": {
+    "BUILDS DAILY": 20
+   },
+   "bubbles": [
+    {
+     "who": "STARTS LATE",
+     "text": "I'll start later",
+     "at": 0.4,
+     "dur": 1.3
+    },
+    {
+     "who": "BUILDS DAILY",
+     "text": "one plank a day",
+     "at": 1.7,
+     "dur": 1.2
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "NOBODY CLAPS FOR DAY 120.",
+   "counter": 120,
+   "values": {
+    "BUILDS DAILY": 40
+   },
+   "bubbles": [
+    {
+     "who": "WAITS",
+     "text": "why not me?",
+     "at": 0.5,
+     "dur": 1.2
+    },
+    {
+     "who": "WISHES",
+     "text": "it's coming, I feel it",
+     "at": 1.7,
+     "dur": 1.2
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "LATE STILL BEATS NEVER.",
+   "counter": 200,
+   "values": {
+    "BUILDS DAILY": 58,
+    "STARTS LATE": 18
+   },
+   "states": {
+    "STARTS LATE": "active"
+   },
+   "stateAt": {
+    "STARTS LATE": 0.3
+   },
+   "tags": {
+    "STARTS LATE": {
+     "text": "STARTED",
+     "color": "#ffc53d"
+    }
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "THE SKY STARTS TO CHANGE.",
+   "counter": 300,
+   "values": {
+    "BUILDS DAILY": 80,
+    "STARTS LATE": 34
+   },
+   "props": {
+    "WAITS": {
+     "sky": 1
+    }
+   },
+   "tags": {
+    "STARTS LATE": null
+   },
+   "states": {
+    "WAITS": "shock"
+   },
+   "stateAt": {
+    "WAITS": 1.8
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "THEN IT RAINS.",
+   "counter": 365,
+   "curve": "accel",
+   "values": {
+    "BUILDS DAILY": 96,
+    "STARTS LATE": 42
+   },
+   "events": [
+    {
+     "type": "rain",
+     "at": 0.5,
+     "count": 16,
+     "interval": 0.15
+    }
+   ],
+   "props": {
+    "BUILDS DAILY": {
+     "gold": 0.45
+    },
+    "STARTS LATE": {
+     "gold": 0.6
+    },
+    "WISHES": {
+     "gold": 1.2
+    }
+   },
+   "states": {
+    "WAITS": "sit"
+   },
+   "stateAt": {
+    "WAITS": 0.2
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "LUCK FALLS ON EVERYONE.",
+   "counter": 365,
+   "values": {
+    "BUILDS DAILY": 100
+   },
+   "props": {
+    "BUILDS DAILY": {
+     "gold": 1.35
+    },
+    "STARTS LATE": {
+     "gold": 1.1
+    },
+    "WISHES": {
+     "gold": 1.4
+    }
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "BUILDS DAILY",
+     "at": 1.0
+    },
+    {
+     "type": "shake",
+     "who": "WAITS",
+     "at": 0.4,
+     "strength": 7
+    }
+   ],
+   "states": {
+    "BUILDS DAILY": "win",
+    "STARTS LATE": "cheer",
+    "WAITS": "sad",
+    "WISHES": "sad"
+   },
+   "stateAt": {
+    "BUILDS DAILY": 1.0,
+    "STARTS LATE": 1.3,
+    "WAITS": 0.6,
+    "WISHES": 0.8
+   },
+   "tags": {
+    "BUILDS DAILY": {
+     "text": "READY",
+     "color": "#36e0c8"
+    },
+    "WAITS": "EMPTY HANDS",
+    "WISHES": "OVERFLOWED"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "ONLY SOME BUILT A BUCKET.",
+   "counter": 365
+  },
+  {
+   "dur": 2.0,
+   "caption": "LUCK NEEDS A BUCKET.",
+   "style": "closing",
+   "counter": 365
+  }
+ ],
+ "endcard": {
+  "tagline": "BUILD THE BUCKET BEFORE THE RAIN."
+ },
+ "upload": {
+  "title": "Luck Needs A Bucket",
+  "description": "Luck falls on everyone. The difference is who built something to catch it. Build yours today. #luck #discipline #motivation",
+  "hashtags": [
+   "luck",
+   "discipline",
+   "motivation",
+   "success",
+   "shorts"
+  ]
+ }
+}

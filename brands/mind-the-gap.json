@@ -47,6 +47,7 @@
  "storyRules": {
   "roles": true,
   "nameEffect": true,
-  "oneChange": true
+  "oneChange": true,
+  "question": true
  }
 }

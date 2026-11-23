@@ -38,8 +38,8 @@
  },
  "footnote": "Illustrative · how good life feels · hedonic adaptation",
  "upload": {
-  "title": "Why New Things Stop Working",
-  "description": "The new phone feels amazing, then a few weeks later it's just a phone. Your brain resets to its usual level (hedonic adaptation). Buying more resets it again. Deliberately enjoying small things helps a little, every day. Which one are you? (Illustrative numbers.)",
+  "title": "Why The Thrill Never Lasts",
+  "description": "The new phone feels amazing, then a few weeks later it's just a phone. Your brain resets to its usual level (hedonic adaptation), and buying more only resets it again. Enjoying small things on purpose helps a little, every day. Which one are you? (Illustrative numbers.)",
   "hashtags": [
    "psychology",
    "brainscience",
@@ -52,7 +52,7 @@
  "beats": [
   {
    "dur": 2.6,
-   "caption": "SAME LIFE. SAME PAY.",
+   "caption": "YOU THINK THE NEXT THING WILL FIX IT.",
    "counter": 0,
    "bubbles": [
     {
@@ -228,5 +228,7 @@
    "caption": "WHICH ONE ARE YOU?",
    "style": "question"
   }
- ]
+ ],
+ "question": "WHO'S HAPPIEST A YEAR LATER?",
+ "answer": "IT'S C: ENJOYS IT"
 }

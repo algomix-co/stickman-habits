@@ -34,7 +34,7 @@
  "footnote": "Illustrative · progress to the goal · sunk cost fallacy",
  "upload": {
   "title": "Why You Can't Quit",
-  "description": "\"I'm too far in to stop now.\" That's the sunk cost fallacy: time you've already spent can't come back, but it keeps steering what you do next. The fix is one honest question. Which one are you? (Illustrative numbers.)",
+  "description": "\"I've put too much in to stop now.\" That's the sunk cost fallacy: time you've already spent can't come back, but it keeps steering what you do next. One honest question fixes it. Which one are you? (Illustrative numbers.)",
   "hashtags": [
    "psychology",
    "brainscience",
@@ -47,7 +47,7 @@
  "beats": [
   {
    "dur": 2.6,
-   "caption": "SAME START. THREE PATHS.",
+   "caption": "TOO FAR IN TO QUIT NOW?",
    "counter": 0,
    "bubbles": [
     {
@@ -216,5 +216,7 @@
    "caption": "WHICH ONE ARE YOU?",
    "style": "question"
   }
- ]
+ ],
+ "question": "WHO ACTUALLY GETS THERE?",
+ "answer": "IT'S C: RE-CHECKS"
 }

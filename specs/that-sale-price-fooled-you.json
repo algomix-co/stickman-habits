@@ -38,8 +38,8 @@
  },
  "footnote": "Illustrative · money kept from $300/mo spare · anchoring",
  "upload": {
-  "title": "That Sale Price Fooled You",
-  "description": "\"Was $200, now $99!\" The first price you see becomes the anchor, so $99 feels like a win even if it was never worth $200. Deciding what something is worth to you before you look at the price breaks the spell. Which one are you? (Illustrative numbers.)",
+  "title": "Why Sales Keep You Broke",
+  "description": "\"Was $200, now $99!\" feels like saving, but the first price you see becomes the anchor, and it's often made up. Deciding what something is worth to you before you look at the price breaks the spell. Which one are you? (Illustrative numbers.)",
   "hashtags": [
    "psychology",
    "brainscience",
@@ -52,7 +52,7 @@
  "beats": [
   {
    "dur": 2.6,
-   "caption": "SAME PAY. SAME SALES.",
+   "caption": "YOU LOVE A GOOD DEAL.",
    "counter": 1,
    "events": [
     {
@@ -223,5 +223,7 @@
    "caption": "WHICH ONE ARE YOU?",
    "style": "question"
   }
- ]
+ ],
+ "question": "WHO KEEPS THE MOST MONEY?",
+ "answer": "IT'S C: OWN PRICE"
 }

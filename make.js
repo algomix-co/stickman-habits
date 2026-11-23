@@ -25,7 +25,6 @@ const DIMS = {
   theme: ['void', 'dusk', 'navy', 'grid'],
   captionStyle: ['tracked', 'bold', 'boxed'],
   transition: ['fade', 'slide', 'cut', 'dayzoom'],
-  camera: ['static', 'push', 'drift'],
   labels: ['above', 'board'],
   hook: ['straight', 'flashforward'],
   speed: ['none', 'slowmo'],
@@ -80,6 +79,7 @@ function validate(s, brand = {}) {
     const at = `beat ${k + 1}`;
     need(b.dur >= 1.5 && b.dur <= 7, `${at}: dur must be 1.5-7s`);
     need(typeof b.caption === 'string' && b.caption.length <= 40, `${at}: caption required, <= 40 chars`);
+    if (k === 0 && brand.storyRules && brand.storyRules.question) need(s.question && s.question.length <= 30, 'question (the open loop at the top) required, <= 30 chars');
     if (b.caption && b.caption !== b.caption.toUpperCase()) Wn.push(`${at}: caption should be ALL CAPS`);
     for (const obj of [b.values, b.states, b.curves, b.tags]) if (obj) for (const n in obj) need(names.includes(n), `${at}: unknown character "${n}"`);
     if (b.values) for (const n in b.values) need(typeof b.values[n] === 'number' && b.values[n] >= 0, `${at}: value for ${n} must be >= 0`);

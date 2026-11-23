@@ -14,7 +14,7 @@ const FLOOR_MAX = 1470;
 SCENES.towers = {
   debris: 'coins', facing: 'front', noBoard: true, K: 1.4, HMAX: 700,
   setup(T) { this.xs = colsX(T.chars.length, 230); },
-  cam(t) { let m = 0; for (let k = 0; k < 10; k++) { const tk = Math.max(0, t - k * 0.1); m += Math.max(...T.chars.map((_, i) => this.HMAX * fracAt(i, tk))); } const u = ss(100, 520, m / 10); return { z: lerp(1.1, 1.0, u), fy: lerp(1300, FLOOR_MAX, u) }; },
+  cam(t) { let m = 0; for (let k = 0; k < 10; k++) { const tk = Math.max(0, t - k * 0.1); m += Math.max(...T.chars.map((_, i) => this.HMAX * fracAt(i, tk))); } return { z: 1, fy: FLOOR_MAX }; },   // still camera: the towers scene no longer zooms as stacks grow
   floorY(t) { return this.cam(t).fy; },
   place(i, t) { const cam = this.cam(t), h = this.HMAX * fracAt(i, t), y = cam.fy - h * cam.z, s = cam.z * this.K; return { x: 540 + (this.xs[i] - 540) * cam.z, top: y - figH() * s, s, floor: cam.fy, footY: y }; },
   debrisSpan(i, tc) { const p = this.place(i, tc - 0.02); return { x: p.x, y0: p.footY, y1: p.floor, floor: p.floor }; },
@@ -81,7 +81,7 @@ SCENES.climb = {
     c.fillStyle = 'rgba(255,255,255,0.7)'; c.fillRect(x0, this.BAR - 3, x1 - x0, 6); floorLine(c, this.F); if (T.__lines) T.__lines.push({ y: this.BAR, x0, x1 });
     charsDo((ch, i) => {
       const x = this.xs[i];
-      c.strokeStyle = 'rgba(214,180,130,0.55)'; c.lineWidth = 6; c.beginPath(); c.moveTo(x, this.BAR); c.lineTo(x, this.F - 4); c.stroke();
+      c.strokeStyle = 'rgba(214,180,130,0.55)'; c.lineWidth = 6; c.beginPath(); c.moveTo(x, this.BAR); c.lineTo(x, this.F - 4); c.stroke(); if (T.__vlines) T.__vlines.push({ x, y0: this.BAR, y1: this.F });
       c.strokeStyle = 'rgba(255,230,190,0.35)'; c.lineWidth = 2; c.beginPath(); for (let y = this.BAR + 6; y < this.F - 8; y += 14) { c.moveTo(x - 3, y); c.lineTo(x + 3, y + 6); } c.stroke();
       c.strokeStyle = fracAt(i, t) > 0.985 ? GOLD : 'rgba(255,255,255,0.35)'; c.lineWidth = 3; c.beginPath(); c.arc(x, this.BAR - 22, 13, 0, 7); c.stroke();
     });

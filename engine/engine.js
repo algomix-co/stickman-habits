@@ -429,7 +429,15 @@ function directorAt(t, safeTop) {
 }
 // how much each character is "in focus" right now (0..1), smoothed - drives spotlight + label emphasis
 function focusWeights(t) { const w = T.chars.map(() => 0); for (let k = 0; k < 8; k++) { const sh = shotAt(Math.max(0, t - k * 0.05)); if (sh.i >= 0) w[sh.i] += 1 / 8; } return w; }
-function cameraAt(t, tm, safeTop) {
+function fixedCamera() {   // computed once: widest frame that keeps every character, label and badge in view all video long
+  if (T.__fixed) return T.__fixed;
+  let top = 0; for (let tt = 0; tt <= T.dur; tt += 0.25) top = Math.max(top, captionBlock(tt, { kind: 'play', u: 0 }, scratchC));
+  const safeTop = (T.style.labels === 'board' ? top + 56 + T.chars.length * 60 : top) + 30;
+  let best = null; for (let tt = 0; tt <= T.dur; tt += 0.25) { const q = frameFor(tt, safeTop, -1, 1.25); if (!best || q.z < best.z) best = q; }
+  T.__fixed = { ...best, safeTop }; return T.__fixed;
+}
+function cameraAt(t, tm, safeTop) { const f = fixedCamera(); return { z: f.z, dx: f.dx, dy: f.dy }; }
+function cameraAtOld(t, tm, safeTop) {
   const st = T.style, B = beatAt(t), dir = tm.kind === 'hook' && T.burst ? frameFor(t, safeTop, T.burst.i, 1.35) : directorAt(t, safeTop); let z = dir.z, dx = dir.dx, dy = dir.dy;
   const fz = z;   // style flavours stay small so they can never push anyone out of frame
   const steady = !!T.scene.steadyCam;
@@ -442,15 +450,15 @@ function cameraAt(t, tm, safeTop) {
   const k = z / fz, cxs = 503, cys = (safeTop + 1850) / 2;   // style zooms scale about the framed centre
   return { z, dx: cxs + (540 + dx - cxs) * k - 540, dy: cys + (960 + dy - cys) * k - 960 };
 }
-function shakeAt(t, tm) {
+function shakeAt(t, tm) { return [0, 0]; }   // the world never shakes; impacts are carried by the text (textShake)
+function textShake(t) {
   let s = 0;
   for (const e of T.events) {
     if (e.type === 'crash') s += (t > e.t && t < e.t + 0.9) ? (1 - ss(e.t, e.t + 0.9, t)) * 16 : 0;
     if (e.type === 'shake') s += (t > e.t && t < e.t + 0.6) ? (1 - ss(e.t, e.t + 0.6, t)) * (e.strength || 6) : 0;
     if (e.type === 'burst') s += (t > e.t && t < e.t + 0.4) ? (1 - ss(e.t, e.t + 0.4, t)) * 5 : 0;
   }
-  if (tm.kind === 'rewind') s += 5;
-  return [s * Math.sin(t * 93 + tm.u * 40), s * Math.cos(t * 71 + tm.u * 31)];
+  return s * Math.sin(t * 93);
 }
 function drawEffects(c, t, P) {
   for (const e of T.events) {
@@ -500,11 +508,12 @@ function drawWords(C, line, cx, y, font, spacing, color, a, glow, tStart, t, wor
   const up = line.toUpperCase(), names = T.chars.filter(c => up.includes(c.name)).map(c => ({ parts: c.name.split(' '), color: c.color }));
   words.forEach((w, k) => {
     const key = w.replace(/[^A-Za-z0-9$%]/g, '').toUpperCase(), hit = names.find(n => n.parts.includes(key));
+    const accent = !box && ((up.startsWith("THAT'S ") && k > 0) || (up.startsWith('ONE CHANGE:') && k < 2)) ? '#36e0c8' : (!box && /[0-9$%]/.test(w) ? GOLD : null);
     const dt = t - (tStart + (wordBase + k) * 0.075), u = clamp(dt / 0.28);
     if (u > 0) {
       C.save(); C.translate(x + ws[k] / 2, y); const sc2 = lerp(1.22, 1, easeBack(u)); C.scale(sc2, sc2); C.globalAlpha = a * clamp(dt / 0.1);
       if (box && hit) { C.fillStyle = hit.color; C.beginPath(); C.roundRect(-ws[k] / 2 - 8, -box * 0.8, ws[k] + 16, box * 1.06, 8); C.fill(); }
-      C.fillStyle = hit && !box ? hit.color : color; if (glow) { C.shadowColor = C.fillStyle; C.shadowBlur = glow; }
+      C.fillStyle = hit && !box ? hit.color : (accent && color !== RED ? accent : color); if (glow || accent) { C.shadowColor = C.fillStyle; C.shadowBlur = glow || 10; }
       C.fillText(w, spacing / 2, 0); C.restore();
     }
     x += ws[k] + sp;
@@ -523,33 +532,43 @@ function captionBlock(t, tm, C = ctx) {
   const gold = q || tm.kind === 'hook', color = gold ? GOLD : '#dfe4e9';
   const counter = T.spec.counter.label ? T.spec.counter.label + ' ' + Math.round(counterAt(t)) + (T.spec.counter.suffix || '') : '';
   const clock = tm.kind === 'hook' ? tm.u * 1.3 : t, tStart = tm.kind === 'hook' ? 0 : (B.bi === 0 ? -0.3 : B.t0);
+  // open loop: a question at the top from the first frame, answered at the climax
+  const qs = T.spec.question, ans = T.spec.answer || (T.burst ? `IT'S ${String.fromCharCode(65 + T.burst.i)}: ${T.chars[T.burst.i].name}` : ''), rv = T.burst ? T.burst.t + 0.15 : 1e9;
+  const showQ = qs && tm.kind !== 'rewind' && !(T.question && t >= T.question.t0), yo = qs ? 58 : 0;
+  if (showQ) { const isAns = t >= rv && tm.kind !== 'hook', txt = isAns ? ans : qs, pop = isAns ? lerp(1.35, 1, easeBack(clamp((t - rv) / 0.35))) : 1;
+    C.save(); C.translate(W / 2, 140); C.scale(pop, pop); if (isAns) { C.font = '800 34px Inter'; C.letterSpacing = '2px'; const pw = C.measureText(txt).width + 44; C.fillStyle = 'rgba(5,7,11,0.85)'; C.beginPath(); C.roundRect(-pw / 2, -40, pw, 56, 28); C.fill(); C.strokeStyle = 'rgba(54,224,200,0.55)'; C.lineWidth = 2; C.stroke(); C.letterSpacing = '0px'; } spaced(C, txt, 0, 0, '800 34px Inter', isAns ? '#36e0c8' : GOLD, 2, 1, 14, false); C.restore();
+    if (C === scratchC) { C.font = '800 34px Inter'; const w = C.measureText(txt).width * pop; CAPRECTS.push({ x0: 540 - w / 2, x1: 540 + w / 2, y0: 140 - 28, y1: 140 + 8, text: txt }); } }
+  // text impacts: the caption shakes and flashes red on a crash, glows gold at the climax
+  xoff += textShake(t);
+  const crashHit = T.events.some(e => (e.type === 'crash' || e.type === 'shake') && t > e.t && t < e.t + 0.45), burstHit = T.burst && t > T.burst.t && t < T.burst.t + 0.8;
+  const capColor = c0 => crashHit ? RED : burstHit ? GOLD : c0;
   let bottom, wb = 0;
   if (st.captionStyle === 'bold') {
     const pz = (st.transition === 'dayzoom' || st.transition === 'cut') && B.bi > 0 ? 1 + 0.35 * (1 - easeOut(clamp((t - B.t0) / 0.4))) : 1;
-    if (counter && tm.kind !== 'rewind') { C.save(); C.translate(W / 2, 150); C.scale(pz, pz); spaced(C, counter, 0, 0, '700 40px Inter', '#9aa6b2', 6, 1, 0, false); C.restore(); }
+    if (counter && tm.kind !== 'rewind') { C.save(); C.translate(W / 2, 150 + yo); C.scale(pz, pz); spaced(C, counter, 0, 0, '700 40px Inter', '#9aa6b2', 6, 1, 0, false); C.restore(); }
     const lines = text ? wrapText(text, '800 54px Inter', 1, 960) : [];
-    lines.forEach((ln, k) => { wb += drawWords(C, ln, W / 2 + xoff, 228 + k * 62, '800 54px Inter', 3, gold ? GOLD : '#c9d0d8', a, gold ? 14 : 0, tStart, clock, wb); });
-    bottom = 228 + Math.max(0, lines.length - 1) * 62 + 18;
+    lines.forEach((ln, k) => { wb += drawWords(C, ln, W / 2 + xoff, 228 + yo + k * 62, '800 54px Inter', 3, capColor(gold ? GOLD : '#c9d0d8'), a, gold || burstHit ? 14 : 0, tStart, clock, wb); });
+    bottom = 228 + yo + Math.max(0, lines.length - 1) * 62 + 18;
   } else if (st.captionStyle === 'boxed') {
     const lines = text ? wrapText(text, '800 46px Inter', 1, 920) : [];
     if (lines.length && a > 0) {
       C.save(); C.font = '800 46px Inter'; C.letterSpacing = '1px'; const w = Math.max(...lines.map(l => C.measureText(l).width)) + 60, h = lines.length * 60 + 30;
-      C.globalAlpha = a; C.fillStyle = gold ? GOLD : '#f4f6f8'; C.beginPath(); C.roundRect(W / 2 - w / 2 + xoff, 160, w, h, 22); C.fill(); C.restore();
-      lines.forEach((ln, k) => { wb += drawWords(C, ln, W / 2 + xoff, 160 + 60 + k * 60, '800 46px Inter', 1, INK, a, 0, tStart, clock, wb, 46); });
+      C.globalAlpha = a; C.fillStyle = crashHit ? '#ffd5da' : (gold || burstHit) ? GOLD : '#f4f6f8'; C.beginPath(); C.roundRect(W / 2 - w / 2 + xoff, 160 + yo, w, h, 22); C.fill(); C.restore();
+      lines.forEach((ln, k) => { wb += drawWords(C, ln, W / 2 + xoff, 160 + yo + 60 + k * 60, '800 46px Inter', 1, INK, a, 0, tStart, clock, wb, 46); });
     }
-    const by = 160 + Math.max(1, lines.length) * 60 + 30;
+    const by = 160 + yo + Math.max(1, lines.length) * 60 + 30;
     if (counter && tm.kind !== 'hook' && tm.kind !== 'rewind') spaced(C, counter, W / 2, by + 46, '700 32px Inter', '#9aa3ad', 5, 1, 0, true);
     bottom = by + 46;
   } else {
     const lines = text ? wrapText(text, '700 50px Inter', 4, 960) : [];
-    lines.forEach((ln, k) => { wb += drawWords(C, ln, W / 2 + xoff, 210 + k * 62, '700 50px Inter', 4, color, a, gold ? 16 : 4, tStart, clock, wb); });
+    lines.forEach((ln, k) => { wb += drawWords(C, ln, W / 2 + xoff, 210 + yo + k * 62, '700 50px Inter', 4, capColor(color), a, gold || burstHit ? 16 : 4, tStart, clock, wb); });
     const n = Math.max(1, lines.length);
-    if (counter && tm.kind !== 'rewind') spaced(C, counter, W / 2, 210 + n * 62 - 2, '700 32px Inter', '#9aa3ad', 6, a, 0, true);
-    bottom = 210 + n * 62;
+    if (counter && tm.kind !== 'rewind') spaced(C, counter, W / 2, 210 + yo + n * 62 - 2, '700 32px Inter', '#9aa3ad', 6, a, 0, true);
+    bottom = 210 + yo + n * 62;
   }
   if (st.transition === 'dayzoom' && st.captionStyle !== 'bold' && B.bi > 0 && counter && tm.kind !== 'hook') {
     const du = (t - B.t0) / 0.45;
-    if (du >= 0 && du < 1) { const sc2 = lerp(2.0, 1, easeOut(du)), y = lerp(470, 240, easeIO(du)); C.save(); C.translate(W / 2, y); C.scale(sc2, sc2); spaced(C, counter, 0, 0, '800 64px Inter', '#ffffff', 2, 1 - ss(0.6, 1, du), 24); C.restore(); }
+    if (du >= 0 && du < 1) { const sc2 = lerp(2.0, 1, easeOut(du)), y = lerp(470, 240 + yo, easeIO(du)); C.save(); C.translate(W / 2, y); C.scale(sc2, sc2); spaced(C, counter, 0, 0, '800 64px Inter', '#ffffff', 2, 1 - ss(0.6, 1, du), 24); C.restore(); }
   }
   if (q && tm.kind !== 'endcard') { const L = T.chars.map((_, k) => String.fromCharCode(65 + k)).join(' · '); spaced(C, 'COMMENT ' + L, W / 2, bottom + 42, '800 32px Inter', '#ffffff', 4, ss(B.t0 + 0.4, B.t0 + 0.8, t)); if (C === scratchC) CAPRECTS.push({ x0: 300, x1: 780, y0: bottom + 42 - 26, y1: bottom + 48, text: 'COMMENT' }); bottom += 42; }
   if (T.spec.footnote) { const ft = T.beats[Math.max(0, T.beats.length - 2)].t0; const fl = wrapText(T.spec.footnote.toUpperCase(), '700 28px Inter', 1, 860); fl.forEach((ln, k) => { spaced(C, ln, W / 2, bottom + 40 + k * 34, '700 28px Inter', '#9aa3ad', 1, ss(ft + .2, ft + 1, t), 0, true); if (C === scratchC && t > ft + .4) { C.font = '700 28px Inter'; const w = C.measureText(ln).width; CAPRECTS.push({ x0: 540 - w / 2, x1: 540 + w / 2, y0: bottom + 40 + k * 34 - 22, y1: bottom + 40 + k * 34 + 6, text: ln }); } }); bottom += 40 + (fl.length - 1) * 34; }
@@ -574,6 +593,7 @@ function qaLayout(t, P) {
       const pts = [[T.__X(j.head[0]), T.__Y(j.head[1]), j.hr * (T.__z || 1)], ...j.hands.map(h => [T.__X(h[0]), T.__Y(h[1]), 6])];
       if (pts.some(([x, y, r]) => x + r > A.x0 + 2 && x - r < A.x1 - 2 && y + r > A.y0 + 2 && y - r < A.y1 - 2)) WARN.add(`character covers its own label: ${nm} "${String(A.text).replace(/[0-9][0-9,.]*/g, '#')}"`); }
   }
+  for (const A of RECTS) { if (A.owner >= 300) continue; const own = A.owner % 100; T.chars.forEach((ch, i) => { if (i === own) return; const j = T.__joints[i]; if (!j) return; const x = T.__X(j.head[0]), y = T.__Y(j.head[1]), r = j.hr * (T.__z || 1); if (x + r > A.x0 + 4 && x - r < A.x1 - 4 && y + r > A.y0 + 4 && y - r < A.y1 - 4) WARN.add(`label covers another character: ${ownerName(A.owner)} "${String(A.text).replace(/[0-9][0-9,.]*/g, '#')}" / ${ch.name}`); }); }
   T.chars.forEach((ch, i) => { const j = T.__joints[i]; if (j && T.__Y(j.head[1]) > 1560) WARN.add(`character in the Shorts bottom overlay: ${ch.name}`); });
   for (const A of RECTS) { for (const C of CAPRECTS) if (Math.min(A.x1, C.x1) - Math.max(A.x0, C.x0) > 2 && Math.min(A.y1, C.y1) - Math.max(A.y0, C.y0) > 2) WARN.add(`label overlaps the caption block: ${ownerName(A.owner)} "${String(A.text).replace(/[0-9][0-9,.]*/g, '#')}" / "${String(C.text).slice(0, 24)}"`); }
   for (const pr of (T.__props || [])) { const j = T.__joints[pr.i]; if (!j || !pr.held) continue; const tol = 14 * (j.hr / 27); if (j.hands.some(h => Math.abs(h[1] - pr.y0) > tol || h[0] < pr.x0 - tol || h[0] > pr.x1 + tol)) WARN.add(`prop not held by the hands: ${T.chars[pr.i].name}`); }
@@ -582,6 +602,15 @@ function qaLayout(t, P) {
   RECTS.length = 0;
 }
 const tagY0 = (y0, board, s) => y0 - (board ? 50 : 108) * s;
+// badge goes above the label stack, unless that covers another character's head: then beside the name (left, else right)
+function badgeSpot(i, q, yAbove, r, yName, nameW) {
+  const hits = (x, y) => T.chars.some((_, o) => { if (o === i) return false; const j = T.__joints[o]; if (!j) return false; const hx = T.__X(j.head[0]), hy = T.__Y(j.head[1]), hr = j.hr * (T.__z || 1) + 8; return Math.hypot(hx - x, hy - y) < hr + r; });
+  if (!hits(q.x, yAbove)) return [q.x, yAbove];
+  const xl = q.x - nameW / 2 - 14 - r, xr = q.x + nameW / 2 + 14 + r;
+  if (xl >= 40 + r && !hits(xl, yName)) return [xl, yName];
+  if (xr <= 950 - r && !hits(xr, yName)) return [xr, yName];
+  return [q.x, yAbove];
+}
 function drawLabels(t, P, boardTop) {
   RECTS.length = 0;
   const board = T.style.labels === 'board', fw = focusWeights(t);
@@ -597,14 +626,22 @@ function drawLabels(t, P, boardTop) {
   const sorted = L.slice().sort((a, b) => a.x - b.x);
   if (!window.__disableSolver) for (let pass = 0; pass < 3; pass++) for (let k = 0; k < sorted.length - 1; k++) {
     const A = sorted[k], Bq = sorted[k + 1];
-    if (Math.abs((A.top - A.lift) - (Bq.top - Bq.lift)) > 110 * Math.max(A.s, Bq.s)) continue;
+    const hOf = Z => ((Z.lines.length > 1 ? 72 : 38) + (board ? 0 : 60) + (Z.tagW ? 50 : 0)) * Z.s * Z.grow, aB = A.top - A.lift, bB = Bq.top - Bq.lift;   // real stack heights, not a fixed guess
+    if (aB + 10 < bB - hOf(Bq) || bB + 10 < aB - hOf(A)) continue;
     const dx = Bq.x - A.x, GAP = 44; if ((A.w * A.f + Bq.w * Bq.f) / 2 + GAP <= dx) continue;
     for (const Z of [A, Bq]) if (Z.split && Z.lines.length === 1) { Z.lines = [Z.split[1], Z.split[2]]; Z.w = Math.max(Z.numW, Z.split[0], Z.tagW); }   // 1) wrap long names
     if ((A.w * A.f + Bq.w * Bq.f) / 2 + GAP <= dx) continue;
     const kf = clamp((dx - GAP) / ((A.w + Bq.w) / 2), 0.9, 1); A.f = Math.min(A.f, kf); Bq.f = Math.min(Bq.f, kf);   // 2) shrink a little
-    if ((A.w * A.f + Bq.w * Bq.f) / 2 + GAP > dx) { const hi = (A.top - A.lift) <= (Bq.top - Bq.lift) ? A : Bq; hi.lift += 110 * hi.s; }   // 3) stagger
+    if ((A.w * A.f + Bq.w * Bq.f) / 2 + GAP > dx) { const hi = aB <= bB ? A : Bq, lo = hi === A ? Bq : A; hi.lift += Math.max(20, (hi.top - hi.lift) - (lo.top - lo.lift) + hOf(lo) + 14); }   // 3) stagger: lift the higher stack clear of the other
   }
   for (const q of L) { const half = q.w * q.f / 2; q.x = clamp(q.x, half + 40, 950 - half); }
+  if (!window.__disableSolver) for (const q of L) {   // a label never sits on top of another character's head: slide it sideways
+    const h = ((q.lines.length > 1 ? 72 : 38) + (board ? 0 : 60) + (q.tagW ? 50 : 0)) * q.s * q.grow, yb = q.top - q.lift + 8, yt = yb - h - 8, half = q.w * q.f / 2;
+    T.chars.forEach((_, o) => { if (o === q.i) return; const j = T.__joints[o]; if (!j) return; const hx = T.__X(j.head[0]), hy = T.__Y(j.head[1]), hr = j.hr * (T.__z || 1) + 10;
+      if (hy + hr < yt || hy - hr > yb || hx + hr < q.x - half || hx - hr > q.x + half) return;
+      const toL = hx - hr - half, toR = hx + hr + half, okL = toL >= half + 40, okR = toR <= 950 - half;
+      q.x = okL && (!okR || Math.abs(toL - q.x) <= Math.abs(toR - q.x)) ? toL : okR ? toR : q.x; });
+  }
   T.__labels = L;
   T.chars.forEach((ch, i) => {
     const q = L[i], s = q.s, f = q.f * q.grow, a = Math.max(alphaAt(i, t), pickTurn(i, t), 0.75, T.question && t >= T.question.t0 ? 1 : 0), y0 = q.top - q.lift, CAP = 0.73;   // options stay readable even when the character is dimmed
@@ -620,7 +657,7 @@ function drawLabels(t, P, boardTop) {
     const tg = tagAt(i, t);
     if (tg) { const tagPx = 34 * s * q.f, tagBase = top - 10 * s, tf = `800 ${tagPx.toFixed(1)}px Inter`; spaced(sc, tg.text, q.x, tagBase, tf, tg.color || RED, 2, tg.a * Math.max(a, 0.8), 0, true); if (tg.a > 0.5) rectOf(i, tg.text, q.x, tagBase, tf, 2); top = tagBase - CAP * tagPx; }
     q.stackTop = top;
-    if (T.question && t >= T.question.t0) { const pk = pickTurn(i, t), bs = (1 + 0.35 * pk) * s * q.f, by = top - 12 * s - 34 * bs - 10 * pk * s, qa = ss(T.question.t0, T.question.t0 + 0.4, t); sc.save(); sc.globalAlpha = qa; sc.fillStyle = ch.color; sc.shadowColor = ch.color; sc.shadowBlur = 20 * pk; sc.beginPath(); sc.arc(q.x, by, 34 * bs, 0, 7); sc.fill(); sc.restore(); spaced(sc, String.fromCharCode(65 + i), q.x, by + 14 * bs, `800 ${(40 * bs).toFixed(1)}px Inter`, INK, 0, qa, 0, false, false); RECTS.push({ owner: 100 + i, text: 'badge', x0: q.x - 34 * bs, x1: q.x + 34 * bs, y0: by - 34 * bs, y1: by + 34 * bs }); }
+    if ((T.question && t >= T.question.t0) || (T.spec.question && t < T.beats[0].t1)) { const pk = pickTurn(i, t), bs = (1 + 0.35 * pk) * s * q.f, predict = !(T.question && t >= T.question.t0), [bx, by] = badgeSpot(i, q, top - 12 * s - 34 * bs - 10 * pk * s, 34 * bs, nameBase - (q.lines.length - 1) * lineH / 2 - CAP * namePx / 2, Math.max(...q.lines.map(ln => meas(ln, mf, 2)))), talk = predict ? Math.max(0, ...T.bubbles.filter(b => b.i === i).map(b => ss(b.t0 - 0.3, b.t0 - 0.05, t) * (1 - ss(b.t1, b.t1 + 0.25, t)))) : 0, qa = (T.question && t >= T.question.t0) ? ss(T.question.t0, T.question.t0 + 0.4, t) : (1 - ss(T.beats[0].t1 - 0.3, T.beats[0].t1, t)) * (1 - talk); /* a speaking character badge steps aside for its bubble */ sc.save(); sc.globalAlpha = qa; sc.fillStyle = ch.color; sc.shadowColor = ch.color; sc.shadowBlur = 20 * pk; sc.beginPath(); sc.arc(bx, by, 34 * bs, 0, 7); sc.fill(); sc.restore(); spaced(sc, String.fromCharCode(65 + i), bx, by + 14 * bs, `800 ${(40 * bs).toFixed(1)}px Inter`, INK, 0, qa, 0, false, false); if (qa > 0.3) RECTS.push({ owner: 100 + i, text: 'badge', x0: bx - 34 * bs, x1: bx + 34 * bs, y0: by - 34 * bs, y1: by + 34 * bs }); if (qa > 0.02 && by < q.stackTop) q.stackTop = by - 34 * bs - 4; }   // bubbles and markers go above the badge
   });
   if (board && T.__kind !== 'rewind') {
     const rankAt = tt => { const order = T.chars.map((_, i) => i).sort((x, y) => value(y, tt) - value(x, tt)); const rk = []; order.forEach((ci, k) => { rk[ci] = k; }); return rk; };
@@ -637,12 +674,14 @@ function drawLabels(t, P, boardTop) {
     if (t < bb.t0 || t > bb.t1) continue;
     const q = L[bb.i], s = q.s, a = ss(bb.t0, bb.t0 + .2, t) * (1 - ss(bb.t1 - .25, bb.t1, t));
     const y = q.stackTop - 14 * s - 6 * (1 - a);
-    let left = 24, right = (y > 860 && y < 1720) ? 972 : W - 24;
-    for (const o of L) { if (o.i === bb.i) continue; const jj = T.__joints[o.i]; if (jj) { const hx = T.__X(jj.head[0]), hy = T.__Y(jj.head[1]), hr = jj.hr * (T.__z || 1) + 10; if (!(y + 6 < hy - hr || y - 28 * s > hy + hr)) { if (hx < q.x) left = Math.max(left, hx + hr); else right = Math.min(right, hx - hr); } }
-      const oy0 = o.stackTop - 4, oy1 = o.top - o.lift; if (y + 6 < oy0 || y - 28 * s > oy1) continue; if (o.x < q.x) left = Math.max(left, o.x + o.w * o.f / 2 + 12); else right = Math.min(right, o.x - o.w * o.f / 2 - 12); }
+    const gap = yTop => { let left = 24, right = (y > 860 && y < 1720) ? 972 : W - 24;
+      for (const o of L) { if (o.i === bb.i) continue; const jj = T.__joints[o.i]; if (jj) { const hx = T.__X(jj.head[0]), hy = T.__Y(jj.head[1]), hr = jj.hr * (T.__z || 1) + 10; if (!(y + 6 < hy - hr || yTop > hy + hr)) { if (hx < q.x) left = Math.max(left, hx + hr); else right = Math.min(right, hx - hr); } }
+        const oy0 = o.stackTop - 4, oy1 = o.top - o.lift; if (y + 6 < oy0 || yTop > oy1) continue; if (o.x < q.x) left = Math.max(left, o.x + o.w * o.f / 2 + 12); else right = Math.min(right, o.x - o.w * o.f / 2 - 12); }
+      return [left, right]; };
+    let [left, right] = gap(y - 28 * s);
     const bf0 = `italic 700 ${(36 * s).toFixed(1)}px Inter`, w0 = meas(bb.text, bf0, 0);
     let lines = [bb.text], wl = w0;
-    if (w0 * 0.85 > right - left && bb.text.includes(' ')) { const ws = bb.text.split(' '); let best = null; for (let k = 1; k < ws.length; k++) { const a1 = ws.slice(0, k).join(' '), a2 = ws.slice(k).join(' '), m = Math.max(meas(a1, bf0, 0), meas(a2, bf0, 0)); if (!best || m < best[0]) best = [m, a1, a2]; } lines = [best[1], best[2]]; wl = best[0]; }   // too wide for the gap: two lines
+    if (w0 * 0.85 > right - left && bb.text.includes(' ')) { [left, right] = gap(y - 28 * s - 38 * s); /* two lines: clear the taller box */ const ws = bb.text.split(' '); let best = null; for (let k = 1; k < ws.length; k++) { const a1 = ws.slice(0, k).join(' '), a2 = ws.slice(k).join(' '), m = Math.max(meas(a1, bf0, 0), meas(a2, bf0, 0)); if (!best || m < best[0]) best = [m, a1, a2]; } lines = [best[1], best[2]]; wl = best[0]; }   // too wide for the gap: two lines
     const kf = clamp((right - left) / wl, 0.85, 1), w = wl * kf, bf = `italic 700 ${(36 * s * kf).toFixed(1)}px Inter`, lh = 36 * s * kf * 1.05;
     const x = right - left >= w ? clamp(q.x, left + w / 2, right - w / 2) : (left + right) / 2;
     let shown = Math.ceil(bb.text.length * clamp((t - bb.t0) / 0.45));
@@ -684,7 +723,7 @@ function renderFrame(r) {
   const safeTop = (boardOn ? capCanvasBottom + 56 + T.chars.length * 60 : capCanvasBottom) + 30;
   const [shx, shy] = shakeAt(t, tm), cam = cameraAt(t, tm, safeTop), look = lookOf(T.chars[0]);
   const X = x => 540 + cam.dx + (x - 540) * cam.z + shx, Y = y => 960 + cam.dy + (y - 960) * cam.z + shy;
-  T.__joints = {}; T.__props = []; T.__lines = []; T.__X = X; T.__Y = Y; T.__z = cam.z; T.__kind = tm.kind;
+  T.__joints = {}; T.__props = []; T.__lines = []; T.__vlines = []; T.__X = X; T.__Y = Y; T.__z = cam.z; T.__kind = tm.kind;
   sc.clearRect(0, 0, W, H);
   sc.save(); sc.translate(540 + cam.dx + shx, 960 + cam.dy + shy); sc.scale(cam.z, cam.z); sc.translate(-540, -960);
   const th = THEMES[st.theme] || THEMES.void;
@@ -717,6 +756,9 @@ function renderFrame(r) {
   drawLabels(t, P, capCanvasBottom + 56);
   for (const ln of (T.__lines || [])) { const y = T.__Y(ln.y), x0 = T.__X(ln.x0), x1 = T.__X(ln.x1);   // text crossed by a scenery line gets a dark plate behind it
     for (const A of RECTS) { if (A.owner >= 300 || !(y > A.y0 - 6 && y < A.y1 + 6 && Math.min(A.x1, x1) - Math.max(A.x0, x0) > 0)) continue;
+      ctx.save(); ctx.fillStyle = 'rgba(5,7,11,0.92)'; ctx.beginPath(); ctx.roundRect(A.x0 - 12, A.y0 - 8, A.x1 - A.x0 + 24, A.y1 - A.y0 + 14, 10); ctx.fill(); ctx.restore(); A.plated = true; } }
+  for (const vl of (T.__vlines || [])) { const x = T.__X(vl.x), y0 = T.__Y(vl.y0), y1 = T.__Y(vl.y1);   // ropes/poles crossing text: same dark plate
+    for (const A of RECTS) { if (A.owner >= 300 || A.plated || !(x > A.x0 - 4 && x < A.x1 + 4 && Math.min(A.y1, y1) - Math.max(A.y0, y0) > 0)) continue;
       ctx.save(); ctx.fillStyle = 'rgba(5,7,11,0.92)'; ctx.beginPath(); ctx.roundRect(A.x0 - 12, A.y0 - 8, A.x1 - A.x0 + 24, A.y1 - A.y0 + 14, 10); ctx.fill(); ctx.restore(); A.plated = true; } }
   if (tm.kind === 'play' || tm.kind === 'slow' || tm.kind === 'hook') qaLayout(t, P); else RECTS.length = 0;
   ctx.drawImage(scene, 0, 0);
@@ -769,7 +811,7 @@ function buildCues() {
   return out;
 }
 const SCENES = {};
-window.loadSpec = (spec, brand, style) => { WARN.clear(); T = compile(spec, brand, style); if (T.scene.setup) T.scene.setup(T); buildTimeMap(); buildShots(); return { dur: T.dur, realDur: T.realDur, tail: T.burst ? T.dur - T.burst.t : 0, warnings: [...WARN] }; };
+window.loadSpec = (spec, brand, style) => { WARN.clear(); T = compile(spec, brand, style); T.__fixed = null; if (T.scene.setup) T.scene.setup(T); buildTimeMap(); buildShots(); fixedCamera(); CAPRECTS.length = 0; return { dur: T.dur, realDur: T.realDur, tail: T.burst ? T.dur - T.burst.t : 0, warnings: [...WARN] }; };
 window.render = r => renderFrame(r);
 window.cues = () => buildCues();
 window.warnings = () => [...WARN];

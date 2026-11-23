@@ -33,8 +33,8 @@
  },
  "footnote": "Illustrative · free hours gained in a month · variable rewards",
  "upload": {
-  "title": "Why You Check Your Phone",
-  "description": "\"I'll just check one thing.\" Your phone pays out like a slot machine: sometimes a like, sometimes nothing. That unpredictability (a variable reward) is a big part of why you keep reaching for it. One small change helps a lot. Which one are you? (Illustrative numbers.)",
+  "title": "Why You Can't Stop Checking",
+  "description": "You unlock your phone without even deciding to. It pays out like a slot machine (a variable reward), and that's why you keep reaching for it. One small change gives you hours back. Which one are you? (Illustrative numbers.)",
   "hashtags": [
    "psychology",
    "brainscience",
@@ -47,7 +47,7 @@
  "beats": [
   {
    "dur": 2.6,
-   "caption": "SAME JOB. SAME PHONE.",
+   "caption": "YOU UNLOCK IT WITHOUT THINKING.",
    "counter": 1,
    "bubbles": [
     {
@@ -140,7 +140,7 @@
   },
   {
    "dur": 3.0,
-   "caption": "BED SCROLLER HITS 2AM.",
+   "caption": "2AM. STILL SCROLLING.",
    "counter": 14,
    "values": {
     "BED SCROLLER": 4,
@@ -177,7 +177,7 @@
   },
   {
    "dur": 3.8,
-   "caption": "FREE HOURS ADD UP.",
+   "caption": "60 FREE HOURS. EVERY MONTH.",
    "counter": 30,
    "curve": "accel",
    "values": {
@@ -231,5 +231,7 @@
    "caption": "WHICH ONE ARE YOU?",
    "style": "question"
   }
- ]
+ ],
+ "question": "WHO GETS 60 HOURS BACK?",
+ "answer": "IT'S C: PHONE AWAY"
 }

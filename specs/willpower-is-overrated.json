@@ -33,8 +33,8 @@
  },
  "footnote": "Illustrative · workouts done in 6 months · if-then plans",
  "upload": {
-  "title": "Willpower Is Overrated",
-  "description": "\"I'll start on Monday.\" Motivation comes and goes. An if-then plan (\"if it's 7am, I train\") decides for you before your mood gets a vote. Same goal, three approaches. Which one are you? (Illustrative numbers.)",
+  "title": "Why Monday Never Comes",
+  "description": "\"I'll start on Monday.\" Motivation comes and goes. An if-then plan (\"if it's 7am, I go\") decides for you before your mood gets a vote. Same goal, three approaches. Which one are you? (Illustrative numbers.)",
   "hashtags": [
    "psychology",
    "brainscience",
@@ -47,7 +47,7 @@
  "beats": [
   {
    "dur": 2.6,
-   "caption": "SAME GOAL. SAME GYM.",
+   "caption": "YOU'LL START ON MONDAY.",
    "counter": 1,
    "bubbles": [
     {
@@ -203,5 +203,7 @@
    "caption": "WHICH ONE ARE YOU?",
    "style": "question"
   }
- ]
+ ],
+ "question": "WHO'S STILL GOING AT WEEK 26?",
+ "answer": "IT'S C: 7AM = GYM"
 }

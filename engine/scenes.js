@@ -45,6 +45,8 @@ function runPose(ph) {
 }
 SCENES.race = {
   facing: 'right', sideLabels: true,
+  workAt(i, t) { return moving(i, t, 0.0008, 0.006); },
+  stride(i, t) { return 2 * Math.PI * phaseInt(i, t, 160, 0, 2.3); },   /* legs keep a running cadence even on a slow day; a long day runs faster */
   setup(T) {
     const n = T.chars.length; this.gap = Math.min(380, 1100 / n); this.s = clamp((this.gap - 120) / 165, 0.85, 1.5);
     this.y0 = 1440 - (n - 1) * this.gap; this.x0 = 120; this.x1 = 800;
@@ -54,13 +56,13 @@ SCENES.race = {
   extent() { return { x0: this.x0 - 50, x1: this.x1 + 90, y0: this.y0 - figH() * this.s - 90, y1: this.y0 + (T.chars.length - 1) * this.gap + 60 }; },
   xAt(i, t) { return this.x0 + fracAt(i, t) * (this.x1 - this.x0); },
   place(i, t) { const y = this.laneY(i); return { x: this.xAt(i, t), top: y - figH() * this.s, s: this.s, floor: y, footY: y }; },
-  activePose(i, t) { return blendPose(POSES.stand, runPose(this.xAt(i, t) / (15 * this.s)), moving(i, t, 0.003, 0.03)); },
+  activePose(i, t) { return blendPose(POSES.stand, runPose(this.stride(i, t)), moving(i, t, 0.0008, 0.006)); },
   draw(c, t) {
     const yTop = this.y0 - figH() * this.s - 20, yBot = this.y0 + (T.chars.length - 1) * this.gap, fx = this.x1 - 80;   // the winner ends past the line
     c.save(); c.setLineDash([14, 12]); c.strokeStyle = 'rgba(255,255,255,0.4)'; c.lineWidth = 3; c.beginPath(); c.moveTo(fx, yTop); c.lineTo(fx, yBot + 4); c.stroke(); c.restore();
     spaced(c, 'FINISH', fx - 110, yTop - 22, '800 44px Inter', '#dfe4e9', 3, 0.9); if (T.__vlines) T.__vlines.push({ x: fx, y0: yTop, y1: yBot + 4 });
     c.fillStyle = 'rgba(255,255,255,0.12)'; c.fillRect(this.x0 - 30, yTop, 2, yBot - yTop);
-    return charsDo((ch, i) => { const y = this.laneY(i); floorLine(c, y, -200, W + 200, 0.16); const p = this.place(i, t); drawChar(c, i, t, tt => ({ mode: 'feet', x: this.xAt(i, tt), y }), { s: this.s, speed: speedFx(i, t, 0.12, 0.35), sweat: speedFx(i, t, 0.08, 0.2) }); return p; });
+    return charsDo((ch, i) => { const y = this.laneY(i); floorLine(c, y, -200, W + 200, 0.16); const p = this.place(i, t); const back = fracRate(i, t) < -0.0008 && stateAt(i, t).state === 'active', bx = this.xAt(i, t); if (back) { c.save(); c.translate(2 * bx, 0); c.scale(-1, 1); } /* running back to the start line: turn around */ drawChar(c, i, t, tt => ({ mode: 'feet', x: this.xAt(i, tt), y }), { s: this.s, speed: speedFx(i, t, 0.12, 0.35), sweat: speedFx(i, t, 0.08, 0.2) }); if (back) c.restore(); return p; });
   },
 };
 
@@ -68,8 +70,9 @@ SCENES.race = {
 function climbPose(ph) { const s = Math.sin(ph); return { la: [-2.95 + 0.75 * Math.max(0, s), -3.05 + 0.5 * Math.max(0, s)], ra: [2.95 - 0.75 * Math.max(0, -s), 3.05 - 0.5 * Math.max(0, -s)], ll: [0.9 + 0.5 * s, -0.35], rl: [0.4 - 0.5 * s, -0.7], lean: 0.05, drop: -0.35 }; }
 SCENES.climb = {
   facing: 'front', boardMax: 3, upperBodyFree: false, steadyCam: true, K: 1.35,
+  workAt(i, t) { return Math.max(moving(i, t), ss(this.stand - 5, this.stand - 45, this.hip(i, t)) * 0.8 * energyAt(t)); },
   freeUpper(i, t) { return this.hip(i, t) > this.stand - 8; },
-  setup(T) { this.xs = colsX(T.chars.length, 380, 1300); this.BAR = T.style.labels === 'board' ? 660 : 560; this.F = FLOOR_MAX; this.stand = this.F - 72.5 * this.K; this.high = this.BAR + 115 * this.K; },
+  setup(T) { this.xs = colsX(T.chars.length, 380, 960); this.BAR = T.style.labels === 'board' || T.spec.question ? 660 : 560; this.F = FLOOR_MAX; this.stand = this.F - 72.5 * this.K; this.high = this.BAR + 115 * this.K; },
   floorY() { return this.F; },
   extent() { return { x0: this.xs[0] - 130, x1: this.xs[this.xs.length - 1] + 130, y0: this.BAR - 40, y1: this.F + 12 }; },
   hipAt(i, t) { return lerp(this.stand, this.high, fracAt(i, t)); },
@@ -94,16 +97,17 @@ const HANG = { la: [-2.75, -2.85], ra: [2.75, 2.85], ll: [-0.06, 0.12], rl: [0.0
 const PULL = { la: [-1.15, -2.65], ra: [1.15, 2.65], ll: [-0.75, 0.55], rl: [0.75, -0.55], lean: 0, drop: -0.4 };
 SCENES.pullup = {
   facing: 'front', upperBodyFree: false, K: 1.35,
-  setup(T) { this.xs = colsX(T.chars.length, 360, 1250); this.BAR = 720; this.F = FLOOR_MAX; },
+  workAt(i, t) { return this.dropped(i, t) == null ? Math.max(moving(i, t, 0.001, 0.01), 0.85 * energyAt(t)) : 0; },
+  setup(T) { this.xs = colsX(T.chars.length, 360, 960); this.BAR = 900; this.F = FLOOR_MAX; },
   floorY() { return this.F; },
-  extent() { return { x0: this.xs[0] - 150, x1: this.xs[this.xs.length - 1] + 150, y0: this.BAR - 10, y1: this.F + 12 }; },
+  extent() { return { x0: this.xs[0] - 125, x1: this.xs[this.xs.length - 1] + 125, y0: this.BAR - 10, y1: this.F + 12 }; },
   dropped(i, t) { const since = fallStart(i, t); return since == null ? null : clamp((t - since) / 0.55); },
   place(i, t) { const d = this.dropped(i, t), hx = figH() - 160, K = this.K; if (d == null) return { x: this.xs[i], top: this.BAR - (78 + hx) * K, s: K, floor: this.F }; const feet = lerp(this.BAR + (180 + hx) * K, this.F, d * d); return { x: this.xs[i], top: lerp(this.BAR - (78 + hx) * K, feet - (150 + hx) * K, d), s: K, floor: this.F, feet }; },
-  activePose(i, t) { const p = 0.5 - 0.5 * Math.cos(2 * Math.PI * phaseInt(i, t, 5, 0.6, 2.6)); return blendPose(HANG, blendPose(HANG, PULL, p), Math.max(moving(i, t, 0.001, 0.01), 0.85 * energyAt(t))); },
+  activePose(i, t) { const p = 0.5 - 0.5 * Math.cos(2 * Math.PI * phaseInt(i, t, 12, 1.0, 2.6)); return blendPose(HANG, blendPose(HANG, PULL, p), Math.max(moving(i, t, 0.001, 0.01), 0.85 * energyAt(t))); },
   idlePose() { return HANG; },
   winPose() { return PULL; },
   draw(c, t) {
-    const x0 = this.xs[0] - 145, x1 = this.xs[this.xs.length - 1] + 145;
+    const x0 = this.xs[0] - 120, x1 = this.xs[this.xs.length - 1] + 120;
     c.fillStyle = 'rgba(255,255,255,0.8)'; c.fillRect(x0, this.BAR - 3, x1 - x0, 7); if (T.__lines) T.__lines.push({ y: this.BAR, x0, x1 });
     c.fillStyle = 'rgba(255,255,255,0.45)'; c.fillRect(x0, this.BAR, 5, this.F - this.BAR); c.fillRect(x1 - 5, this.BAR, 5, this.F - this.BAR); floorLine(c, this.F);
     return charsDo((ch, i) => {
@@ -119,6 +123,7 @@ const LIFT_UP = { la: [-0.16, -0.06], ra: [0.16, 0.06], ll: [-0.12, -0.04], rl: 
 const LIFT_RACK = { la: [-0.5, -2.7], ra: [0.5, 2.7], ll: [-0.2, -0.1], rl: [0.2, 0.1], lean: 0, drop: -0.35 };   // winner: bar held at chest, hands on the bar (an overhead bar would cross the big heads)
 SCENES.lift = {
   facing: 'front', upperBodyFree: false,   // hands stay on the bar: reactions and fidgets use the legs
+  workAt(i, t) { return Math.max(moving(i, t), 0.8 * energyAt(t)); },
   setup(T) { const n = T.chars.length; this.sp = Math.min(300, 920 / n); this.xs = colsX(n, 300); this.s = clamp(this.sp / 165, 0.9, 1.8); this.F = 1450; },
   floorY() { return this.F; },
   extent() { const h = 90 * this.s; return { x0: this.xs[0] - h, x1: this.xs[this.xs.length - 1] + h, y0: this.F - 300 * this.s, y1: this.F + 12 }; },
@@ -156,7 +161,8 @@ const DIG_DOWN = { la: [1.2, 0.7], ra: [1.0, 0.55], ll: [-0.3, -0.1], rl: [0.35,
 const ROCKS = (() => { const r = rng(21); return [...Array(160)].map(() => ({ x: -500 + r() * (W + 1000), y: 600 + r() * 1600, s: 6 + r() * 16, k: r(), gem: r() < 0.12 })); })();
 SCENES.dig = {
   facing: 'right', K: 1.35,
-  setup(T) { this.xs = colsX(T.chars.length, 270); this.G = T.style.labels === 'board' ? 740 : 600; this.D = 1400 - this.G; this.HW = 70 * this.K; },
+  workAt(i, t) { return Math.max(moving(i, t), 0.8 * energyAt(t)); },
+  setup(T) { this.xs = colsX(T.chars.length, 270, 1000); this.G = T.style.labels === 'board' ? 740 : T.spec.question ? 780 : 600; this.D = 1400 - this.G; this.HW = 70 * this.K; },
   foot(i, t) { return this.G + fracAt(i, t) * this.D; },
   extent(t) { return { x0: this.xs[0] - this.HW - 10, x1: this.xs[this.xs.length - 1] + this.HW + 10, y0: this.G - 40, y1: Math.max(...T.chars.map((_, i) => this.foot(i, t))) + 70 }; },
   place(i, t) { const y = this.foot(i, t); return { x: this.xs[i], top: y - figH() * this.K, s: this.K, floor: y }; },

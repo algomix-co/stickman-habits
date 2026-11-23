@@ -1,0 +1,244 @@
+{
+ "id": "one-deep-hole-wins",
+ "brand": "mind-the-gap",
+ "scene": "dig",
+ "keywords": [
+  "focus",
+  "chasing",
+  "money",
+  "obsession"
+ ],
+ "characters": [
+  {
+   "name": "ONE HOLE",
+   "color": "#ff5a6e",
+   "accessory": "headband"
+  },
+  {
+   "name": "HOLE HOPPER",
+   "color": "#36e0c8",
+   "accessory": "cap"
+  },
+  {
+   "name": "DISTRACTED",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "DYNAMITE",
+   "color": "#ffc53d",
+   "accessory": "beanie"
+  }
+ ],
+ "start": {
+  "ONE HOLE": 0,
+  "HOLE HOPPER": 0,
+  "DISTRACTED": 0,
+  "DYNAMITE": 0
+ },
+ "metric": {
+  "suffix": " M",
+  "scale": 1,
+  "max": 40
+ },
+ "counter": {
+  "label": "MONTH",
+  "start": 1
+ },
+ "question": "WHO HITS GOLD?",
+ "footnote": "Illustrative · metres = months of focus",
+ "upload": {
+  "title": "One Deep Hole Wins",
+  "description": "Same shovel, same start. One jumps to every new idea, one wants it all now, one digs between scrolls, one digs a single hole every day. Who hits gold? Which one are you? (Illustrative.)",
+  "hashtags": [
+   "discipline",
+   "focus",
+   "money",
+   "success",
+   "selfimprovement",
+   "shorts"
+  ]
+ },
+ "endcard": {
+  "tagline": "PICK ONE HOLE. DIG DEEP."
+ },
+ "beats": [
+  {
+   "dur": 2.8,
+   "caption": "SAME SHOVEL. SAME START.",
+   "counter": 1,
+   "values": {
+    "ONE HOLE": 3,
+    "HOLE HOPPER": 5,
+    "DISTRACTED": 2,
+    "DYNAMITE": 3
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "HOLE HOPPER HAS A NEW IDEA.",
+   "counter": 3,
+   "values": {
+    "HOLE HOPPER": 0,
+    "ONE HOLE": 7,
+    "DISTRACTED": 3.5,
+    "DYNAMITE": 6
+   },
+   "curves": {
+    "HOLE HOPPER": "early"
+   },
+   "bubbles": [
+    {
+     "who": "HOLE HOPPER",
+     "text": "crypto is the move!",
+     "at": 0.2
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "DYNAMITE WANTS IT NOW.",
+   "counter": 5,
+   "values": {
+    "DYNAMITE": 24,
+    "HOLE HOPPER": 6,
+    "ONE HOLE": 11,
+    "DISTRACTED": 5
+   },
+   "curves": {
+    "DYNAMITE": "decel"
+   },
+   "events": [
+    {
+     "type": "flash",
+     "at": 0.15
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "DYNAMITE",
+     "text": "why dig slow?",
+     "at": 0.9
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THEN IT CAVES IN.",
+   "counter": 7,
+   "values": {
+    "DYNAMITE": 0,
+    "HOLE HOPPER": 0,
+    "ONE HOLE": 15,
+    "DISTRACTED": 6
+   },
+   "curves": {
+    "HOLE HOPPER": "late"
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "DYNAMITE",
+     "at": 0.3
+    }
+   ],
+   "tags": {
+    "DYNAMITE": "CAVED IN"
+   },
+   "bubbles": [
+    {
+     "who": "HOLE HOPPER",
+     "text": "dropshipping!",
+     "at": 1.6
+    }
+   ]
+  },
+  {
+   "dur": 3.2,
+   "caption": "DISTRACTED DIGS BETWEEN REELS.",
+   "counter": 12,
+   "values": {
+    "DISTRACTED": 9,
+    "ONE HOLE": 24,
+    "HOLE HOPPER": 7
+   },
+   "curves": {
+    "DISTRACTED": "late"
+   },
+   "bubbles": [
+    {
+     "who": "DISTRACTED",
+     "text": "5 more minutes...",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "dur": 3.4,
+   "caption": "ONE HOLE. EVERY DAY.",
+   "counter": 20,
+   "curve": "linear",
+   "values": {
+    "ONE HOLE": 36,
+    "HOLE HOPPER": 0,
+    "DISTRACTED": 11,
+    "DYNAMITE": 4
+   },
+   "curves": {
+    "HOLE HOPPER": "early"
+   },
+   "states": {
+    "DYNAMITE": "active"
+   },
+   "stateAt": {
+    "DYNAMITE": 0.4
+   },
+   "bubbles": [
+    {
+     "who": "HOLE HOPPER",
+     "text": "AI agency, day 1!",
+     "at": 0.2
+    },
+    {
+     "who": "DYNAMITE",
+     "text": "fine. by hand.",
+     "at": 1.9
+    }
+   ]
+  },
+  {
+   "dur": 3.6,
+   "caption": "GOLD WAS 40 M DOWN.",
+   "counter": 24,
+   "curve": "accel",
+   "values": {
+    "ONE HOLE": 40,
+    "HOLE HOPPER": 5,
+    "DISTRACTED": 12,
+    "DYNAMITE": 7
+   },
+   "states": {
+    "ONE HOLE": "win"
+   },
+   "stateAt": {
+    "ONE HOLE": 3.3
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "ONE HOLE",
+     "at": 3.35
+    }
+   ],
+   "tags": {
+    "HOLE HOPPER": "9 HOLES. 0 GOLD.",
+    "DISTRACTED": "SCROLLING"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

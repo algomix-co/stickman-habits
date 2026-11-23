@@ -8,36 +8,35 @@
   and **retention mechanics** (hook, open loop, payoff, loop) that make the algorithm keep re-testing a video.
 
 ## 2. Niche and audience (corrected in round 2)
-**Niche:** discipline, motivation and self-improvement, told as visual metaphors (genre reference:
+**Niche:** discipline, motivation and self-improvement, told as a race between four relatable people doing one
+physical activity (the generation-1 format the owner liked best; title-tone reference:
 @SimplyAnimatedVisuals, whose top Shorts reach 10-29M views with statement titles like "Success is earned, never
 given"). The keyword pool lives in `brands/mind-the-gap.json` (`rules.keywords`) and in LEARNINGS.md.
 
 **Core viewer:** 18-34, ambitious, feels behind, wants a push. Watches on a phone in idle moments (bed, commute,
 gym rest). **Secondary:** 35-45 restarting (fitness, money, career). UK/US English, gender-neutral stakes.
 
-## 3. The evergreen rules (every video)
-1. **One original visual metaphor** that reads with the sound off in under 2 seconds.
-2. **A concept pair** at the top (OVERTHINKER | DOER). The viewer instantly sees which one they are.
-3. **A statement title**, at most 5 words, quotable on its own. No "Why..." questions.
-4. **No dates, trends or prices that age.** Day/year counters only.
-5. **Hook in the first frame:** the conflict is already visible, and the top line dares the viewer
-   ("EVERYONE PAYS. PICK WHEN.").
-6. **Climax around 70%:** a physical payoff (boulder drops, sword snaps, flag planted), then a two-line moral,
-   then the title as the closing line.
-7. **Drive music:** rhythmic from frame 1 and escalating to the climax.
-8. **Still camera, moving text.**
+## 3. The evergreen rules (every video), restored in round 3
+1. **One physical activity everyone does on screen** (lift, pull-up, climb, run, dig): progress you can see.
+2. **Four relatable people**, not abstract traits (NEW YEAR, HACK HUNTER, QUITS AT 80%...), each with a
+   **live number over the head** and a DAY / WEEK / MONTH counter.
+3. **Hook in the first second:** flash-forward of the climax ("HOW DID THIS HAPPEN?", rewind) or an open-loop
+   question with A·B·C·D badges ("WHO HITS GOLD?").
+4. **A crash halfway** (the fast starter burns out, caves in, lets go), then the steady one wins with a burst.
+5. **Ending:** WHICH ONE ARE YOU? COMMENT A·B·C·D (comments + rewatches), then the story's own tagline.
+6. **A statement title**, at most 5 words, quotable on its own. No "Why..." questions.
+7. **Drive music:** rhythmic from frame 1, escalating to the climax, never pausing.
+8. **Still camera, moving text.** Every character keeps working; nobody stands around.
 
-## 4. Hook formulas (top line, readable in about 1 second)
+## 4. Hook formulas
 | Formula | Example |
 |---|---|
-| Everyone-pays | "EVERYONE PAYS. PICK WHEN." |
-| Hidden design | "THE DOOR IS SMALL ON PURPOSE." |
-| Then-what | "LUCK WILL FIND YOU. THEN WHAT?" |
-| Unfair start | "HE WAS BORN WITH IT." |
-| Same start | "BOTH STARTED TODAY." |
+| Flash-forward | climax first, "HOW DID THIS HAPPEN?", rewind to day 1 |
+| Open loop | "WHO HITS GOLD?" with A·B·C·D badges, answered at the climax |
+| Same start | "SAME BAR. SAME JANUARY." |
 
 ## 5. Backlog
-See `scripts/round-2.md` for 17 concepts (titles, keywords, metaphors) and five full scripts. Rejected and used
+Round 3 specs are in `specs/`; round-2 metaphor concepts (`scripts/round-2.md`) are retired. Rejected and used
 titles live in the ledger (`brands/mind-the-gap.titles.json`); new drafts must clear `make.js` validation.
 
 ## 6. Publishing system

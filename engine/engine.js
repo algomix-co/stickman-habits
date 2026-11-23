@@ -259,10 +259,14 @@ function compile(spec, brand, style) {
   const n = chars.length;
   const T = { spec, brand: brand || {}, style: { ...DEFAULT_STYLE, ...(style || {}) }, chars, idx, beats: [], events: [], bubbles: [], stateTL: chars.map(() => [[0, 'active']]), tagTL: chars.map(() => [[0, null]]), dimTL: chars.map(() => 1e9) };
   const asArr = (obj, fb) => chars.map((c, i) => obj && obj[c.name] != null ? obj[c.name] : fb[i]);
-  let prev = asArr(spec.start, Array(n).fill(0)), cnt = spec.counter.start, t = 0;
+  let prev = asArr(spec.start, Array(n).fill(0)), cnt = spec.counter.start, t = 0, prevD = Array(n).fill(0);
   spec.beats.forEach((b, bi) => {
     const t0 = t, t1 = t + b.dur, to = asArr(b.values, prev);
-    const curves = chars.map(c => (b.curves && b.curves[c.name]) || b.curve || 'ease'), crashAt = Array(n).fill(null);
+    /* flow: a character who keeps going in the same direction across a caption change does not stop at the change */
+    const nb = spec.beats[bi + 1], nextTo = asArr(nb && nb.values, to), sg = x => Math.abs(x) < 1e-9 ? 0 : Math.sign(x);
+    const flow = i => { const d = sg(to[i] - prev[i]), cin = d && sg(prevD[i]) === d, cout = d && sg(nextTo[i] - to[i]) === d; return cin && cout ? 'linear' : cin ? 'decel' : cout ? 'accel' : 'ease'; };
+    const curves = chars.map((c, i) => (b.curves && b.curves[c.name]) || b.curve || (spec.flow === false ? 'ease' : flow(i))), crashAt = Array(n).fill(null);
+    prevD = to.map((v, i) => v - prev[i]);
     for (const e of b.events || []) {
       const ev = { ...e, beat: bi, t: t0 + (e.at != null ? e.at : (e.type === 'burst' ? 0 : 0.07 * b.dur)) };
       if (e.who) ev.i = idx(e.who);
@@ -342,6 +346,9 @@ function poseOf(state, i, t) {
 function cheerAnim(t, i) { const k = Math.sin(t * 7 + i * 1.3), up = Math.max(0, k); return { la: [-2.05 + 0.25 * k, -2.4 + 0.2 * k], ra: [2.05 - 0.25 * k, 2.4 - 0.2 * k], ll: [-0.3, -0.1 - 0.5 * up], rl: [0.3, 0.1 + 0.5 * up], lean: 0, drop: -0.35 }; }
 function poseAt(i, t) { const tl = T.stateTL[i]; let p = poseOf(tl[0][1], i, t); for (let k = 1; k < tl.length; k++) { const [tk, st] = tl[k]; if (t < tk) break; p = blendPose(p, poseOf(st, i, t), ss(tk, tk + (st === 'fall' ? 0.15 : 0.35), t)); } if (T.scene.poseOverride) p = T.scene.poseOverride(i, t, p); return gestureLayer(i, t, p); }
 const moving = (i, t, lo = 0.002, hi = 0.02) => ss(lo, hi, Math.abs(fracRate(i, t)));
+/* action check: is the character doing its activity (a rep, a climb, a stride, a dig) or a big story move? Waving does not count. */
+const ACTION_STATES = ['win', 'boast', 'cheer', 'fall', 'throw', 'shock'];
+function workAt(i, t) { const st = stateAt(i, t).state; if (st === 'active') return T.scene.workAt ? T.scene.workAt(i, t) : moving(i, t); return ACTION_STATES.includes(st) ? 0.6 : 0; }
 const alphaAt = (i, t) => (T.question && t >= T.question.t0 + 0.2) ? 1 : 1 - 0.62 * ss(T.dimTL[i], T.dimTL[i] + 1, t);
 function tagAt(i, t) { let cur = null; for (const [tk, v] of T.tagTL[i]) if (tk <= t) cur = { v, tk }; return cur && cur.v ? { ...cur.v, a: ss(cur.tk, cur.tk + 0.4, t) } : null; }
 function fmt(v) { const m = T.spec.metric, d = m.decimals || 0, crowded = T.chars.length >= 5 && m.compact !== false; v = Math.max(0, v); let s; if ((m.compact || crowded) && v >= 1e6) s = (v / 1e6).toFixed(2) + 'M'; else if ((m.compact || crowded) && v >= 1e4) s = Math.round(v / 1000) + 'K'; else if (crowded && v >= 1000) s = (v / 1000).toFixed(1) + 'K'; else s = d ? v.toFixed(d) : Math.round(v).toLocaleString('en-US'); return (m.prefix || '') + s + (m.suffix || ''); }
@@ -435,6 +442,7 @@ function focusWeights(t) { const w = T.chars.map(() => 0); for (let k = 0; k < 8
 function fixedCamera() {   // computed once: widest frame that keeps every character, label and badge in view all video long
   if (T.__fixed) return T.__fixed;
   let top = 0; for (let tt = 0; tt <= T.dur; tt += 0.25) top = Math.max(top, captionBlock(tt, { kind: 'play', u: 0 }, scratchC));
+  for (const g of (T.segs || []).filter(g => g.kind === 'hook')) for (let u = 0; u <= 1; u += 0.25) top = Math.max(top, captionBlock(lerp(g.s0, g.s1, u), { kind: 'hook', u, g }, scratchC));   /* the flash-forward hook has its own, taller caption block */
   const safeTop = (T.style.labels === 'board' ? top + 56 + T.chars.length * 60 : top) + 30;
   let best = null; for (let tt = 0; tt <= T.dur; tt += 0.25) { const q = frameFor(tt, safeTop, -1, 1.25); if (!best || q.z < best.z) best = q; }
   T.__fixed = { ...best, safeTop }; return T.__fixed;
@@ -616,13 +624,15 @@ const hitBox = (b, x0, x1, y0, y1) => b && x1 > b.x0 && x0 < b.x1 && y1 > b.y0 &
 const noNum = () => T.style.labels === 'board' || T.spec.showValues === false;   // metaphor videos show names, not numbers
 const stackH = Z => ((Z.lines.length > 1 ? 72 : 38) + (noNum() ? 0 : 60) + (Z.tagW ? 50 : 0)) * Z.s * Z.grow;
 function badgeSpot(i, q, yAbove, r, yName, nameW, L) {
-  if (q.side) return [q.side > 0 ? q.x + nameW / 2 + 14 + r : q.x - nameW / 2 - 14 - r, yName];
+  if (q.side) { const w = Math.max(nameW, (q.w || 0) * (q.f || 1)); return [q.side > 0 ? q.x + w / 2 + 14 + r : q.x - w / 2 - 14 - r, yName]; }   /* beside the widest line (the big number), not just the name */
   const hits = (x, y) => T.chars.some((_, o) => o !== i && hitBox(bodyBox(o, 4), x - r, x + r, y - r, y + r))
     || L.some(o => { if (o.i === i) return false; const hw = o.w * o.f / 2 + 8, yb = o.top - o.lift + 8, yt = yb - stackH(o) - 30 - 2 * r; return x + r > o.x - hw && x - r < o.x + hw && y + r > yt && y - r < yb; });
-  if (!hits(q.x, yAbove)) return [q.x, yAbove];
-  const xl = q.x - nameW / 2 - 14 - r, xr = q.x + nameW / 2 + 14 + r;
-  if (xl >= 40 + r && !hits(xl, yName)) return [xl, yName];
-  if (xr <= 950 - r && !hits(xr, yName)) return [xr, yName];
+  const cap = (x, y) => CAPRECTS.some(c => x + r > c.x0 - 6 && x - r < c.x1 + 6 && y + r > c.y0 - 8 && y - r < c.y1 + 8);   /* never into the caption block */
+  if (!hits(q.x, yAbove) && !cap(q.x, yAbove)) return [q.x, yAbove];
+  const wW = Math.max(nameW, (q.w || 0) * (q.f || 1)), xl = q.x - wW / 2 - 14 - r, xr = q.x + wW / 2 + 14 + r;
+  if (xl >= 40 + r && !hits(xl, yName) && !cap(xl, yName)) return [xl, yName];
+  if (xr <= 950 - r && !hits(xr, yName) && !cap(xr, yName)) return [xr, yName];
+  if (cap(q.x, yAbove)) { if (xr <= 950 - r && !cap(xr, yName)) return [xr, yName]; if (xl >= 40 + r && !cap(xl, yName)) return [xl, yName]; }
   return [q.x, yAbove];
 }
 function drawLabels(t, P, boardTop) {
@@ -869,6 +879,7 @@ window.warnings = () => [...WARN];
 window.brandSheet = b => drawBrandSheet(b);
 window.__T = () => T;
 window.__storyAt = r => storyAt(r).s;
+window.__dbgWork = (i, t) => stateAt(i, t).state + '/' + workAt(i, t).toFixed(2);
 function hsl(r, g, b) { r /= 255; g /= 255; b /= 255; const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, d = mx - mn; return { l, s: d === 0 ? 0 : d / (1 - Math.abs(2 * l - 1)) }; }
 window.reviewRun = (fps = 15) => {
   WARN.clear();
@@ -892,8 +903,16 @@ window.reviewRun = (fps = 15) => {
       });
     }
   }
+  /* action profile, sampled at 10 Hz of story time over the story beats (not the question beat) */
+  const qb = T.beats.find(B => B.b.style === 'question' || B.b.style === 'closing'), endS = qb ? qb.t0 : T.dur, work = T.chars.map(() => [0, 0]), thin = [];
+  for (let tt = 0; tt < endS; tt += 0.1) { let on = 0; T.chars.forEach((_, i) => { const w = workAt(i, tt) > 0.4; work[i][1]++; if (w) { work[i][0]++; on++; } }); if (tt < endS * 0.8 && on < Math.ceil(T.chars.length / 2)) thin.push(+tt.toFixed(1)); }
+  const action = T.chars.map((ch, i) => ({ name: ch.name, frac: work[i][1] ? work[i][0] / work[i][1] : 0 })), winner = T.burst ? T.burst.i : -1, mean = action.reduce((x, y) => x + y.frac, 0) / Math.max(1, action.length);
+  action.forEach((a, i) => { const need = i === winner ? 0.75 : 0.4; if (a.frac < need) WARN.add(`idle character: ${a.name} does its activity only ${(a.frac * 100).toFixed(0)}% of the story (needs ${need * 100}%)`); });
+  if (mean < 0.6) WARN.add(`idle cast: characters do their activity ${(mean * 100).toFixed(0)}% of the story on average (needs 60%)`);
+  let run = 0, best = 0, bestAt = 0; thin.forEach((x, k) => { run = k && Math.abs(x - thin[k - 1] - 0.1) < 0.01 ? run + 1 : 1; if (run > best) { best = run; bestAt = +(x - (run - 1) * 0.1).toFixed(1); } });
+  if (best > 12) WARN.add(`idle stretch: fewer than half the cast working for ${(best / 10).toFixed(1)}s in a row before the climax (from ${bestAt}s)`);
   const perSecond = []; diffs.forEach((v, k) => { const sec = Math.floor((k + 1) / fps); (perSecond[sec] = perSecond[sec] || []).push(v); });
-  return { motion: perSecond.map(a => a.reduce((x, y) => x + y, 0) / a.length), washed: T.chars.map((ch, i) => ({ name: ch.name, frac: wash[i][1] ? wash[i][0] / wash[i][1] : 0 })), bgLum: bg.reduce((x, y) => x + y, 0) / Math.max(1, bg.length), haze: haze.reduce((x, y) => x + y, 0) / Math.max(1, haze.length), meanLum: meanL.reduce((x, y) => x + y, 0) / Math.max(1, meanL.length), warnings: [...WARN], realDur: T.realDur };
+  return { motion: perSecond.map(a => a.reduce((x, y) => x + y, 0) / a.length), washed: T.chars.map((ch, i) => ({ name: ch.name, frac: wash[i][1] ? wash[i][0] / wash[i][1] : 0 })), bgLum: bg.reduce((x, y) => x + y, 0) / Math.max(1, bg.length), haze: haze.reduce((x, y) => x + y, 0) / Math.max(1, haze.length), meanLum: meanL.reduce((x, y) => x + y, 0) / Math.max(1, meanL.length), warnings: [...WARN], realDur: T.realDur, action: action.map(a => ({ name: a.name, frac: +a.frac.toFixed(2) })) };
 };
 window.__realOf = s => realOf(s);
 window.ready = Promise.all(['300 44px Inter', '700 40px Inter', '600 17px Inter', 'italic 600 25px Inter', '500 20px Inter', '800 92px Inter', '600 34px Inter'].map(f => document.fonts.load(f)));

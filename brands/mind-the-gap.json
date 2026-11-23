@@ -47,7 +47,6 @@
  "storyRules": {},
  "fixed": {
   "music": "drive",
-  "hook": "straight",
   "outro": "endcard"
  },
  "rules": {
@@ -97,6 +96,16 @@
    "results"
   ],
   "minCharacters": 4,
-  "storyTagline": true
+  "storyTagline": true,
+  "hook": true,
+  "actionFromStart": true
+ },
+ "allow": {
+  "hook": [
+   "flashforward"
+  ],
+  "labels": [
+   "above"
+  ]
  }
 }

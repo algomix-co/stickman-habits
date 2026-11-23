@@ -22,10 +22,20 @@ are enforced by `make.js` (see "Enforced" at the bottom); a spec that breaks one
   silence, results. Every video declares at least one in `"keywords"`.
 - **Don't:** psychology / brain-science explainers (anchoring, sunk cost, hedonic adaptation...). The
   owner said this got the niche wrong (round 1, retired).
-- **Do:** one original visual metaphor per Short (reference style: @SimplyAnimatedVisuals). A concept pair
-  on screen (e.g. OVERTHINKER | DOER) and a few short lines.
-- **Don't:** dashboards, leaderboards, percentages, A/B/C quizzes. Use a counter only when counting is the
-  point.
+- **Do (the format the owner liked best, generation 1):** one physical activity per Short (lift, pull-up,
+  climb, run, dig, stack), a **live number over every head** that ticks all video long, a DAY / WEEK / MONTH
+  counter, a fast starter who crashes halfway, a steady one who wins, and the ending **WHICH ONE ARE YOU?
+  COMMENT A·B·C·D**. The gap between characters must visibly widen on screen.
+- **Don't:** metaphor scenes where props change while people stand (round 2: bricks, buckets, swords,
+  doors). The owner called it the worst generation: "the characters simply don't do anything... just wave
+  their hands". Waving, nodding and fidgets are not action.
+- **Don't:** hide the numbers or drop the counter. Visible numbers are the retention engine, not clutter.
+  (Round 2's "no counters" rule was my own recommendation and it was wrong.)
+- **Do:** a hook in the first second: a flash-forward of the climax ("HOW DID THIS HAPPEN?" then rewind)
+  or an open-loop question with A·B·C·D badges ("WHO HITS GOLD?"). Never a calm line-up. (enforced)
+- **Do:** every character is already doing the activity in beat 1, and keeps doing it: losers restart,
+  slide back, crash and try again rather than stand still. (enforced: action check)
+- **Do:** motion carries through caption changes; characters never all freeze at a beat boundary.
 - **Don't:** copy a reference channel's specific metaphors or titles. Same genre, our own ideas.
 - **Don't:** resend the same stories or titles after they were rejected. A rejection means new concepts,
   not a reword.
@@ -61,6 +71,10 @@ are enforced by `make.js` (see "Enforced" at the bottom); a spec that breaks one
 - **Do:** run the reviewer before every render and iterate until confident.
 - **Do:** send scripts for approval before building new concepts, unless the owner says to decide and
   proceed (round 2: "you decide and proceed... don't take shortcuts").
+- **Do:** when a generation is rejected, compare it frame by frame with the best one before changing
+  anything, and say which of my own rules caused the regression.
+- **Don't:** trust pixel-motion numbers as proof of action: round 2 moved more pixels than generation 1 and
+  still had nobody doing anything.
 
 ## Performance notes
 (add YouTube Studio numbers per video here: viewed-vs-swiped, average % viewed, subs per 1k views)
@@ -70,9 +84,21 @@ are enforced by `make.js` (see "Enforced" at the bottom); a spec that breaks one
   or share most of its words with a ledger title.
 - `keywords`: at least one from `rules.keywords`.
 - Music: the brand pins `music: drive`.
+- Hook: `rules.hook` needs an open-loop `question` or a burst the flash-forward can show; the brand allows
+  only the flash-forward hook (`allow.hook`), never a plain start.
+- `rules.actionFromStart`: every character's number moves in beat 1.
+- Action check (reviewer): each character does its activity >= 40% of the story (the winner >= 75%), the
+  cast >= 60% on average, and never fewer than half the cast working for more than 1.2s in a row before
+  the climax. A spec that fails does not render.
+- Labels: the brand allows only numbers over heads (`allow.labels: above`), no leaderboard.
 
 ## Feedback log
 - 2026-11-23: zoom distracting → still camera, effects on text. Hooks must relate to daily life.
 - 2026-11-23: titles and stories rejected; niche corrected to discipline/motivation keywords; music must be
   rhythmic and escalating, not relaxing; build this feedback loop.
 - 2026-11-23: round 2 feedback: at least 4 characters; tagline varies per story; music must never pause and needs rhythmic filler SFX; owner can't judge scripts on paper, wants to see videos
+- 2026-11-23: round 3 feedback: generation 1 was best, round 2 worst ("characters simply don't do anything", no hook for engagement or retention). Rewound to the generation-1 format; kept the owner's own rules (niche, 4+ characters, still camera, drive music, story taglines, 5-word titles). Owner chose: keep the bean characters, full batch of 4.
+- 2026-11-23: rejected "Pick Your Pain": round 2: worst generation; characters barely act (props change, people stand), no hook, no visible progress
+- 2026-11-23: rejected "Luck Needs A Bucket": round 2: worst generation; characters barely act (props change, people stand), no hook, no visible progress
+- 2026-11-23: rejected "Talent Rusts Without Practice": round 2: worst generation; characters barely act (props change, people stand), no hook, no visible progress
+- 2026-11-23: rejected "Big Ego, Small Door": round 2: worst generation; characters barely act (props change, people stand), no hook, no visible progress

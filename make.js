@@ -103,6 +103,9 @@ function validate(s, brand = {}) {
     const mine = words(T0), own = (L.approved || []).concat(L.used || []).map(x => x.title || x).filter(t => s.upload.approved !== true || t.toLowerCase() !== T0.toLowerCase());
     for (const e of (L.rejected || []).map(x => x.title || x)) { const w = words(e), inter = [...mine].filter(x => w.has(x)).length; need(e.toLowerCase() !== T0.toLowerCase() && inter / Math.max(1, Math.min(mine.size, w.size)) < 0.6, `title "${T0}" repeats rejected title "${e}" (ledger)`); }
     for (const e of (L.used || []).map(x => x.title || x)) need(e.toLowerCase() !== T0.toLowerCase() || s.upload.rerender === true, `title "${T0}" was already used (ledger)`); }
+  /* owner feedback (round 3): every video needs a hook (a flash-forward of the climax or an open-loop question), and every character starts working in beat 1 */
+  if (BR.hook) need(s.question || (s.beats || []).some(b => (b.events || []).some(e => e.type === 'burst')), 'hook required: an open-loop "question" or a burst the flash-forward hook can show (LEARNINGS.md)');
+  if (BR.actionFromStart && s.beats && s.beats[0]) { const b0 = s.beats[0].values || {}; for (const n of names) need(b0[n] != null && b0[n] !== ((s.start || {})[n] || 0), `beat 1: ${n} must already be doing the activity (value changes in beat 1)`); }
   if (BR.keywords) { const kw = (s.keywords || []).map(k => String(k).toLowerCase()); need(kw.some(k => BR.keywords.includes(k)), `"keywords" must include at least one of the brand keywords (${BR.keywords.slice(0, 6).join(', ')}, ...)`); }
   // brand story rules ("mirror cast"): who viewers can see themselves in
   const R = brand.storyRules || {};
@@ -147,7 +150,7 @@ async function reviewLoop(page, spec, brand, style0, out) {
     const crowd = st.warnings.filter(w => /overlap|out of frame|too small|covers its own/.test(w)), edge = st.warnings.filter(w => /off-screen|Shorts like|bottom overlay/.test(w));
     if (crowd.length || edge.length) {
       issues.push(...crowd.concat(edge).slice(0, 3));
-      if (crowd.length && style.labels !== 'board' && compatible('labels', 'board', spec, brand)) { style.labels = 'board'; if (style.transition === 'dayzoom') style.transition = 'cut'; fixes.push('leaderboard labels'); }
+      if (crowd.length && style.labels !== 'board' && compatible('labels', 'board', spec, brand) && !(brand.allow && brand.allow.labels && !brand.allow.labels.includes('board'))) { style.labels = 'board'; if (style.transition === 'dayzoom') style.transition = 'cut'; fixes.push('leaderboard labels'); }
       else if (edge.length && !crowd.some(w => /too small/.test(w)) && (style.labelScale || 1) > 0.85) { style.labelScale = +((style.labelScale || 1) * 0.94).toFixed(3); fixes.push('labels -6%'); }
       // "too small" is never fixed by shrinking; if the leaderboard is already on, a human has to shorten names/tags
     }
@@ -156,12 +159,13 @@ async function reviewLoop(page, spec, brand, style0, out) {
     const washed = st.washed.filter(w => w.frac > 0.3);
     if (washed.length) { issues.push('washed out: ' + washed.map(w => `${w.name} ${(w.frac * 100).toFixed(0)}%`).join(', ')); if ((style.glow != null ? style.glow : 1) > 0.3) { style.glow = +((style.glow != null ? style.glow : 1) * 0.7).toFixed(3); fixes.push('glow -30%'); } }
     if (st.bgLum > 28) { issues.push(`background too bright (${st.bgLum.toFixed(1)})`); if (style.theme !== 'void') { style.theme = 'void'; fixes.push('darker theme'); } else if ((style.glow != null ? style.glow : 1) > 0.3) { style.glow = +((style.glow != null ? style.glow : 1) * 0.8).toFixed(3); fixes.push('glow -20%'); } }
-    log.push({ iteration: it, issues, fixes, quietEarly: early.length, bgLum: +st.bgLum.toFixed(1) });
+    log.push({ iteration: it, issues, fixes, quietEarly: early.length, bgLum: +st.bgLum.toFixed(1), action: st.action });
+    console.log('  action: ' + st.action.map(a => a.name + ' ' + Math.round(a.frac * 100) + '%').join(' · '));
     console.log(`  review ${it}: ${issues.length ? issues.join('; ') : 'clean'}${fixes.length ? ' -> fix: ' + fixes.join(', ') : ''}`);
     if (!issues.length) { pass = true; break; }
     if (!fixes.length) break;
   }
-  fs.writeFileSync(path.join(out, 'review.json'), JSON.stringify({ pass, style, log, final: last && { motion: last.motion.map(v => +v.toFixed(2)), washed: last.washed, bgLum: last.bgLum, warnings: last.warnings } }, null, 1));
+  fs.writeFileSync(path.join(out, 'review.json'), JSON.stringify({ pass, style, log, final: last && { motion: last.motion.map(v => +v.toFixed(2)), washed: last.washed, bgLum: last.bgLum, action: last.action, warnings: last.warnings } }, null, 1));
   return { style, pass };
 }
 const hashOf = (...objs) => crypto.createHash('sha1').update(JSON.stringify(objs)).digest('hex').slice(0, 12);

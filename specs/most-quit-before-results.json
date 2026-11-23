@@ -1,0 +1,233 @@
+{
+ "id": "most-quit-before-results",
+ "brand": "mind-the-gap",
+ "scene": "climb",
+ "keywords": [
+  "quitting",
+  "results",
+  "overthinking",
+  "potential"
+ ],
+ "characters": [
+  {
+   "name": "QUITS AT 80%",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  },
+  {
+   "name": "OVERTHINKER",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "NEXT GRIP",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  },
+  {
+   "name": "COMPARER",
+   "color": "#ff5a6e",
+   "accessory": "beanie"
+  }
+ ],
+ "start": {
+  "QUITS AT 80%": 0,
+  "OVERTHINKER": 0,
+  "NEXT GRIP": 0,
+  "COMPARER": 0
+ },
+ "metric": {
+  "suffix": " M",
+  "scale": 1,
+  "max": 30
+ },
+ "counter": {
+  "label": "MONTH",
+  "start": 1
+ },
+ "question": "WHO REACHES THE TOP?",
+ "footnote": "Illustrative · metres climbed",
+ "upload": {
+  "title": "Most Quit Right Before Results",
+  "description": "Same rope, same goal. One overthinks, one keeps checking the others, one climbs fast and lets go at 80%, one just takes the next grip. Who reaches the top? Which one are you? (Illustrative.)",
+  "hashtags": [
+   "discipline",
+   "nevergiveup",
+   "results",
+   "motivation",
+   "selfimprovement",
+   "shorts"
+  ]
+ },
+ "endcard": {
+  "tagline": "DON'T LET GO AT 80%."
+ },
+ "beats": [
+  {
+   "dur": 2.8,
+   "caption": "SAME ROPE. SAME GOAL.",
+   "counter": 1,
+   "values": {
+    "QUITS AT 80%": 5,
+    "OVERTHINKER": 3,
+    "NEXT GRIP": 3,
+    "COMPARER": 4
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "OVERTHINKER CLIMBS. THEN DOUBTS.",
+   "counter": 2,
+   "values": {
+    "OVERTHINKER": 0.5,
+    "QUITS AT 80%": 10,
+    "NEXT GRIP": 6,
+    "COMPARER": 8
+   },
+   "curves": {
+    "OVERTHINKER": "late"
+   },
+   "bubbles": [
+    {
+     "who": "OVERTHINKER",
+     "text": "what if I fall?",
+     "at": 0.2
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "COMPARER WATCHES THE OTHERS.",
+   "counter": 4,
+   "values": {
+    "COMPARER": 6,
+    "QUITS AT 80%": 15,
+    "NEXT GRIP": 10,
+    "OVERTHINKER": 4
+   },
+   "events": [
+    {
+     "type": "shake",
+     "who": "COMPARER",
+     "at": 0.9
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "COMPARER",
+     "text": "how is she so fast?",
+     "at": 0.2
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "80% UP. ARMS ON FIRE.",
+   "counter": 6,
+   "values": {
+    "QUITS AT 80%": 24,
+    "NEXT GRIP": 15,
+    "COMPARER": 11,
+    "OVERTHINKER": 1.5
+   },
+   "curves": {
+    "QUITS AT 80%": "decel",
+    "OVERTHINKER": "late"
+   },
+   "bubbles": [
+    {
+     "who": "QUITS AT 80%",
+     "text": "this is pointless.",
+     "at": 1.3
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "AND SHE LETS GO.",
+   "counter": 7,
+   "values": {
+    "QUITS AT 80%": 0,
+    "NEXT GRIP": 18,
+    "COMPARER": 13,
+    "OVERTHINKER": 4
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "QUITS AT 80%",
+     "at": 0.35
+    }
+   ],
+   "tags": {
+    "QUITS AT 80%": "SO CLOSE"
+   }
+  },
+  {
+   "dur": 3.4,
+   "caption": "NEXT GRIP. THEN ANOTHER.",
+   "counter": 10,
+   "curve": "linear",
+   "values": {
+    "NEXT GRIP": 26,
+    "COMPARER": 15,
+    "OVERTHINKER": 1
+   },
+   "curves": {
+    "OVERTHINKER": "late"
+   },
+   "states": {
+    "QUITS AT 80%": "active"
+   },
+   "stateAt": {
+    "QUITS AT 80%": 0.5
+   },
+   "bubbles": [
+    {
+     "who": "OVERTHINKER",
+     "text": "need a better plan",
+     "at": 0.4
+    },
+    {
+     "who": "QUITS AT 80%",
+     "text": "from zero. again.",
+     "at": 1.8
+    }
+   ]
+  },
+  {
+   "dur": 3.6,
+   "caption": "THE TOP WAS RIGHT THERE.",
+   "counter": 12,
+   "curve": "accel",
+   "values": {
+    "NEXT GRIP": 30,
+    "QUITS AT 80%": 6,
+    "COMPARER": 16,
+    "OVERTHINKER": 3
+   },
+   "states": {
+    "NEXT GRIP": "win"
+   },
+   "stateAt": {
+    "NEXT GRIP": 3.3
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "NEXT GRIP",
+     "at": 3.35
+    }
+   ],
+   "tags": {
+    "COMPARER": "STILL LOOKING",
+    "OVERTHINKER": "STILL PLANNING"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

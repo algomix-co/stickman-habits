@@ -25,7 +25,7 @@ gym rest). **Secondary:** 35-45 restarting (fitness, money, career). UK/US Engli
 4. **A crash halfway** (the fast starter burns out, caves in, lets go), then the steady one wins with a burst.
 5. **Ending:** WHICH ONE ARE YOU? COMMENT A·B·C·D (comments + rewatches), then the story's own tagline.
 6. **A statement title**, at most 5 words, quotable on its own. No "Why..." questions.
-7. **Drive music:** rhythmic from frame 1, escalating to the climax, never pausing.
+7. **The generation-1 score** (the very first video's music), with no gaps.
 8. **Still camera, moving text.** Every character keeps working; nobody stands around.
 
 ## 4. Hook formulas

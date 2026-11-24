@@ -36,9 +36,9 @@ specs/<id>.json ──► validate ──► preview sheet (approve) ──► f
   bars, ground lines or the finish line gets a dark plate. Captions wrap to stay inside x 130-950.
 - See `STRATEGY.md` for the audience, evergreen rules and hook formulas, `LEARNINGS.md` for every do/don't from
   owner feedback (enforced by the validator where possible), and `scripts/` for drafts awaiting approval.
-- **Drive music** (`music: drive`, pinned for Mind the Gap): four-on-the-floor from the first beat, tempo
-  accelerating toward the climax, layers stacking in four stages, a key lift at the halfway point, a snare roll
-  and a one-beat drop-out before the climax, a full drop after it.
+- **Music** (`music: first`, pinned for Mind the Gap): the generation-1 score from the very first video
+  (`engine/audio_first.py`): piano arpeggios, pad and bass, risers into crashes, heartbeat, thunder hit on the
+  climax, with no gaps. `music: drive` (`engine/audio.py`) is the round-2 score, kept but no longer used.
 
 ## Review before render (two layers)
 1. **Automatic reviewer** (`node make.js --review specs/<id>.json`, and always before a full render).

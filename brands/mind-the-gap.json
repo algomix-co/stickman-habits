@@ -46,7 +46,9 @@
  ],
  "storyRules": {},
  "fixed": {
-  "music": "drive",
+  "music": "first",
+  "instrument": "piano",
+  "impact": "boom",
   "outro": "endcard"
  },
  "rules": {

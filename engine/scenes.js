@@ -72,7 +72,7 @@ SCENES.climb = {
   facing: 'front', boardMax: 3, upperBodyFree: false, steadyCam: true, K: 1.35,
   workAt(i, t) { return Math.max(moving(i, t), ss(this.stand - 5, this.stand - 45, this.hip(i, t)) * 0.8 * energyAt(t)); },
   freeUpper(i, t) { return this.hip(i, t) > this.stand - 8; },
-  setup(T) { this.xs = colsX(T.chars.length, 380, 960); this.BAR = T.style.labels === 'board' || T.spec.question ? 660 : 560; this.F = FLOOR_MAX; this.stand = this.F - 72.5 * this.K; this.high = this.BAR + 115 * this.K; },
+  setup(T) { this.xs = colsX(T.chars.length, 380, 1240);   /* owner: characters were too close together */ this.BAR = T.style.labels === 'board' || T.spec.question ? 660 : 560; this.F = FLOOR_MAX; this.stand = this.F - 72.5 * this.K; this.high = this.BAR + 115 * this.K; },
   floorY() { return this.F; },
   extent() { return { x0: this.xs[0] - 130, x1: this.xs[this.xs.length - 1] + 130, y0: this.BAR - 40, y1: this.F + 12 }; },
   hipAt(i, t) { return lerp(this.stand, this.high, fracAt(i, t)); },
@@ -98,7 +98,7 @@ const PULL = { la: [-1.15, -2.65], ra: [1.15, 2.65], ll: [-0.75, 0.55], rl: [0.7
 SCENES.pullup = {
   facing: 'front', upperBodyFree: false, K: 1.35,
   workAt(i, t) { return this.dropped(i, t) == null ? Math.max(moving(i, t, 0.001, 0.01), 0.85 * energyAt(t)) : 0; },
-  setup(T) { this.xs = colsX(T.chars.length, 360, 960); this.BAR = 900; this.F = FLOOR_MAX; },
+  setup(T) { this.xs = colsX(T.chars.length, 360, 1240); this.BAR = 900; this.F = FLOOR_MAX; },
   floorY() { return this.F; },
   extent() { return { x0: this.xs[0] - 125, x1: this.xs[this.xs.length - 1] + 125, y0: this.BAR - 10, y1: this.F + 12 }; },
   dropped(i, t) { const since = fallStart(i, t); return since == null ? null : clamp((t - since) / 0.55); },
@@ -162,7 +162,7 @@ const ROCKS = (() => { const r = rng(21); return [...Array(160)].map(() => ({ x:
 SCENES.dig = {
   facing: 'right', K: 1.35, labelRoom: 500,   /* surface diggers stand close: their stacked labels need more headroom under the caption */
   workAt(i, t) { return Math.max(moving(i, t), 0.8 * energyAt(t)); },
-  setup(T) { this.xs = colsX(T.chars.length, 270, 1000); this.G = T.style.labels === 'board' ? 740 : T.spec.question ? 780 : 600; this.D = 1250 - this.G;   /* the gold sits well above the Shorts overlay */ this.HW = 70 * this.K; },
+  setup(T) { this.xs = colsX(T.chars.length, 320, 1240); this.G = T.style.labels === 'board' ? 740 : T.spec.question ? 780 : 600; this.D = 1250 - this.G;   /* the gold sits well above the Shorts overlay */ this.HW = 70 * this.K; },
   foot(i, t) { return this.G + fracAt(i, t) * this.D; },
   extent(t) { return { x0: this.xs[0] - this.HW - 10, x1: this.xs[this.xs.length - 1] + this.HW + 10, y0: this.G - 40, y1: Math.max(this.G + this.D + 34 + 75, ...T.chars.map((_, i) => this.foot(i, t)) .map(y => y + 70)) }; },   /* the gold (the payoff) always stays in frame, above the Shorts overlay */
   place(i, t) { const y = this.foot(i, t); return { x: this.xs[i], top: y - figH() * this.K, s: this.K, floor: y }; },

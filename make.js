@@ -33,7 +33,7 @@ const DIMS = {
   impact: ['boom', 'tapestop', 'glitch', 'snap', 'sub'],
   root: [57, 55, 52, 50, 53, 54, 59],
   bpm: [72, 76, 80, 84, 90],
-  music: ['drive', 'calm'],   // drive: rhythmic, escalating score; calm: the older ambient bed
+  music: ['drive', 'calm', 'first'],   // first: the generation-1 score (piano, thunder hit, risers, heartbeat)   // drive: rhythmic, escalating score; calm: the older ambient bed
 };
 function seededRand(str) { let h = crypto.createHash('sha1').update(str).digest().readUInt32LE(0); return () => { h = (h + 0x6D2B79F5) | 0; let t = Math.imul(h ^ h >>> 15, 1 | h); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 function compatible(dim, v, spec, brand) {
@@ -231,7 +231,7 @@ async function sheet(page, times, cols) {
     fs.writeFileSync(path.join(out, 'cues.json'), JSON.stringify(await pages[0].evaluate(() => window.cues()), null, 1));
     await Promise.all(pages.map(p => p.close()));
     console.log(`  frames: ${total} in ${((Date.now() - t0) / 1000).toFixed(0)}s`);
-    console.log('  ' + execFileSync('python3', ['-I', path.join(ROOT, 'engine', 'audio.py'), path.join(out, 'cues.json'), path.join(out, 'audio.wav')]).toString().trim());
+    console.log('  ' + execFileSync('python3', ['-I', path.join(ROOT, 'engine', style.music === 'first' ? 'audio_first.py' : 'audio.py'), path.join(out, 'cues.json'), path.join(out, 'audio.wav')]).toString().trim());
     const mp4 = path.join(out, spec.id + '.mp4');
     execFileSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', '-framerate', String(FPS), '-i', path.join(frames, '%05d.png'), '-i', path.join(out, 'audio.wav'), '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-tune', 'animation', '-pix_fmt', 'yuv420p', '-af', 'loudnorm=I=-14:TP=-1.5:LRA=11', '-ar', '48000', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', mp4]);
     if (!KEEP) fs.rmSync(frames, { recursive: true, force: true });

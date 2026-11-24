@@ -40,6 +40,8 @@ are enforced by `make.js` (see "Enforced" at the bottom); a spec that breaks one
 - **Don't:** resend the same stories or titles after they were rejected. A rejection means new concepts,
   not a reword.
 - **Do:** make the viewer see themselves in one of the characters.
+- **Don't:** squeeze four characters close together to make them bigger (round 3: "spaced very near"). Keep
+  columns about 310px apart in scene units, even if the still camera then draws everyone smaller.
 - **Do:** at least **4 characters** per video, each a recognisable archetype with a visible arc (enforced:
   `rules.minCharacters`). The owner judges a story by seeing it, so the visuals alone must tell it.
 
@@ -59,13 +61,14 @@ are enforced by `make.js` (see "Enforced" at the bottom); a spec that breaks one
 - **Do:** an end-card tagline written for each story (enforced: `endcard.tagline`), never one fixed line.
 
 ## Music & sound
-- **Don't:** the same "thunder" impact and pattern every video (template feel).
-- **Don't:** smooth, slow or relaxing beds (rejected round 2).
-- **Do:** rhythmic and urgent, escalating as the video goes on: faster, layered, brighter, a lift before the
-  climax (`music: drive`).
-- **Don't:** any pause or gap in the music, including a 'drop-out' before the climax (round 2 feedback).
-- **Do:** lock the music to the story: every caption change lands on a downbeat with a fill/swell, and
-  filler SFX (bricks, hammers, blades, steps) play on the beat while characters work.
+- **Do (round 3, owner):** use the **generation-1 score**, the music of the very first video (Same Salary):
+  piano arpeggios over a pad and bass, kick and hats, risers into crashes, a heartbeat in tense stretches,
+  the thunder hit on the crash and the climax (`music: first`, `engine/audio_first.py`). The brand pins it.
+- **Don't:** the round-2 "drive" score. The owner never confirmed it and asked to reset to the first music.
+- **Don't:** any pause or gap in the music (round 2 feedback, still in force). The only change made to the
+  generation-1 score is that its hook, rewind and pre-question gaps are filled.
+- Note: in round 1 the owner called the same thunder hit in every video "template". If that comes back,
+  vary the hit per video (`impact`) before touching anything else.
 
 ## Process
 - **Do:** run the reviewer before every render and iterate until confident.
@@ -83,7 +86,7 @@ are enforced by `make.js` (see "Enforced" at the bottom); a spec that breaks one
 - Title: at most `titleMaxWords` words, must not match `rules.titleBan` patterns, must not be in the ledger
   or share most of its words with a ledger title.
 - `keywords`: at least one from `rules.keywords`.
-- Music: the brand pins `music: drive`.
+- Music: the brand pins `music: first` (generation-1 score), `instrument: piano`, `impact: boom`.
 - Hook: `rules.hook` needs an open-loop `question` or a burst the flash-forward can show; the brand allows
   only the flash-forward hook (`allow.hook`), never a plain start.
 - `rules.actionFromStart`: every character's number moves in beat 1.
@@ -102,3 +105,4 @@ are enforced by `make.js` (see "Enforced" at the bottom); a spec that breaks one
 - 2026-11-23: rejected "Luck Needs A Bucket": round 2: worst generation; characters barely act (props change, people stand), no hook, no visible progress
 - 2026-11-23: rejected "Talent Rusts Without Practice": round 2: worst generation; characters barely act (props change, people stand), no hook, no visible progress
 - 2026-11-23: rejected "Big Ego, Small Door": round 2: worst generation; characters barely act (props change, people stand), no hook, no visible progress
+- 2026-11-24: round 3 feedback: characters too close together (widened to ~310px columns); music must be the very first score, not drive (restored generation-1 score, gaps filled).

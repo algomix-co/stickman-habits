@@ -207,7 +207,7 @@ function pickTurn(i, t) {   // "which one are you?" - each character gets a turn
 function anchorWithMotion(i, t, an, s) {
   if (an.mode === 'hands') return an;
   const st = stateAt(i, t).state, bob = (st === 'idle' || st === 'active' || st === 'sad') ? 3.5 * Math.sin(t * 2.6 + i * 1.9) : 0;
-  return { ...an, y: an.y - (hopAt(i, t) + bob) * s };
+  return { ...an, y: an.y - (hopAt(i, t) * (T.scene.sideLabels ? 0.3 : 1) + bob) * s };   /* in stacked lanes a hop must not reach the lane above */
 }
 function drawChar(c, i, t, anchorFn0, opt = {}) {
   const ch = T.chars[i], s = opt.s || 1, sp = opt.speed || 0, a = Math.max(alphaAt(i, t), pickTurn(i, t));
@@ -348,6 +348,7 @@ function poseAt(i, t) { const tl = T.stateTL[i]; let p = poseOf(tl[0][1], i, t);
 const moving = (i, t, lo = 0.002, hi = 0.02) => ss(lo, hi, Math.abs(fracRate(i, t)));
 /* action check: is the character doing its activity (a rep, a climb, a stride, a dig) or a big story move? Waving does not count. */
 const ACTION_STATES = ['win', 'boast', 'cheer', 'fall', 'throw', 'shock'];
+function shownValue(i, t) { const st = stateAt(i, t); if (st.state !== 'fall') return value(i, t); const v0 = value(i, st.since - 0.02); return lerp(v0, value(i, t), ss(0, 0.6, t - st.since)); }   /* the number reaches the new value when the character lands, not mid-air */
 function workAt(i, t) { const st = stateAt(i, t).state; if (st === 'active') return T.scene.workAt ? T.scene.workAt(i, t) : moving(i, t); return ACTION_STATES.includes(st) ? 0.6 : 0; }
 const alphaAt = (i, t) => (T.question && t >= T.question.t0 + 0.2) ? 1 : 1 - 0.62 * ss(T.dimTL[i], T.dimTL[i] + 1, t);
 function tagAt(i, t) { let cur = null; for (const [tk, v] of T.tagTL[i]) if (tk <= t) cur = { v, tk }; return cur && cur.v ? { ...cur.v, a: ss(cur.tk, cur.tk + 0.4, t) } : null; }
@@ -477,6 +478,7 @@ function drawEffects(c, t, P) {
     const g = T.scene.gapPoints(e.i, gapPeak(e)), a = ss(e.t, e.t + 0.35, t) * (0.7 + 0.3 * Math.sin((t - e.t) * 6)), [x0, y0] = g.tip, [x1, y1] = g.goal;
     c.save(); c.globalAlpha = a; c.strokeStyle = GOLD; c.shadowColor = GOLD; c.shadowBlur = 18; c.lineWidth = 4; c.setLineDash([12, 9]); c.beginPath(); c.moveTo(x0, y0); c.lineTo(x1, y1); c.stroke(); c.setLineDash([]);
     const nx = g.kind === 'v' ? 18 : 0, ny = g.kind === 'v' ? 0 : 18; c.beginPath(); c.moveTo(x0 - nx, y0 - ny); c.lineTo(x0 + nx, y0 + ny); c.moveTo(x1 - nx, y1 - ny); c.lineTo(x1 + nx, y1 + ny); c.stroke();
+    c.fillStyle = GOLD; c.beginPath(); c.arc(x0, y0, 9, 0, 7); c.fill();   /* their best point */
     if (T.scene.gapGhost) T.scene.gapGhost(c, e.i, e.t, a); c.restore();
   }
   for (const e of T.events) {
@@ -631,7 +633,7 @@ const hitBox = (b, x0, x1, y0, y1) => b && x1 > b.x0 && x0 < b.x1 && y1 > b.y0 &
 const noNum = () => T.style.labels === 'board' || T.spec.showValues === false;   // metaphor videos show names, not numbers
 const stackH = Z => ((Z.lines.length > 1 ? 72 : 38) + (noNum() ? 0 : 60) + (Z.tagW ? 50 : 0)) * Z.s * Z.grow;
 function badgeSpot(i, q, yAbove, r, yName, nameW, L) {
-  if (q.side) { const w = Math.max(nameW, (q.w || 0) * (q.f || 1)); return [q.side > 0 ? q.x + w / 2 + 14 + r : q.x - w / 2 - 14 - r, yName]; }   /* beside the widest line (the big number), not just the name */
+  if (q.side) { const bb = bodyBox(i, 8), j = T.__joints[i]; if (bb && j) { const x = q.side > 0 ? bb.x0 - r - 10 : bb.x1 + r + 10; if (x >= 40 + r && x <= 950 - r) return [x, T.__Y(j.head[1])]; } const w = Math.max(nameW, (q.w || 0) * (q.f || 1)); return [clamp(q.side > 0 ? q.x + w / 2 + 14 + r : q.x - w / 2 - 14 - r, 40 + r, 950 - r), yName]; }   /* lane labels: the badge sits on the far side of the body, so the label never has to move or shrink */
   const hits = (x, y) => T.chars.some((_, o) => o !== i && hitBox(bodyBox(o, 4), x - r, x + r, y - r, y + r))
     || L.some(o => { if (o.i === i) return false; const hw = o.w * o.f / 2 + 8, yb = o.top - o.lift + 8, yt = yb - stackH(o) - 30 - 2 * r; return x + r > o.x - hw && x - r < o.x + hw && y + r > yt && y - r < yb; });
   const cap = (x, y) => CAPRECTS.some(c => x + r > c.x0 - 6 && x - r < c.x1 + 6 && y + r > c.y0 - 8 && y - r < c.y1 + 8);   /* never into the caption block */
@@ -647,12 +649,13 @@ function drawLabels(t, P, boardTop) {
   const board = T.style.labels === 'board', nonum = noNum(), fw = focusWeights(t);
   const meas = (text, font, sp) => { sc.font = font; sc.letterSpacing = sp + 'px'; return sc.measureText(text).width; };
   const L = T.chars.map((ch, i) => {
-    const p = { ...P[i], s: clamp(T.__z || 1, 0.92, 1.08) * (T.style.labelScale || 1) * (T.scene.labelScale || 1) }, s = p.s, rate = fracRate(i, t), grow = (1 + 0.16 * fw[i]) * (1 + 0.25 * clamp(Math.abs(rate) * 2.2)) * (1 + 0.35 * Math.max(0, ...T.milestones.filter(m => m.i === i).map(m => bump(m.t, m.t + 0.45, t)))) * (1 + 0.3 * rollPop(i, t)) * (T.scene.sideLabels ? 0.9 : 1);
+    const p = { ...P[i], s: clamp(T.__z || 1, 0.92, 1.08) * (T.style.labelScale || 1) * (T.scene.labelScale || 1) }, s = p.s, rate = fracRate(i, t), grow0 = (1 + 0.16 * fw[i]) * (1 + 0.25 * clamp(Math.abs(rate) * 2.2)) * (1 + 0.35 * Math.max(0, ...T.milestones.filter(m => m.i === i).map(m => bump(m.t, m.t + 0.45, t)))) * (1 + 0.3 * rollPop(i, t));
+    const grow = T.scene.sideLabels ? 0.9 * Math.min(grow0, 1.05) : grow0;   /* lane labels barely grow: a growing label would flip sides or rewrap mid-shot */
     const numW = nonum ? 0 : meas(fmt(value(i, t)), `800 ${(60 * s * grow).toFixed(1)}px Inter`, 0);
     const nf0 = `800 ${(34 * s * grow).toFixed(1)}px Inter`, nameW = meas(ch.name, nf0, 2), words = ch.name.split(' ');
     let split = null; if (words.length > 1) { let best = null; for (let k = 1; k < words.length; k++) { if (/^[=&+]$/.test(words[k]) || /^[=&+]$/.test(words[k - 1])) continue; const l1 = words.slice(0, k).join(' '), l2 = words.slice(k).join(' '), w2 = Math.max(meas(l1, nf0, 2), meas(l2, nf0, 2)) + (Math.min(l1.length, l2.length) <= 2 ? 999 : 0); if (!best || w2 < best[0]) best = [w2, l1, l2]; } split = best && best[0] < 900 ? best : null; }
     const tg = tagAt(i, t), tagW = tg ? meas(tg.text, `800 ${(34 * s).toFixed(1)}px Inter`, 2) : 0;
-    return { i, x: p.x, top: p.top, s, grow, rate, w: Math.max(numW, nameW, tagW), numW, tagW, split, lines: [ch.name], f: 1, lift: 0 };
+    return { i, x: p.x, top: p.top, s, grow, rate, wb: Math.max(numW, nameW, tagW) / grow, w: Math.max(numW, nameW, tagW), numW, tagW, split, lines: [ch.name], f: 1, lift: 0 };
   });
   const sorted = L.slice().sort((a, b) => a.x - b.x);
   const solve = () => { sorted.sort((u, v) => u.x - v.x);
@@ -684,7 +687,7 @@ function drawLabels(t, P, boardTop) {
     else { let topB = 1e9; for (const [u0, u1] of blk) if (q.x + q.w * q.f / 2 > u0 && q.x - q.w * q.f / 2 < u1) T.chars.forEach((_, o) => { const bx = o === q.i ? null : bodyBox(o, 10); if (bx && bx.x0 <= u1 && bx.x1 >= u0) topB = Math.min(topB, bx.y0); }); if (topB < 1e9) q.lift += Math.min(70 * q.s, Math.max(0, yb - (topB - 12))); }   // no room beside: rise above the obstacle
   }
   if (!T.scene.sideLabels) solve();   // body-fit moved some labels: re-check label vs label
-  if (T.scene.sideLabels) for (const q of L) { const p = P[q.i], off = (70 + (T.scene.labelGap || 0)) * p.s + 18, maxR = T.scene.labelMaxX && !(T.scene.beyond && T.scene.beyond(q.i, t)) ? T.__X(T.scene.labelMaxX) : 950, pad = ((T.question || T.spec.question) ? 90 : 10) * q.s;
+  if (T.scene.sideLabels) for (const q of L) { const p = P[q.i], off = (70 + (T.scene.labelGap || 0)) * p.s + 18, maxR = T.scene.labelMaxX && !(T.scene.beyond && T.scene.beyond(q.i, t)) ? T.__X(T.scene.labelMaxX) : 950, pad = 10 * q.s;   /* lane labels keep their size in the question beat: the badge goes on the far side of the body */
     q.lift = 0; q.f = 1; q.top = p.floor - 0.3 * (p.floor - p.top);   /* lane labels start full size: the stacked-label squeeze above does not apply beside a body */
     if (T.scene.beyond && T.scene.beyond(q.i, t) && T.scene.lightX) { if (q.split && q.lines.length === 1) { q.lines = [q.split[1], q.split[2]]; q.w = Math.max(q.numW, q.split[0], q.tagW); } const half = q.w * q.f / 2; q.top = p.top; q.side = 0; q.x = clamp(p.x, T.__X(T.scene.lightX) + half, 920 - half); continue; }
     const fit = () => { const half = q.w * q.f / 2, rightX = Math.max(p.x + off, ((bodyBox(q.i, 12) || {}).x1 || -1e9)) + half, leftX = (T.scene.labelSide === -1 ? Math.min(p.x - (64 * p.s + 18), ((bodyBox(q.i, 12 + 0.3 * ((T.__joints[q.i] || {}).hr || 0) * (T.__z || 1)) || {}).x0 || 1e9)) : p.x - off - 26 * q.s) - half, R = rightX + half + pad <= maxR, Lf = leftX - half >= 40; if (T.scene.labelSide === -1 && !(T.scene.beyond && T.scene.beyond(q.i, t))) { if (Lf) return [-1, leftX]; if (R) return [1, rightX]; return null; } if (R) return [1, rightX]; if (Lf) return [-1, leftX]; return null; };
@@ -701,7 +704,7 @@ function drawLabels(t, P, boardTop) {
     let top = nameTop;
     if (!nonum) {
       const numPx = 60 * s * f, numBase = nameTop - 16 * s, nf = `800 ${numPx.toFixed(1)}px Inter`;
-      spaced(sc, fmt(value(i, t)), q.x, numBase, nf, q.rate < -0.05 ? RED : ch.color, 0, a, q.rate > 0.1 || fw[i] > 0.5 ? 12 : 0, true); if (a > 0.3) rectOf(i, fmt(value(i, t)), q.x, numBase, nf, 0);
+      spaced(sc, fmt(shownValue(i, t)), q.x, numBase, nf, q.rate < -0.05 ? RED : ch.color, 0, a, q.rate > 0.1 || fw[i] > 0.5 ? 12 : 0, true); if (a > 0.3) rectOf(i, fmt(value(i, t)), q.x, numBase, nf, 0);
       top = numBase - CAP * numPx;
     }
     const tg = tagAt(i, t);
@@ -753,9 +756,9 @@ function drawLabels(t, P, boardTop) {
     lines.forEach((ln, k) => { const yy = by0 + PAD * 0.7 + LH * (k + 0.78), part = ln.slice(0, Math.max(0, shown)); shown -= ln.length + 1; spaced(sc, part, x, yy, bf0, '#f2f5f8', 0, a, 0, true, false); if (a > 0.5) RECTS.push({ owner: bb.i, text: ln, x0: bx0, x1: bx0 + bw, y0: by0 + k * LH, y1: by0 + (k + 1) * LH + PAD, bubble: true }); });
   }
   for (const e of T.events) if (e.type === 'gap' && T.scene.gapPoints) {
-    const a = ss(e.t + 0.15, e.t + 0.45, t) * (1 - ss(e.t + (e.dur || 3.5) - 0.3, e.t + (e.dur || 3.5), t)); if (a <= 0) continue;
-    const g = T.scene.gapPoints(e.i, gapPeak(e)), z = T.__z || 1, mx0 = T.__X((g.tip[0] + g.goal[0]) / 2), my0 = T.__Y((g.tip[1] + g.goal[1]) / 2), mf = `800 ${(34 * clamp(z, 0.92, 1.08)).toFixed(1)}px Inter`, mw = (sc.font = mf, sc.letterSpacing = '0px', sc.measureText(e.text).width), px = parseFloat(mf.match(/([0-9.]+)px/)[1]);
-    const mx = clamp(g.kind === 'v' ? mx0 + 46 * z + mw / 2 : mx0, mw / 2 + 40, 950 - mw / 2), my = g.kind === 'v' ? my0 + px * 0.35 : g.label === 'below' ? my0 + 34 * z + px * 0.6 : my0 - 40 * z;
+    const a = ss(e.t + 0.15, e.t + 0.45, t) * (1 - ss(e.t + (e.dur || 3) - 0.3, e.t + (e.dur || 3), t)); if (a <= 0) continue;
+    const g = T.scene.gapPoints(e.i, gapPeak(e)), z = T.__z || 1, mx0 = T.__X((g.tip[0] + g.goal[0]) / 2), my0 = T.__Y((g.tip[1] + g.goal[1]) / 2), mf = `800 ${(46 * clamp(z, 0.92, 1.08)).toFixed(1)}px Inter`, mw = (sc.font = mf, sc.letterSpacing = '0px', sc.measureText(e.text).width), px = parseFloat(mf.match(/([0-9.]+)px/)[1]);
+    const la = g.labelAt ? [T.__X(g.labelAt[0]), T.__Y(g.labelAt[1])] : null, mx = clamp(la ? la[0] : g.kind === 'v' ? mx0 + 46 * z + mw / 2 : mx0, mw / 2 + 40, 950 - mw / 2), my = la ? la[1] : g.kind === 'v' ? my0 + px * 0.35 : g.label === 'below' ? my0 + 34 * z + px * 0.6 : my0 - 40 * z;
     sc.save(); sc.globalAlpha = a; sc.fillStyle = 'rgba(8,10,14,0.92)'; sc.strokeStyle = GOLD; sc.lineWidth = 2.5; sc.beginPath(); sc.roundRect(mx - mw / 2 - 12, my - px * 0.85, mw + 24, px * 1.15, 10); sc.fill(); sc.stroke(); sc.restore();
     spaced(sc, e.text, mx, my, mf, GOLD, 0, a, 0, false, false); if (a > 0.5) rectOf(200 + e.i, e.text, mx, my, mf, 0);
   }
@@ -844,7 +847,7 @@ function renderFrame(r) {
   captionBlock(t, tm);
   // crash flash / cut flash
   for (const e of T.events) if (e.type === 'crash' || e.type === 'flash') { const f = t > e.t ? 1 - ss(e.t, e.t + 0.8, t) : 0; if (f <= 0) continue; const rf = ctx.createRadialGradient(W / 2, H / 2, 300, W / 2, H / 2, 1100); rf.addColorStop(0, 'rgba(255,40,60,0)'); rf.addColorStop(1, `rgba(255,40,60,${0.28 * f})`); ctx.fillStyle = rf; ctx.fillRect(0, 0, W, H); }
-  for (const e of T.events) if (e.type === 'burst' && t >= e.t) { const f = 1 - ss(e.t, e.t + 0.4, t); if (f > 0) { ctx.fillStyle = `rgba(255,250,235,${0.55 * f})`; ctx.fillRect(0, 0, W, H); } }   /* photo-finish flash on the climax */
+  if (tm.kind !== 'rewind') for (const e of T.events) if (e.type === 'burst' && t >= e.t) { const f = 1 - ss(e.t, e.t + 0.15, t); if (f > 0) { ctx.fillStyle = `rgba(255,214,150,${0.22 * f})`; ctx.fillRect(0, 0, W, H); } }   /* photo-finish flash on the climax: short and warm, never a washed-out frame */
   if (st.transition === 'cut') { const B = beatAt(t); if (B.bi > 0) { const f = 1 - ss(B.t0, B.t0 + 0.12, t); if (f > 0) { ctx.fillStyle = `rgba(255,255,255,${0.18 * f})`; ctx.fillRect(0, 0, W, H); } } }
   if (tm.kind === 'slow') { ctx.fillStyle = 'rgba(255,255,255,0.03)'; for (let y = 0; y < H; y += 7) ctx.fillRect(0, y, W, 1); }
   if (tm.kind === 'rewind') {
@@ -914,7 +917,7 @@ window.reviewRun = (fps = 15) => {
     if (prev) { let sm = 0; for (let k = 0; k < g.length; k++) sm += Math.abs(g[k] - prev[k]); diffs.push(sm / g.length); }
     prev = g;
     if (f % 5 === 0) {
-      const sorted = Array.from(g).sort((a, b) => a - b); bg.push(sorted[Math.floor(sorted.length * 0.2)]); haze.push(sorted[Math.floor(sorted.length * 0.6)]); meanL.push(g.reduce((x, y) => x + y, 0) / g.length);
+      const sorted = Array.from(g).sort((a, b) => a - b); bg.push(sorted[Math.floor(sorted.length * 0.2)]); haze.push(sorted[Math.floor(sorted.length * 0.6)]); meanL.push(g.reduce((x, y) => x + y, 0) / g.length); { const ml = meanL[meanL.length - 1], tk = storyAt(r).kind; if (ml > 90 && tk !== 'endcard') WARN.add(`washed-out frame at ${r.toFixed(1)}s (mean luma ${ml.toFixed(0)}; flashes must stay subtle)`); }
       const tm = storyAt(r);
       if (tm.kind === 'play' || tm.kind === 'slow') T.chars.forEach((ch, i) => {
         const j = T.__joints[i], want = hsl(...[1, 3, 5].map(o => parseInt(ch.color.slice(o, o + 2), 16)));

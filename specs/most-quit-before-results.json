@@ -139,6 +139,13 @@
      "text": "this is pointless.",
      "at": 1.3
     }
+   ],
+   "events": [
+    {
+     "type": "shake",
+     "who": "OVERTHINKER",
+     "at": 1.3
+    }
    ]
   },
   {
@@ -177,12 +184,10 @@
    "values": {
     "NEXT GRIP": 26,
     "COMPARER": 15,
-    "OVERTHINKER": 1,
+    "OVERTHINKER": 4.5,
     "QUITS AT 80%": 3
    },
-   "curves": {
-    "OVERTHINKER": "late"
-   },
+   "curves": {},
    "states": {
     "QUITS AT 80%": "active"
    },
@@ -214,7 +219,7 @@
     "NEXT GRIP": 30,
     "QUITS AT 80%": 6,
     "COMPARER": 16,
-    "OVERTHINKER": 3
+    "OVERTHINKER": 5
    },
    "states": {
     "NEXT GRIP": "win"

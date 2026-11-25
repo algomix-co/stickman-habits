@@ -72,7 +72,7 @@ function climbPose(ph) { const s = Math.sin(ph); return { la: [-2.95 + 0.75 * Ma
 SCENES.climb = {
   facing: 'front', boardMax: 3, upperBodyFree: false, steadyCam: true, K: 1.35,
   workAt(i, t) { return Math.max(moving(i, t), ss(this.stand - 5, this.stand - 45, this.hip(i, t)) * 0.8 * energyAt(t)); },
-  gapPoints(i, t0) { const x = this.xs[i] + 34 * this.K; return { tip: [x, this.hipAt(i, t0) - 100 * this.K], goal: [x, this.BAR + 8], kind: 'v' }; },
+  gapPoints(i, t0) { const x = this.xs[i] + 34 * this.K, y = this.hipAt(i, t0) - 100 * this.K; return { tip: [x, y], goal: [x, this.BAR + 8], kind: 'v', labelAt: [this.xs[i], y + 70] }; },   /* label just below her best point, on her own rope */
   freeUpper(i, t) { return this.hip(i, t) > this.stand - 8; },
   setup(T) { this.xs = colsX(T.chars.length, 380, 1240);   /* owner: characters were too close together */ this.BAR = T.style.labels === 'board' || T.spec.question ? 660 : 560; this.F = FLOOR_MAX; this.stand = this.F - 72.5 * this.K; this.high = this.BAR + 115 * this.K; },
   floorY() { return this.F; },
@@ -487,8 +487,8 @@ SCENES.bridge = {
   extent() { return { x0: 40, x1: 940, y0: this.y0 - figH() * this.s - 60, y1: this.laneY(T.chars.length - 1) + 40 }; },
   place(i, t) { const y = this.laneY(i); return { x: this.charX(i, t), top: y - figH() * this.s, s: this.s, floor: y, footY: y }; },
   debrisSpan(i, tc) { const y = this.laneY(i); return { x: this.tipX(i, tc - 0.02), y0: y - 6, y1: y + 4, floor: y + this.gap * 0.4 }; },
-  gapPoints(i, t0) { const y = this.laneY(i) + 6; return { tip: [this.tipX(i, t0), y], goal: [this.x1, y], kind: 'h', label: 'below' }; },
-  gapGhost(c, i, t0, a) { const y = this.laneY(i), x0 = this.tipX(i, t0); c.save(); c.globalAlpha = a * 0.9; c.setLineDash([6, 5]); c.strokeStyle = GOLD; c.lineWidth = 2.5; for (let x = x0 + 2; x < this.x1 - 2; x += this.PW) { c.beginPath(); c.roundRect(x, y - 2, Math.min(this.PW - 4, this.x1 - 2 - x), 16, 3); c.stroke(); } c.restore(); },   /* the missing planks, drawn as gold outlines */
+  gapPoints(i, t0) { const y = this.laneY(i) + 6, x = this.tipX(i, t0); return { tip: [x, y], goal: [this.x1, y], kind: 'h', labelAt: [x - 40, this.laneY(i) - figH() * this.s - 46] }; },   /* label above the quitter's head, inside their own lane */
+  gapGhost(c, i, t0, a) { const y = this.laneY(i), x0 = this.tipX(i, t0); c.save(); c.globalAlpha = a; c.setLineDash([7, 5]); c.strokeStyle = GOLD; c.fillStyle = 'rgba(255,197,61,0.28)'; c.lineWidth = 3.5; for (let x = x0 + 2; x < this.x1 - 2; x += this.PW) { c.beginPath(); c.roundRect(x, y - 4, Math.min(this.PW - 4, this.x1 - 2 - x), 20, 3); c.fill(); c.stroke(); } c.restore(); },   /* the missing planks, drawn as gold outlines */
   activePose(i, t) {
     if (this.across(i, t)) return POSES.stand;
     const u = ((phaseInt(i, t, 10, 1.1, 2.6) + i * 0.31) % 1 + 1) % 1, c = u < 0.62 ? ss(0, 0.62, u) : 1 - ss(0.62, 0.78, u);

@@ -63,6 +63,10 @@ are enforced by `make.js` (see "Enforced" at the bottom); a spec that breaks one
 - **Don't:** zoom or pan the camera; it distracts from the characters. Keep it still, put effects on the text.
 - **Don't:** crop or hide any character, or let text overlap text or characters.
 - **Don't:** fluorescent backgrounds or ultra-bright characters; they look low-res.
+- **Don't:** full-frame white flashes (round 3 review: a climax flash washed whole frames grey). Flashes are
+  short and warm; the reviewer fails any frame with mean luma above 90.
+- **Do:** in stacked lanes, everything stays in its lane: hops are small, labels don't grow or flip sides,
+  the A·B·C·D badge sits beside the body.
 - **Don't:** static frames toward the end, or a quiet opening. Use big movements, not small tweaks.
 - **Do:** a consistent custom character for the channel, and vary the look per video so it never feels
   templated.
@@ -120,3 +124,4 @@ are enforced by `make.js` (see "Enforced" at the bottom); a spec that breaks one
 - 2026-11-25: owner asked why two runners ran the opposite direction: restarts were drawn as running back to the start. Fixed: distance only goes up, restarters crawl forward; validator forbids a falling race distance.
 - 2026-11-25: owner asked to fix such mistakes in the code/prompt rather than per video. Added the on-screen logic checklist (README), CLAUDE.md for every session, and validator rules (no falling totals, no stale tags). The new rules flag the delivered climb, race and dig specs (stale tags; dig hole refilling); not re-rendered, per the owner.
 - 2026-11-25: owner asked to pick the best improvements from the reference channel. Built: bridge scene (stacked lanes), near-miss `gap`, `storm`, climax flash, live decimals. Videos: He Quit Two Planks Short (new), She Quit 6 Metres Short (climb upgraded).
+- 2026-11-25: independent review of the bridge and climb videos: lane hops, label flips, washed-out flash and a weak near-miss fixed in the engine (bigger 3 s near-miss label above the quitter, peak marker, numbers land with a falling character).

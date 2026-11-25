@@ -293,29 +293,9 @@
   }
  },
  {
-  "id": "most-quit-before-results",
-  "scene": "climb",
-  "date": "2026-11-25T21:33:22.241Z",
-  "style": {
-   "theme": "dusk",
-   "captionStyle": "tracked",
-   "transition": "fade",
-   "labels": "above",
-   "hook": "flashforward",
-   "speed": "none",
-   "outro": "endcard",
-   "instrument": "piano",
-   "impact": "boom",
-   "root": 57,
-   "bpm": 84,
-   "music": "first",
-   "boost": []
-  }
- },
- {
   "id": "he-quit-two-planks-short",
   "scene": "bridge",
-  "date": "2026-11-25T21:51:09.000Z",
+  "date": "2026-11-25T22:10:50.389Z",
   "style": {
    "theme": "grid",
    "captionStyle": "bold",
@@ -328,6 +308,26 @@
    "impact": "boom",
    "root": 53,
    "bpm": 80,
+   "music": "first",
+   "boost": []
+  }
+ },
+ {
+  "id": "most-quit-before-results",
+  "scene": "climb",
+  "date": "2026-11-25T22:14:07.507Z",
+  "style": {
+   "theme": "dusk",
+   "captionStyle": "tracked",
+   "transition": "fade",
+   "labels": "above",
+   "hook": "flashforward",
+   "speed": "none",
+   "outro": "endcard",
+   "instrument": "piano",
+   "impact": "boom",
+   "root": 57,
+   "bpm": 84,
    "music": "first",
    "boost": []
   }

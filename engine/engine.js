@@ -685,7 +685,7 @@ function drawLabels(t, P, boardTop) {
   }
   if (!T.scene.sideLabels) solve();   // body-fit moved some labels: re-check label vs label
   if (T.scene.sideLabels) for (const q of L) { const p = P[q.i], off = (70 + (T.scene.labelGap || 0)) * p.s + 18, maxR = T.scene.labelMaxX && !(T.scene.beyond && T.scene.beyond(q.i, t)) ? T.__X(T.scene.labelMaxX) : 950, pad = ((T.question || T.spec.question) ? 90 : 10) * q.s;
-    q.lift = 0; q.top = p.floor - 0.3 * (p.floor - p.top);
+    q.lift = 0; q.f = 1; q.top = p.floor - 0.3 * (p.floor - p.top);   /* lane labels start full size: the stacked-label squeeze above does not apply beside a body */
     if (T.scene.beyond && T.scene.beyond(q.i, t) && T.scene.lightX) { if (q.split && q.lines.length === 1) { q.lines = [q.split[1], q.split[2]]; q.w = Math.max(q.numW, q.split[0], q.tagW); } const half = q.w * q.f / 2; q.top = p.top; q.side = 0; q.x = clamp(p.x, T.__X(T.scene.lightX) + half, 920 - half); continue; }
     const fit = () => { const half = q.w * q.f / 2, rightX = Math.max(p.x + off, ((bodyBox(q.i, 12) || {}).x1 || -1e9)) + half, leftX = (T.scene.labelSide === -1 ? Math.min(p.x - (64 * p.s + 18), ((bodyBox(q.i, 12 + 0.3 * ((T.__joints[q.i] || {}).hr || 0) * (T.__z || 1)) || {}).x0 || 1e9)) : p.x - off - 26 * q.s) - half, R = rightX + half + pad <= maxR, Lf = leftX - half >= 40; if (T.scene.labelSide === -1 && !(T.scene.beyond && T.scene.beyond(q.i, t))) { if (Lf) return [-1, leftX]; if (R) return [1, rightX]; return null; } if (R) return [1, rightX]; if (Lf) return [-1, leftX]; return null; };
     let got = fit();

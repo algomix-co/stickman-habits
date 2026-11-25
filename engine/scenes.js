@@ -44,7 +44,7 @@ function runPose(ph) {
   return { la: arm(ph + Math.PI), ra: arm(ph), ll: leg(ph), rl: leg(ph + Math.PI), lean: 0.3, drop: -0.1 };
 }
 SCENES.race = {
-  facing: 'right', sideLabels: true,
+  facing: 'right', sideLabels: true, monotonic: true,   /* distance run never goes down: nobody runs backwards */
   workAt(i, t) { return moving(i, t, 0.0008, 0.006); },
   stride(i, t) { return 2 * Math.PI * phaseInt(i, t, 160, 0, 2.3); },   /* legs keep a running cadence even on a slow day; a long day runs faster */
   setup(T) {
@@ -62,7 +62,7 @@ SCENES.race = {
     c.save(); c.setLineDash([14, 12]); c.strokeStyle = 'rgba(255,255,255,0.4)'; c.lineWidth = 3; c.beginPath(); c.moveTo(fx, yTop); c.lineTo(fx, yBot + 4); c.stroke(); c.restore();
     spaced(c, 'FINISH', fx - 110, yTop - 22, '800 44px Inter', '#dfe4e9', 3, 0.9); if (T.__vlines) T.__vlines.push({ x: fx, y0: yTop, y1: yBot + 4 });
     c.fillStyle = 'rgba(255,255,255,0.12)'; c.fillRect(this.x0 - 30, yTop, 2, yBot - yTop);
-    return charsDo((ch, i) => { const y = this.laneY(i); floorLine(c, y, -200, W + 200, 0.16); const p = this.place(i, t); const back = fracRate(i, t) < -0.0008 && stateAt(i, t).state === 'active', bx = this.xAt(i, t); if (back) { c.save(); c.translate(2 * bx, 0); c.scale(-1, 1); } /* running back to the start line: turn around */ drawChar(c, i, t, tt => ({ mode: 'feet', x: this.xAt(i, tt), y }), { s: this.s, speed: speedFx(i, t, 0.12, 0.35), sweat: speedFx(i, t, 0.08, 0.2) }); if (back) c.restore(); return p; });
+    return charsDo((ch, i) => { const y = this.laneY(i); floorLine(c, y, -200, W + 200, 0.16); const p = this.place(i, t); drawChar(c, i, t, tt => ({ mode: 'feet', x: this.xAt(i, tt), y }), { s: this.s, speed: speedFx(i, t, 0.12, 0.35), sweat: speedFx(i, t, 0.08, 0.2) }); return p; });
   },
 };
 

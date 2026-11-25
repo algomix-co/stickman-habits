@@ -89,6 +89,7 @@ function validate(s, brand = {}) {
     for (const bb of b.bubbles || []) { need(names.includes(bb.who), `${at}: bubble who "${bb.who}"`); need(bb.text && bb.text.length <= 24, `${at}: bubble "${bb.text}" must be <= 24 chars`); }
     for (const e of b.events || []) { need(EVENTS.includes(e.type), `${at}: event type "${e.type}"`); if (e.who) need(names.includes(e.who), `${at}: event who "${e.who}"`); }
   });
+  if (['race'].includes(s.scene)) { let pv = { ...(s.start || {}) }; (s.beats || []).forEach((b, k) => { for (const n in b.values || {}) { need(b.values[n] >= (pv[n] || 0), `beat ${k + 1}: ${n} goes from ${pv[n] || 0} to ${b.values[n]}; in a race the total distance can never go down (runners would run backwards)`); pv[n] = b.values[n]; } }); }
   const last = (s.beats || [])[s.beats.length - 1];
   if (last && last.style !== 'question' && last.style !== 'closing') Wn.push('last beat is not style:"question" or "closing"');
   if (brand.rules && brand.rules.storyTagline) need(s.endcard && s.endcard.tagline && s.endcard.tagline.length <= 40, 'endcard.tagline required (written for this story, <= 40 chars)');

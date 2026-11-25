@@ -2,31 +2,236 @@
  "id": "motivation-sprints-discipline-arrives",
  "brand": "mind-the-gap",
  "scene": "race",
- "keywords": ["motivation", "discipline", "consistency", "perfection"],
- "characters": [
-  {"name": "HYPED", "color": "#ff5a6e", "accessory": "headband"},
-  {"name": "PERFECT FORM", "color": "#b98cff", "accessory": "glasses"},
-  {"name": "HACK HUNTER", "color": "#36e0c8", "accessory": "headphones"},
-  {"name": "DAILY 5K", "color": "#ffc53d", "accessory": "cap"}
+ "keywords": [
+  "motivation",
+  "discipline",
+  "consistency",
+  "perfection"
  ],
- "start": {"HYPED": 0, "PERFECT FORM": 0, "HACK HUNTER": 0, "DAILY 5K": 0},
- "metric": {"suffix": " KM", "scale": 1, "max": 500},
- "counter": {"label": "DAY", "start": 1},
+ "characters": [
+  {
+   "name": "HYPED",
+   "color": "#ff5a6e",
+   "accessory": "headband"
+  },
+  {
+   "name": "PERFECT FORM",
+   "color": "#b98cff",
+   "accessory": "glasses"
+  },
+  {
+   "name": "HACK HUNTER",
+   "color": "#36e0c8",
+   "accessory": "headphones"
+  },
+  {
+   "name": "DAILY 5K",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  }
+ ],
+ "start": {
+  "HYPED": 0,
+  "PERFECT FORM": 0,
+  "HACK HUNTER": 0,
+  "DAILY 5K": 0
+ },
+ "metric": {
+  "suffix": " KM",
+  "scale": 1,
+  "max": 500
+ },
+ "counter": {
+  "label": "DAY",
+  "start": 1
+ },
  "footnote": "Illustrative · total distance run in 100 days",
  "upload": {
   "title": "Motivation Sprints. Discipline Arrives.",
-  "description": "Day 1, everyone is motivated. One sprints and burns out, one keeps restarting for perfect form, one chases every new running hack, one runs 5K every single day. Day 100... Which one are you? (Illustrative numbers.)",
-  "hashtags": ["discipline", "motivation", "consistency", "running", "selfimprovement", "shorts"]
+  "description": "Day 1, everyone is motivated. One sprints and burns out, one keeps stopping to restart for perfect form, one keeps switching to the next running hack, one runs 5K every single day. Day 100... Which one are you? (Illustrative numbers.)",
+  "hashtags": [
+   "discipline",
+   "motivation",
+   "consistency",
+   "running",
+   "selfimprovement",
+   "shorts"
+  ]
  },
- "endcard": {"tagline": "MOTIVATION STARTS. HABIT FINISHES."},
+ "endcard": {
+  "tagline": "MOTIVATION STARTS. HABIT FINISHES."
+ },
  "beats": [
-  {"dur": 2.6, "caption": "DAY 1. EVERYONE'S MOTIVATED.", "counter": 2, "values": {"HYPED": 40, "PERFECT FORM": 12, "HACK HUNTER": 14, "DAILY 5K": 10}, "curves": {"HYPED": "accel"}, "bubbles": [{"who": "HYPED", "text": "let's GO!", "at": 0.2}]},
-  {"dur": 3.0, "caption": "HYPED RUNS 20 KM A DAY.", "counter": 6, "values": {"HYPED": 120, "PERFECT FORM": 0, "HACK HUNTER": 30, "DAILY 5K": 30}, "curves": {"PERFECT FORM": "early"}, "bubbles": [{"who": "PERFECT FORM", "text": "form's off. restart.", "at": 0.2}]},
-  {"dur": 3.0, "caption": "HACK HUNTER FINDS A NEW PLAN.", "counter": 10, "values": {"HACK HUNTER": 0, "HYPED": 150, "PERFECT FORM": 15, "DAILY 5K": 50}, "curves": {"HACK HUNTER": "early", "HYPED": "decel"}, "bubbles": [{"who": "HACK HUNTER", "text": "this app is better!", "at": 0.2}]},
-  {"dur": 3.0, "caption": "THEN HYPED BURNS OUT.", "counter": 14, "values": {"HYPED": 150, "DAILY 5K": 70, "HACK HUNTER": 20, "PERFECT FORM": 0}, "curves": {"PERFECT FORM": "early"}, "events": [{"type": "crash", "who": "HYPED", "at": 0.3}], "tags": {"HYPED": "BURNT OUT"}, "bubbles": [{"who": "PERFECT FORM", "text": "wrong shoes. again.", "at": 1.4}]},
-  {"dur": 3.2, "caption": "MOTIVATION LEFT. HABIT STAYED.", "counter": 45, "curve": "linear", "values": {"DAILY 5K": 225, "HACK HUNTER": 0, "PERFECT FORM": 20}, "curves": {"HACK HUNTER": "late"}, "bubbles": [{"who": "DAILY 5K", "text": "just today's 5K.", "at": 0.3}, {"who": "HACK HUNTER", "text": "new plan, day 1!", "at": 1.8}]},
-  {"dur": 3.4, "caption": "DAILY 5K. NO DAYS OFF.", "counter": 80, "curve": "linear", "values": {"DAILY 5K": 400, "HYPED": 185, "HACK HUNTER": 35, "PERFECT FORM": 0}, "curves": {"PERFECT FORM": "late"}, "states": {"HYPED": "active"}, "stateAt": {"HYPED": 0.3}, "bubbles": [{"who": "HYPED", "text": "new playlist. I'm back!", "at": 0.4}]},
-  {"dur": 3.6, "caption": "DAY 100: 500 KM.", "counter": 100, "curve": "accel", "values": {"DAILY 5K": 500, "HYPED": 190, "HACK HUNTER": 50, "PERFECT FORM": 8}, "states": {"DAILY 5K": "win"}, "stateAt": {"DAILY 5K": 3.3}, "events": [{"type": "burst", "who": "DAILY 5K", "at": 3.35}], "tags": {"HYPED": "STOPPED AGAIN", "PERFECT FORM": "STILL ON DAY 1"}},
-  {"dur": 3.0, "caption": "WHICH ONE ARE YOU?", "style": "question"}
+  {
+   "dur": 2.6,
+   "caption": "DAY 1. EVERYONE'S MOTIVATED.",
+   "counter": 2,
+   "values": {
+    "HYPED": 40,
+    "PERFECT FORM": 12,
+    "HACK HUNTER": 14,
+    "DAILY 5K": 10
+   },
+   "bubbles": [
+    {
+     "who": "HYPED",
+     "text": "let's GO!",
+     "at": 0.2
+    }
+   ],
+   "curves": {
+    "HYPED": "accel"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "HYPED RUNS 20 KM A DAY.",
+   "counter": 6,
+   "values": {
+    "HYPED": 120,
+    "PERFECT FORM": 17,
+    "HACK HUNTER": 30,
+    "DAILY 5K": 30
+   },
+   "bubbles": [
+    {
+     "who": "PERFECT FORM",
+     "text": "form's off. restart.",
+     "at": 0.2
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "HACK HUNTER FINDS A NEW PLAN.",
+   "counter": 10,
+   "values": {
+    "HACK HUNTER": 33,
+    "HYPED": 150,
+    "PERFECT FORM": 24,
+    "DAILY 5K": 50
+   },
+   "bubbles": [
+    {
+     "who": "HACK HUNTER",
+     "text": "this app is better!",
+     "at": 0.2
+    }
+   ],
+   "curves": {
+    "HYPED": "decel"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "THEN HYPED BURNS OUT.",
+   "counter": 14,
+   "values": {
+    "HYPED": 150,
+    "DAILY 5K": 70,
+    "HACK HUNTER": 42,
+    "PERFECT FORM": 28
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "HYPED",
+     "at": 0.3
+    }
+   ],
+   "tags": {
+    "HYPED": "BURNT OUT"
+   },
+   "bubbles": [
+    {
+     "who": "PERFECT FORM",
+     "text": "wrong shoes. again.",
+     "at": 1.4
+    }
+   ]
+  },
+  {
+   "dur": 3.2,
+   "caption": "MOTIVATION LEFT. HABIT STAYED.",
+   "counter": 45,
+   "curve": "linear",
+   "values": {
+    "DAILY 5K": 225,
+    "HACK HUNTER": 46,
+    "PERFECT FORM": 38
+   },
+   "bubbles": [
+    {
+     "who": "DAILY 5K",
+     "text": "just today's 5K.",
+     "at": 0.3
+    },
+    {
+     "who": "HACK HUNTER",
+     "text": "new plan, day 1!",
+     "at": 1.8
+    }
+   ]
+  },
+  {
+   "dur": 3.4,
+   "caption": "DAILY 5K. NO DAYS OFF.",
+   "counter": 80,
+   "curve": "linear",
+   "values": {
+    "DAILY 5K": 400,
+    "HYPED": 185,
+    "HACK HUNTER": 62,
+    "PERFECT FORM": 44
+   },
+   "states": {
+    "HYPED": "active"
+   },
+   "stateAt": {
+    "HYPED": 0.3
+   },
+   "bubbles": [
+    {
+     "who": "HYPED",
+     "text": "new playlist. I'm back!",
+     "at": 0.4
+    }
+   ]
+  },
+  {
+   "dur": 3.6,
+   "caption": "DAY 100: 500 KM.",
+   "counter": 100,
+   "curve": "accel",
+   "values": {
+    "DAILY 5K": 500,
+    "HYPED": 190,
+    "HACK HUNTER": 70,
+    "PERFECT FORM": 48
+   },
+   "states": {
+    "DAILY 5K": "win"
+   },
+   "stateAt": {
+    "DAILY 5K": 3.3
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "DAILY 5K",
+     "at": 3.35
+    }
+   ],
+   "tags": {
+    "HYPED": "STOPPED AGAIN",
+    "PERFECT FORM": "STILL RESTARTING",
+    "HACK HUNTER": "6 PLANS"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
  ]
 }

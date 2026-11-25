@@ -36,6 +36,9 @@ are enforced by `make.js` (see "Enforced" at the bottom); a spec that breaks one
 - **Do:** every character is already doing the activity in beat 1, and keeps doing it: losers restart,
   slide back, crash and try again rather than stand still. (enforced: action check)
 - **Do:** motion carries through caption changes; characters never all freeze at a beat boundary.
+- **Don't:** make a character move backwards to show a restart (round 3: the race's restarters ran the
+  wrong way and confused the owner). Cumulative numbers (distance, reps done) never go down; show a
+  restart as slow progress plus a bubble. (enforced for the race)
 - **Don't:** copy a reference channel's specific metaphors or titles. Same genre, our own ideas.
 - **Don't:** resend the same stories or titles after they were rejected. A rejection means new concepts,
   not a reword.
@@ -106,3 +109,4 @@ are enforced by `make.js` (see "Enforced" at the bottom); a spec that breaks one
 - 2026-11-23: rejected "Talent Rusts Without Practice": round 2: worst generation; characters barely act (props change, people stand), no hook, no visible progress
 - 2026-11-23: rejected "Big Ego, Small Door": round 2: worst generation; characters barely act (props change, people stand), no hook, no visible progress
 - 2026-11-24: round 3 feedback: characters too close together (widened to ~310px columns); music must be the very first score, not drive (restored generation-1 score, gaps filled).
+- 2026-11-25: owner asked why two runners ran the opposite direction: restarts were drawn as running back to the start. Fixed: distance only goes up, restarters crawl forward; validator forbids a falling race distance.

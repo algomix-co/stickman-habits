@@ -253,26 +253,6 @@
   }
  },
  {
-  "id": "motivation-sprints-discipline-arrives",
-  "scene": "race",
-  "date": "2026-11-24T15:15:16.242Z",
-  "style": {
-   "theme": "void",
-   "captionStyle": "tracked",
-   "transition": "slide",
-   "labels": "above",
-   "hook": "flashforward",
-   "speed": "slowmo",
-   "outro": "endcard",
-   "instrument": "piano",
-   "impact": "boom",
-   "root": 57,
-   "bpm": 72,
-   "music": "first",
-   "boost": []
-  }
- },
- {
   "id": "one-deep-hole-wins",
   "scene": "dig",
   "date": "2026-11-24T15:18:24.822Z",
@@ -308,6 +288,26 @@
    "impact": "boom",
    "root": 54,
    "bpm": 76,
+   "music": "first",
+   "boost": []
+  }
+ },
+ {
+  "id": "motivation-sprints-discipline-arrives",
+  "scene": "race",
+  "date": "2026-11-25T20:36:24.483Z",
+  "style": {
+   "theme": "void",
+   "captionStyle": "boxed",
+   "transition": "slide",
+   "labels": "above",
+   "hook": "flashforward",
+   "speed": "slowmo",
+   "outro": "endcard",
+   "instrument": "piano",
+   "impact": "boom",
+   "root": 59,
+   "bpm": 72,
    "music": "first",
    "boost": []
   }

@@ -89,7 +89,15 @@ function validate(s, brand = {}) {
     for (const bb of b.bubbles || []) { need(names.includes(bb.who), `${at}: bubble who "${bb.who}"`); need(bb.text && bb.text.length <= 24, `${at}: bubble "${bb.text}" must be <= 24 chars`); }
     for (const e of b.events || []) { need(EVENTS.includes(e.type), `${at}: event type "${e.type}"`); if (e.who) need(names.includes(e.who), `${at}: event who "${e.who}"`); }
   });
-  if (['race'].includes(s.scene)) { let pv = { ...(s.start || {}) }; (s.beats || []).forEach((b, k) => { for (const n in b.values || {}) { need(b.values[n] >= (pv[n] || 0), `beat ${k + 1}: ${n} goes from ${pv[n] || 0} to ${b.values[n]}; in a race the total distance can never go down (runners would run backwards)`); pv[n] = b.values[n]; } }); }
+  /* on-screen logic (round 3: runners ran backwards to show a restart; a QUIT tag stayed on a character who was back at work).
+     Every motion must mean what the number means, and every tag must match what the character is doing now. */
+  const MONO = { race: 'total distance run', dig: 'depth dug' }, cumulative = (s.metric && s.metric.cumulative) || MONO[s.scene];
+  if (cumulative) { const pv = { ...(s.start || {}) }; (s.beats || []).forEach((b, k) => { const crashed = new Set((b.events || []).filter(e => e.type === 'crash').map(e => e.who)); for (const n in b.values || {}) { const from = pv[n] || 0, to = b.values[n]; if (to < from && !(s.scene === 'dig' && crashed.has(n))) E.push(`beat ${k + 1}: ${n} goes from ${from} to ${to}, but the number is ${cumulative} and can never go down (on screen the character would move backwards). Show a restart or plan switch as slow progress plus a bubble${s.scene === 'dig' ? '; only a crash (cave-in) may refill a hole' : ''}.`); pv[n] = to; } }); }
+  { const DOWN = new Set(['quit', 'fall', 'sad', 'sit', 'idle', 'stand']), UP = new Set(['active', 'win', 'boast', 'cheer']), st = {}, tag = {};
+    (s.beats || []).forEach((b, k) => { const crashed = (b.events || []).filter(e => e.type === 'crash').map(e => e.who);
+      for (const n in b.tags || {}) { const v = b.tags[n]; tag[n] = v == null ? null : (typeof v === 'string' ? v : v.text); }
+      for (const n of crashed) if (!(b.states && b.states[n])) st[n] = 'quit';
+      for (const n in b.states || {}) { const was = st[n] || 'active', now = b.states[n]; if (DOWN.has(was) && UP.has(now) && tag[n] && !(b.tags && n in b.tags)) E.push(`beat ${k + 1}: ${n} is back in action but still tagged "${tag[n]}". Set a new tag in the same beat ("BACK AGAIN", "STARTING OVER") or clear it with null.`); st[n] = now; } }); }
   const last = (s.beats || [])[s.beats.length - 1];
   if (last && last.style !== 'question' && last.style !== 'closing') Wn.push('last beat is not style:"question" or "closing"');
   if (brand.rules && brand.rules.storyTagline) need(s.endcard && s.endcard.tagline && s.endcard.tagline.length <= 40, 'endcard.tagline required (written for this story, <= 40 chars)');

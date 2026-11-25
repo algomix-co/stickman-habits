@@ -172,14 +172,14 @@ Brand: `"brand": "neon-bean"` in the spec or `--brand brands/neon-bean.json`.
 Requirements: Node 18+, `playwright` with Chromium, Python 3 + numpy, ffmpeg, the Inter font.
 
 ## Scenes (visual metaphors)
-| scene | what the number means visually | good for |
-|---|---|---|
-| `towers` | stack of coins/blocks under each character (fixed frame sized for the tallest stack) | money, savings, followers, anything that accumulates |
-| `race` | side-view lanes toward a FINISH line | skills, learning, progress to a goal |
-| `climb` | ropes up to a goal bar; quitters fall to the floor | careers, startups, anything with "falling off" |
-| `pullup` | hanging from one bar doing reps; quitters drop and sit | effort/volume: calls, reps, sessions |
-| `lift` | side-view deadlift; plate grows with the value | strength, load, capacity |
-| `dig` | shafts dug down toward a treasure | deep work, mastery, "hidden" progress |
+| scene | what the number means visually | what a falling number looks like | good for |
+|---|---|---|---|
+| `towers` | stack of coins/blocks under each character | the stack shrinks (spending, a crash) | money, savings, anything that accumulates |
+| `race` | side-view lanes toward a FINISH line | **not allowed**: the runner would run backwards | distance, progress to a goal |
+| `climb` | ropes up to a goal bar; quitters fall to the floor | sliding down the rope (doubt, a slip) or a crash fall | careers, goals, anything with "falling off" |
+| `pullup` | hanging from one bar doing reps | a weaker set; drop off the bar only via quit/crash | effort/volume: reps, sessions |
+| `lift` | side-view deadlift; plate grows with the value | lighter plates | strength, load, capacity |
+| `dig` | shafts dug down toward a treasure | **only via a crash** (cave-in); otherwise the hole refills | deep work, mastery, focus |
 
 Ideas for next scenes: tug-of-war (you vs. excuses), stairs vs. elevator, mountain path, garden/roots.
 
@@ -192,7 +192,7 @@ Ideas for next scenes: tug-of-war (you vs. excuses), stairs vs. elevator, mounta
     {"name": "SPENDER", "color": "#ff5a6e", "volatile": false}   // volatile = wobbly value
   ],
   "start": {"SPENDER": 0},               // optional starting values (default 0)
-  "metric": {"prefix": "$", "suffix": " KG", "compact": true,     // compact: 12K / 1.15M
+  "metric": {"prefix": "$", "suffix": " KG", "compact": true,     // compact: 12K / 1.15M; "cumulative": true = the number can never go down
              "decimals": 0, "scale": 0.7, "max": 160},            // scale: visual exponent (lower = small values more visible); max: value that fills the scene
   "counter": {"label": "DAY", "start": 1},                        // "DAY 365", "AGE 60", "WEEK 52"
   "footnote": "Illustrative · ...",      // shown on the last 2 beats (keep claims honest)
@@ -229,13 +229,35 @@ The music follows the story automatically: risers into every crash and burst, im
 a heartbeat on `tense` beats, kick/hats on `accel` (build) beats, and a drop-out before the final question.
 
 ## Drafting guide (what makes these work)
-- **3–4 archetypes of the niche**, each a recognisable behaviour, not a person: SPENDER, CRAMMER, EGO.
-- **Arc**: the flashy one leads early → crashes/quits mid-video (≈40%) → a slow, boring, consistent one
-  wins with a late `accel` beat → `burst` → summary beat with `dim` + tags → `WHICH ONE ARE YOU?`
+Read `LEARNINGS.md` first: it is the owner's feedback, and it overrides anything here.
+- **4 relatable archetypes** (the brand requires at least 4), each a recognisable behaviour: HYPED, NEW YEAR,
+  HOLE HOPPER, QUITS AT 80%.
+- **Arc**: everyone is already doing the activity in beat 1 → the flashy one leads early → crashes/quits
+  mid-video (≈40%) → the slow, consistent one wins with a late `accel` beat → `burst` → `WHICH ONE ARE YOU?`
+- **Hook**: the climax must be flash-forwardable (a `burst`), so the video opens on it.
 - **Captions**: one idea, ≤ 30 chars, period at the end. Bubbles are the characters' inner voice.
 - **Numbers**: plausible and labelled "illustrative" in `footnote`; avoid precise claims you can't back.
 - **Variety**: rotate scenes, niches, palettes and `music.seed`; don't reuse the same metaphor every week.
-- **First frame matters**: beat 1 is visible at t=0 (no fade-in); make its caption the hook.
+
+### On-screen logic: watch it with the sound off before you write it
+The number and the picture are the same thing. Before finishing a spec, play each beat in your head as a
+silent viewer and ask: "could this look like a glitch?"
+1. **Decide what the number means and keep that meaning all video.** Totals (km run, metres dug, reps done,
+   money saved) can only go up. Restarting, switching plans or "starting over" is shown as **slow progress
+   plus a bubble**, never by the number going down. (Validator: `race`, `dig`, and any `metric.cumulative`.)
+2. **A setback needs a physical event that matches the scene** (see the table above): a `crash` (fall,
+   cave-in, drop off the bar), a slide down a rope, a `shake`. Never a silent reversal.
+3. **Everyone moves in the scene's direction of progress.** Nobody runs backwards, floats up out of a hole
+   or teleports. If a motion needs explaining, change the story, not the drawing.
+4. **Tags describe now.** When a character with a tag (QUIT, INJURED, BURNT OUT, CAVED IN) gets back to
+   work, give them a new tag in the same beat (BACK AGAIN, STARTING OVER) or clear it with `null`.
+   (Validator.)
+5. **Bubbles match the motion.** "from zero. again." means the character starts moving in that beat; a
+   bubble about quitting means the character stops.
+6. **Nobody stands around.** Quitters come back, struggle, or slow down; they don't idle for most of the
+   video. (Reviewer: action check.)
+7. **Finals agree with the story**: the end tags, numbers and lane order must tell the same story as the
+   captions (e.g. "6 PLANS" for the plan switcher, the winner on the FINISH line).
 
 ## Files
 - `make.js`: CLI (validate, preview, render, encode, QA)

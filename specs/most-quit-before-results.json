@@ -47,8 +47,8 @@
  },
  "footnote": "Illustrative · metres climbed",
  "upload": {
-  "title": "Most Quit Right Before Results",
-  "description": "Same rope, same goal. One overthinks, one keeps checking the others, one climbs fast and lets go at 80%, one just takes the next grip. Who reaches the top? Which one are you? (Illustrative.)",
+  "title": "She Quit 6 Metres Short",
+  "description": "Same rope, same goal. One overthinks, one keeps checking the others, one climbs fast and lets go 6 metres from the top, one just takes the next grip. Which one are you? (Illustrative.)",
   "hashtags": [
    "discipline",
    "nevergiveup",
@@ -153,6 +153,13 @@
    },
    "events": [
     {
+     "type": "gap",
+     "who": "QUITS AT 80%",
+     "text": "6 M FROM THE TOP",
+     "at": 1.0,
+     "dur": 1.9
+    },
+    {
      "type": "crash",
      "who": "QUITS AT 80%",
      "at": 0.35
@@ -193,7 +200,10 @@
      "text": "from zero. again.",
      "at": 1.8
     }
-   ]
+   ],
+   "tags": {
+    "QUITS AT 80%": "STARTING OVER"
+   }
   },
   {
    "dur": 3.6,

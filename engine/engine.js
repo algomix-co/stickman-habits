@@ -155,7 +155,7 @@ function rollPop(i, t) {   // first beat: introduce the cast one by one
 }
 function reactionAt(i, t) {   // others flinch at a crash, clap at the climax
   let shock = 0, clap = 0;
-  for (const e of T.events) { if (e.i === i) continue; if (e.type === 'crash' || e.type === 'shake') shock = Math.max(shock, bump(e.t + 0.05, e.t + 1.0, t)); if (e.type === 'burst') clap = Math.max(clap, ss(e.t + 0.1, e.t + 0.3, t) * (1 - ss(e.t + 1.6, e.t + 2.0, t))); }
+  for (const e of T.events) { if (e.i === i) continue; if (e.type === 'crash' || e.type === 'shake' || e.type === 'storm') shock = Math.max(shock, bump(e.t + 0.05, e.t + 1.0, t)); if (e.type === 'burst') clap = Math.max(clap, ss(e.t + 0.1, e.t + 0.3, t) * (1 - ss(e.t + 1.6, e.t + 2.0, t))); }
   return { shock, clap };
 }
 const GEST = ['pump', 'look', 'shrug', 'wave', 'clap'];
@@ -351,7 +351,7 @@ const ACTION_STATES = ['win', 'boast', 'cheer', 'fall', 'throw', 'shock'];
 function workAt(i, t) { const st = stateAt(i, t).state; if (st === 'active') return T.scene.workAt ? T.scene.workAt(i, t) : moving(i, t); return ACTION_STATES.includes(st) ? 0.6 : 0; }
 const alphaAt = (i, t) => (T.question && t >= T.question.t0 + 0.2) ? 1 : 1 - 0.62 * ss(T.dimTL[i], T.dimTL[i] + 1, t);
 function tagAt(i, t) { let cur = null; for (const [tk, v] of T.tagTL[i]) if (tk <= t) cur = { v, tk }; return cur && cur.v ? { ...cur.v, a: ss(cur.tk, cur.tk + 0.4, t) } : null; }
-function fmt(v) { const m = T.spec.metric, d = m.decimals || 0, crowded = T.chars.length >= 5 && m.compact !== false; v = Math.max(0, v); let s; if ((m.compact || crowded) && v >= 1e6) s = (v / 1e6).toFixed(2) + 'M'; else if ((m.compact || crowded) && v >= 1e4) s = Math.round(v / 1000) + 'K'; else if (crowded && v >= 1000) s = (v / 1000).toFixed(1) + 'K'; else s = d ? v.toFixed(d) : Math.round(v).toLocaleString('en-US'); let suf = m.suffix || ''; if (s === '1' && /[A-Z]{2,}S$/.test(suf.trim())) suf = suf.replace(/S$/, ''); return (m.prefix || '') + s + suf; }
+function fmt(v) { const m = T.spec.metric, d = m.decimals || 0, crowded = T.chars.length >= 5 && m.compact !== false; v = Math.max(0, v); let s; if ((m.compact || crowded) && v >= 1e6) s = (v / 1e6).toFixed(2) + 'M'; else if ((m.compact || crowded) && v >= 1e4) s = Math.round(v / 1000) + 'K'; else if (crowded && v >= 1000) s = (v / 1000).toFixed(1) + 'K'; else if (m.decimals == null && v > 0 && v < 100 && /^(KM|M|KG|H|MI)$/.test((m.suffix || '').trim())) s = v.toFixed(1).replace(/\.0$/, ''); else s = d ? v.toFixed(d) : Math.round(v).toLocaleString('en-US'); let suf = m.suffix || ''; if (s === '1' && /[A-Z]{2,}S$/.test(suf.trim())) suf = suf.replace(/S$/, ''); return (m.prefix || '') + s + suf; }
 // columns stay left of the Shorts like/comment button strip on the right edge
 function colsX(n, max = 240, total = 860) { const sp = Math.min(max, total / n); return [...Array(n)].map((_, i) => 515 + (i - (n - 1) / 2) * sp); }
 function flyingCoin(c, color, x, y, spin, alpha, s = 1) { c.save(); c.globalAlpha = alpha; c.strokeStyle = color; c.fillStyle = color + '40'; c.lineWidth = 2.5 * s; c.beginPath(); c.ellipse(x, y, (3 + 11 * Math.abs(Math.cos(spin))) * s, 13 * s, 0, 0, 7); c.fill(); c.stroke(); c.restore(); }
@@ -471,7 +471,14 @@ function textShake(t) {
   }
   return s * Math.sin(t * 93);
 }
+function gapPeak(e) { if (e.__tp == null) { let best = e.t, bv = -1; for (let tt = Math.max(0, e.t - 2); tt <= e.t + 1e-6; tt += 0.02) { const v = fracAt(e.i, tt); if (v > bv) { bv = v; best = tt; } } e.__tp = best; } return e.__tp; }   /* the closest a character got in the 2 s before a near-miss is shown */
 function drawEffects(c, t, P) {
+  for (const e of T.events) if (e.type === 'gap' && t >= e.t && T.scene.gapPoints) {   /* near-miss: how close the quitter got, frozen at their best moment */
+    const g = T.scene.gapPoints(e.i, gapPeak(e)), a = ss(e.t, e.t + 0.35, t) * (0.7 + 0.3 * Math.sin((t - e.t) * 6)), [x0, y0] = g.tip, [x1, y1] = g.goal;
+    c.save(); c.globalAlpha = a; c.strokeStyle = GOLD; c.shadowColor = GOLD; c.shadowBlur = 18; c.lineWidth = 4; c.setLineDash([12, 9]); c.beginPath(); c.moveTo(x0, y0); c.lineTo(x1, y1); c.stroke(); c.setLineDash([]);
+    const nx = g.kind === 'v' ? 18 : 0, ny = g.kind === 'v' ? 0 : 18; c.beginPath(); c.moveTo(x0 - nx, y0 - ny); c.lineTo(x0 + nx, y0 + ny); c.moveTo(x1 - nx, y1 - ny); c.lineTo(x1 + nx, y1 + ny); c.stroke();
+    if (T.scene.gapGhost) T.scene.gapGhost(c, e.i, e.t, a); c.restore();
+  }
   for (const e of T.events) {
     const dt = t - e.t; if (dt < 0) continue;
     if (e.type === 'crash' && dt < 2.4) {
@@ -640,7 +647,7 @@ function drawLabels(t, P, boardTop) {
   const board = T.style.labels === 'board', nonum = noNum(), fw = focusWeights(t);
   const meas = (text, font, sp) => { sc.font = font; sc.letterSpacing = sp + 'px'; return sc.measureText(text).width; };
   const L = T.chars.map((ch, i) => {
-    const p = { ...P[i], s: clamp(T.__z || 1, 0.92, 1.08) * (T.style.labelScale || 1) }, s = p.s, rate = fracRate(i, t), grow = (1 + 0.16 * fw[i]) * (1 + 0.25 * clamp(Math.abs(rate) * 2.2)) * (1 + 0.35 * Math.max(0, ...T.milestones.filter(m => m.i === i).map(m => bump(m.t, m.t + 0.45, t)))) * (1 + 0.3 * rollPop(i, t)) * (T.scene.sideLabels ? 0.9 : 1);
+    const p = { ...P[i], s: clamp(T.__z || 1, 0.92, 1.08) * (T.style.labelScale || 1) * (T.scene.labelScale || 1) }, s = p.s, rate = fracRate(i, t), grow = (1 + 0.16 * fw[i]) * (1 + 0.25 * clamp(Math.abs(rate) * 2.2)) * (1 + 0.35 * Math.max(0, ...T.milestones.filter(m => m.i === i).map(m => bump(m.t, m.t + 0.45, t)))) * (1 + 0.3 * rollPop(i, t)) * (T.scene.sideLabels ? 0.9 : 1);
     const numW = nonum ? 0 : meas(fmt(value(i, t)), `800 ${(60 * s * grow).toFixed(1)}px Inter`, 0);
     const nf0 = `800 ${(34 * s * grow).toFixed(1)}px Inter`, nameW = meas(ch.name, nf0, 2), words = ch.name.split(' ');
     let split = null; if (words.length > 1) { let best = null; for (let k = 1; k < words.length; k++) { if (/^[=&+]$/.test(words[k]) || /^[=&+]$/.test(words[k - 1])) continue; const l1 = words.slice(0, k).join(' '), l2 = words.slice(k).join(' '), w2 = Math.max(meas(l1, nf0, 2), meas(l2, nf0, 2)) + (Math.min(l1.length, l2.length) <= 2 ? 999 : 0); if (!best || w2 < best[0]) best = [w2, l1, l2]; } split = best && best[0] < 900 ? best : null; }
@@ -745,6 +752,13 @@ function drawLabels(t, P, boardTop) {
     let shown = Math.ceil(bb.text.length * clamp((t - bb.t0) / 0.45));
     lines.forEach((ln, k) => { const yy = by0 + PAD * 0.7 + LH * (k + 0.78), part = ln.slice(0, Math.max(0, shown)); shown -= ln.length + 1; spaced(sc, part, x, yy, bf0, '#f2f5f8', 0, a, 0, true, false); if (a > 0.5) RECTS.push({ owner: bb.i, text: ln, x0: bx0, x1: bx0 + bw, y0: by0 + k * LH, y1: by0 + (k + 1) * LH + PAD, bubble: true }); });
   }
+  for (const e of T.events) if (e.type === 'gap' && T.scene.gapPoints) {
+    const a = ss(e.t + 0.15, e.t + 0.45, t) * (1 - ss(e.t + (e.dur || 3.5) - 0.3, e.t + (e.dur || 3.5), t)); if (a <= 0) continue;
+    const g = T.scene.gapPoints(e.i, gapPeak(e)), z = T.__z || 1, mx0 = T.__X((g.tip[0] + g.goal[0]) / 2), my0 = T.__Y((g.tip[1] + g.goal[1]) / 2), mf = `800 ${(34 * clamp(z, 0.92, 1.08)).toFixed(1)}px Inter`, mw = (sc.font = mf, sc.letterSpacing = '0px', sc.measureText(e.text).width), px = parseFloat(mf.match(/([0-9.]+)px/)[1]);
+    const mx = clamp(g.kind === 'v' ? mx0 + 46 * z + mw / 2 : mx0, mw / 2 + 40, 950 - mw / 2), my = g.kind === 'v' ? my0 + px * 0.35 : g.label === 'below' ? my0 + 34 * z + px * 0.6 : my0 - 40 * z;
+    sc.save(); sc.globalAlpha = a; sc.fillStyle = 'rgba(8,10,14,0.92)'; sc.strokeStyle = GOLD; sc.lineWidth = 2.5; sc.beginPath(); sc.roundRect(mx - mw / 2 - 12, my - px * 0.85, mw + 24, px * 1.15, 10); sc.fill(); sc.stroke(); sc.restore();
+    spaced(sc, e.text, mx, my, mf, GOLD, 0, a, 0, false, false); if (a > 0.5) rectOf(200 + e.i, e.text, mx, my, mf, 0);
+  }
   for (const e of T.events) if (e.type === 'marker') {
     const a = ss(e.t, e.t + .3, t) * (1 - ss(e.t + (e.dur || 2) - .3, e.t + (e.dur || 2), t)); if (a <= 0) continue;
     const p = P[e.i], mf = `800 ${(38 * clamp(T.__z || 1, 0.92, 1.08)).toFixed(1)}px Inter`, mw = (sc.font = mf, sc.letterSpacing = '0px', sc.measureText(e.text).width), Jm = T.__joints[e.i], side = e.side === 'right' && Jm, mxR = side ? T.__X(Jm.head[0]) + Jm.hr * (T.__z || 1) + 22 + mw / 2 + 12 : 0, mx = side ? clamp(T.scene.labelMaxX && mxR + mw / 2 + 12 > T.__X(T.scene.labelMaxX) - 30 ? T.__X(Jm.head[0]) - Jm.hr * (T.__z || 1) - 22 - mw / 2 - 12 : mxR, mw / 2 + 40, 950 - mw / 2) : clamp(p.x + (e.dx != null ? e.dx : -110) * p.s, mw / 2 + 40, 950 - mw / 2), my0 = side ? T.__Y(Jm.head[1]) + 12 : p.top + (e.dy != null ? e.dy : 120) * p.s, lab = (T.__labels || [])[e.i], my = (e.dy != null && e.dy < 0 && lab && lab.stackTop != null) ? Math.min(my0, lab.stackTop - 16) : my0; { const px = parseFloat(mf.match(/([0-9.]+)px/)[1]); sc.save(); sc.globalAlpha = a * 0.9; sc.fillStyle = 'rgba(8,10,14,0.9)'; sc.strokeStyle = e.color || RED; sc.lineWidth = 2; sc.beginPath(); sc.roundRect(mx - mw / 2 - 12, my - px * 0.85, mw + 24, px * 1.15, 10); sc.fill(); sc.stroke(); sc.restore(); } spaced(sc, e.text, mx, my, mf, e.color || RED, 0, a, 0, false, false); if (a > 0.5) rectOf(200 + e.i, e.text, mx, my, mf, 0);
@@ -809,6 +823,13 @@ function renderFrame(r) {
   g1c.clearRect(0, 0, W / 4, H / 4); g1c.filter = 'blur(2px)'; g1c.drawImage(scene, 0, 0, W / 4, H / 4); g1c.filter = 'none';
   g2c.clearRect(0, 0, W / 8, H / 8); g2c.filter = 'blur(4px)'; g2c.drawImage(scene, 0, 0, W / 8, H / 8); g2c.filter = 'none';
   ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 0.32 * bloom; ctx.drawImage(g1, 0, 0, W, H); ctx.globalAlpha = (0.22 + 0.2 * warm) * bloom; ctx.drawImage(g2, 0, 0, W, H); ctx.restore();
+  for (const e of T.events) if (e.type === 'storm') {   /* the world pushes back: rain, wind and lightning hit everyone */
+    const d = e.dur || 2.6, a = ss(e.t, e.t + 0.4, t) * (1 - ss(e.t + d - 0.5, e.t + d, t)); if (a <= 0) continue;
+    ctx.save(); ctx.fillStyle = `rgba(14,22,48,${0.32 * a})`; ctx.fillRect(0, 0, W, H); ctx.strokeStyle = `rgba(175,205,255,${0.4 * a})`; ctx.lineWidth = 2.2; ctx.beginPath();
+    for (let k = 0; k < 170; k++) { const x = ((k * 97.3 + t * 260) % 1260) - 90, y = ((k * 211.7 + t * 2100) % 2120) - 100; ctx.moveTo(x, y); ctx.lineTo(x - 22, y + 64); } ctx.stroke();
+    const bolt = Math.max(1 - ss(e.t + 0.05, e.t + 0.3, t), 1 - ss(e.t + d * 0.55, e.t + d * 0.55 + 0.22, t)) * (t > e.t + 0.05 ? 1 : 0) * (t > e.t + d * 0.55 || t < e.t + 0.3 ? 1 : 0); if (bolt > 0) { ctx.fillStyle = `rgba(200,215,255,${0.2 * bolt})`;   /* a lightning flicker, never a washed-out frame */ ctx.fillRect(0, 0, W, H); }
+    ctx.restore();
+  }
   // UI layer (numbers, names, tags, bubbles) drawn after the glow so text stays sharp
   sc.clearRect(0, 0, W, H);
   drawLabels(t, P, capCanvasBottom + 56);
@@ -823,6 +844,7 @@ function renderFrame(r) {
   captionBlock(t, tm);
   // crash flash / cut flash
   for (const e of T.events) if (e.type === 'crash' || e.type === 'flash') { const f = t > e.t ? 1 - ss(e.t, e.t + 0.8, t) : 0; if (f <= 0) continue; const rf = ctx.createRadialGradient(W / 2, H / 2, 300, W / 2, H / 2, 1100); rf.addColorStop(0, 'rgba(255,40,60,0)'); rf.addColorStop(1, `rgba(255,40,60,${0.28 * f})`); ctx.fillStyle = rf; ctx.fillRect(0, 0, W, H); }
+  for (const e of T.events) if (e.type === 'burst' && t >= e.t) { const f = 1 - ss(e.t, e.t + 0.4, t); if (f > 0) { ctx.fillStyle = `rgba(255,250,235,${0.55 * f})`; ctx.fillRect(0, 0, W, H); } }   /* photo-finish flash on the climax */
   if (st.transition === 'cut') { const B = beatAt(t); if (B.bi > 0) { const f = 1 - ss(B.t0, B.t0 + 0.12, t); if (f > 0) { ctx.fillStyle = `rgba(255,255,255,${0.18 * f})`; ctx.fillRect(0, 0, W, H); } } }
   if (tm.kind === 'slow') { ctx.fillStyle = 'rgba(255,255,255,0.03)'; for (let y = 0; y < H; y += 7) ctx.fillRect(0, y, W, 1); }
   if (tm.kind === 'rewind') {
@@ -862,7 +884,7 @@ function buildCues() {
   const R2 = s => realOf(s);
   const out = { dur: T.realDur, style: T.style, motif: (T.brand.music && T.brand.music.motif) || null, music: T.spec.music || {}, beats: [], crash: [], shake: [], burst: [], fling: [], pops: T.bubbles.map(b => [R2(b.t0), b.i, T.chars.length]), whoosh: T.beats.slice(1).map(B => R2(B.t0)), rain: [], question: null, slow: [], hook: null, rewind: [], endcard: null };
   for (const B of T.beats) { out.beats.push({ t0: R2(B.t0), t1: R2(B.t1 - 1e-4), mood: B.mood }); if (B.b.style === 'question') out.question = R2(B.t0); }
-  for (const e of T.events) { const rt = R2(e.t); if (e.type === 'crash') out.crash.push(rt); if (e.type === 'shake') out.shake.push(rt); if (e.type === 'burst') out.burst.push(rt); if (e.type === 'fling') out.fling.push(rt); }
+  for (const e of T.events) { const rt = R2(e.t); if (e.type === 'crash') out.crash.push(rt); if (e.type === 'shake' || e.type === 'storm') out.shake.push(rt); if (e.type === 'storm') (out.storm = out.storm || []).push([rt, R2(e.t + (e.dur || 2.6))]); if (e.type === 'burst') out.burst.push(rt); if (e.type === 'fling') out.fling.push(rt); }
   for (const g of T.segs) { if (g.kind === 'slow') out.slow.push([g.r0, g.r1]); if (g.kind === 'hook') out.hook = [g.r0, g.r1]; if (g.kind === 'rewind') out.rewind.push([g.r0, g.r1]); if (g.kind === 'endcard') out.endcard = g.r0; }
   out.milestones = T.milestones.map(m => [R2(m.t), m.i, T.chars.length]);
   if (T.scene.rainCues) out.rain = T.scene.rainCues().map(([t, ci, n]) => [R2(t), ci, n]);

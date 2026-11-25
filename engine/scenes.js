@@ -46,6 +46,7 @@ function runPose(ph) {
 SCENES.race = {
   facing: 'right', sideLabels: true, monotonic: true,   /* distance run never goes down: nobody runs backwards */
   workAt(i, t) { return moving(i, t, 0.0008, 0.006); },
+  gapPoints(i, t0) { const y = this.laneY(i) - figH() * this.s * 0.55; return { tip: [this.xAt(i, t0) + 34 * this.s, y], goal: [this.x1 - 80, y], kind: 'h' }; },
   stride(i, t) { return 2 * Math.PI * phaseInt(i, t, 160, 0, 2.3); },   /* legs keep a running cadence even on a slow day; a long day runs faster */
   setup(T) {
     const n = T.chars.length; this.gap = Math.min(380, 1100 / n); this.s = clamp((this.gap - 120) / 165, 0.85, 1.5);
@@ -71,6 +72,7 @@ function climbPose(ph) { const s = Math.sin(ph); return { la: [-2.95 + 0.75 * Ma
 SCENES.climb = {
   facing: 'front', boardMax: 3, upperBodyFree: false, steadyCam: true, K: 1.35,
   workAt(i, t) { return Math.max(moving(i, t), ss(this.stand - 5, this.stand - 45, this.hip(i, t)) * 0.8 * energyAt(t)); },
+  gapPoints(i, t0) { const x = this.xs[i] + 34 * this.K; return { tip: [x, this.hipAt(i, t0) - 100 * this.K], goal: [x, this.BAR + 8], kind: 'v' }; },
   freeUpper(i, t) { return this.hip(i, t) > this.stand - 8; },
   setup(T) { this.xs = colsX(T.chars.length, 380, 1240);   /* owner: characters were too close together */ this.BAR = T.style.labels === 'board' || T.spec.question ? 660 : 560; this.F = FLOOR_MAX; this.stand = this.F - 72.5 * this.K; this.high = this.BAR + 115 * this.K; },
   floorY() { return this.F; },
@@ -162,6 +164,7 @@ const ROCKS = (() => { const r = rng(21); return [...Array(160)].map(() => ({ x:
 SCENES.dig = {
   facing: 'right', K: 1.35, labelRoom: 500,   /* surface diggers stand close: their stacked labels need more headroom under the caption */
   workAt(i, t) { return Math.max(moving(i, t), 0.8 * energyAt(t)); },
+  gapPoints(i, t0) { const x = this.xs[i] + this.HW + 16; return { tip: [x, this.foot(i, t0)], goal: [x, this.G + this.D + 8], kind: 'v' }; },
   setup(T) { this.xs = colsX(T.chars.length, 320, 1240); this.G = T.style.labels === 'board' ? 740 : T.spec.question ? 780 : 600; this.D = 1250 - this.G;   /* the gold sits well above the Shorts overlay */ this.HW = 70 * this.K; },
   foot(i, t) { return this.G + fracAt(i, t) * this.D; },
   extent(t) { return { x0: this.xs[0] - this.HW - 10, x1: this.xs[this.xs.length - 1] + this.HW + 10, y0: this.G - 40, y1: Math.max(this.G + this.D + 34 + 75, ...T.chars.map((_, i) => this.foot(i, t)) .map(y => y + 70)) }; },   /* the gold (the payoff) always stays in frame, above the Shorts overlay */
@@ -461,5 +464,69 @@ SCENES.doors = {
     }
     if (T.__vlines) T.__vlines.push({ x: D, y0: top, y1: bot });
     return P;
+  },
+};
+
+// ---------------------------------------------------------------- bridge (stacked lanes: each character builds a bridge across the gap, plank by plank)
+// Our own take on full-width lanes: nobody is crowded, and the brand's idea ("mind the gap") is the scene.
+// value = planks laid; the far cliff is reached at metric.max. A crash collapses planks (debris) back to the new value.
+const BR_UP = { la: [0.75, 1.25], ra: [2.5, 3.05], ll: [1.25, 0.05], rl: [-0.35, -1.45], lean: 0.32, drop: 0.42 };
+const BR_DOWN = { la: [0.75, 1.25], ra: [1.2, 1.55], ll: [1.25, 0.05], rl: [-0.35, -1.45], lean: 0.5, drop: 0.48 };
+const BR_WALK = p => ({ ...runPose(p), lean: 0.12 });
+SCENES.bridge = {
+  facing: 'right', sideLabels: true, labelSide: -1, debris: 'planks', foley: 'hammer', labelScale: 1.12,
+  workAt(i, t) { return this.across(i, t) ? 0 : Math.max(moving(i, t, 0.001, 0.01), 0.8 * energyAt(t)); },
+  setup(T) {
+    const n = T.chars.length; this.gap = Math.min(340, 1080 / n); this.s = clamp((this.gap - 95) / 150, 0.9, 1.3);
+    this.y0 = 1430 - (n - 1) * this.gap; this.x0 = 300; this.x1 = 830; this.PW = 24;   /* room on the near cliff for the name labels from the first frame */
+  },
+  laneY(i) { return this.y0 + i * this.gap; },
+  tipX(i, t) { return this.x0 + fracAt(i, t) * (this.x1 - this.x0); },
+  across(i, t) { return fracAt(i, t) > 0.985; },
+  charX(i, t) { if (this.across(i, t)) { const since = (() => { let a = t; while (a > 0 && fracAt(i, a - 0.05) > 0.985) a -= 0.05; return a; })(); return lerp(this.x1 - 30, this.x1 + 55, easeOut(clamp((t - since) / 0.6))); } return Math.max(this.x0 - 40, this.tipX(i, t) - 30 * this.s); },
+  extent() { return { x0: 40, x1: 940, y0: this.y0 - figH() * this.s - 60, y1: this.laneY(T.chars.length - 1) + 40 }; },
+  place(i, t) { const y = this.laneY(i); return { x: this.charX(i, t), top: y - figH() * this.s, s: this.s, floor: y, footY: y }; },
+  debrisSpan(i, tc) { const y = this.laneY(i); return { x: this.tipX(i, tc - 0.02), y0: y - 6, y1: y + 4, floor: y + this.gap * 0.4 }; },
+  gapPoints(i, t0) { const y = this.laneY(i) + 6; return { tip: [this.tipX(i, t0), y], goal: [this.x1, y], kind: 'h', label: 'below' }; },
+  gapGhost(c, i, t0, a) { const y = this.laneY(i), x0 = this.tipX(i, t0); c.save(); c.globalAlpha = a * 0.9; c.setLineDash([6, 5]); c.strokeStyle = GOLD; c.lineWidth = 2.5; for (let x = x0 + 2; x < this.x1 - 2; x += this.PW) { c.beginPath(); c.roundRect(x, y - 2, Math.min(this.PW - 4, this.x1 - 2 - x), 16, 3); c.stroke(); } c.restore(); },   /* the missing planks, drawn as gold outlines */
+  activePose(i, t) {
+    if (this.across(i, t)) return POSES.stand;
+    const u = ((phaseInt(i, t, 10, 1.1, 2.6) + i * 0.31) % 1 + 1) % 1, c = u < 0.62 ? ss(0, 0.62, u) : 1 - ss(0.62, 0.78, u);
+    return blendPose(BR_WALK(this.tipX(i, t) / (14 * this.s)), blendPose(BR_DOWN, BR_UP, c), Math.max(1 - moving(i, t, 0.012, 0.03), 0.6));
+  },
+  winPose(i, t) { const k = Math.sin(t * 7 + i); return { la: [-2.05 + 0.15 * k, -2.35], ra: [2.05 - 0.15 * k, 2.35], ll: [-0.25, -0.1], rl: [0.25, 0.1], lean: 0, drop: -0.3 }; },
+  quitPose() { return POSES.sit; },
+  draw(c, t) {
+    const n = T.chars.length, rr = rng(5);
+    charsDo((ch, i) => {
+      const y = this.laneY(i), depth = this.gap * 0.62;
+      // the gap itself: a dark drop between the cliffs, fading into the void
+      const gv = c.createLinearGradient(0, y, 0, y + depth); gv.addColorStop(0, 'rgba(2,3,6,0.9)'); gv.addColorStop(1, 'rgba(2,3,6,0)'); c.fillStyle = gv; c.fillRect(this.x0, y + 1, this.x1 - this.x0, depth);
+      // cliffs: the near side and the far side (the goal), solid rock with a lit edge
+      for (const [xa, xb, sd] of [[-300, this.x0, 1], [this.x1, W + 300, -1]]) {
+        const edge = sd > 0 ? xb : xa, rg = c.createLinearGradient(0, y, 0, y + depth); rg.addColorStop(0, 'rgba(92,98,114,0.95)'); rg.addColorStop(1, 'rgba(40,44,54,0)');
+        c.fillStyle = rg; c.beginPath(); c.moveTo(xa, y); c.lineTo(xb, y); c.lineTo(edge - sd * 26, y + depth * 0.55); c.lineTo(edge - sd * 10, y + depth); c.lineTo(sd > 0 ? xa : xb, y + depth); c.closePath(); c.fill();
+        c.strokeStyle = 'rgba(235,240,248,0.75)'; c.lineWidth = 3; c.beginPath(); c.moveTo(xa, y); c.lineTo(xb, y); c.stroke();
+        c.strokeStyle = 'rgba(235,240,248,0.3)'; c.lineWidth = 2; c.beginPath(); c.moveTo(edge, y); c.lineTo(edge - sd * 26, y + depth * 0.55); c.lineTo(edge - sd * 10, y + depth); c.stroke();
+      }
+      const reached = this.across(i, t); c.save(); c.globalAlpha = reached ? 1 : 0.55; c.fillStyle = GOLD; if (reached) { c.shadowColor = GOLD; c.shadowBlur = 24; }
+      c.fillRect(this.x1 + 92, y - 70, 4, 70); c.beginPath(); c.moveTo(this.x1 + 96, y - 70); c.lineTo(this.x1 + 132, y - 58); c.lineTo(this.x1 + 96, y - 46); c.closePath(); c.fill(); c.restore();   // flag on the far side
+      // the bridge: planks laid so far, and two rope rails
+      const tip = this.tipX(i, t), a = alphaAt(i, t); c.save(); c.globalAlpha = a;
+      for (let x = this.x0; x < tip - 1; x += this.PW) { const w = Math.min(this.PW - 4, tip - x); if (w < 2) break; c.fillStyle = ch.color + '66'; c.strokeStyle = ch.color; c.lineWidth = 2.5; c.beginPath(); c.roundRect(x, y - 2, w, 16, 3); c.fill(); c.stroke(); }
+      if (tip > this.x0 + 8) { c.strokeStyle = 'rgba(214,190,150,0.6)'; c.lineWidth = 2.5; for (const h of [-46, -26]) { c.beginPath(); c.moveTo(this.x0, y + h * this.s); c.quadraticCurveTo((this.x0 + tip) / 2, y + h * this.s + 12, tip, y + h * this.s); c.stroke(); } }
+      c.restore();
+      if (T.__lines) T.__lines.push({ y, x0: -300, x1: W + 300 });
+    });
+    return charsDo((ch, i) => {
+      const y = this.laneY(i), st = stateAt(i, t).state, a = alphaAt(i, t);
+      const J = drawChar(c, i, t, tt => ({ mode: 'feet', x: this.charX(i, tt), y }), { s: this.s, sweat: moving(i, t) * 0.6, speed: speedFx(i, t, 0.12, 0.35) });
+      if (st === 'active' && !this.across(i, t)) {   // hammer
+        const K = this.s, dx = J.rhand[0] - J.relbow[0], dy = J.rhand[1] - J.relbow[1], L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, ex = J.rhand[0] + ux * 30 * K, ey = J.rhand[1] + uy * 30 * K;
+        c.save(); c.globalAlpha = a; c.strokeStyle = '#c9b48f'; c.lineWidth = 5 * K; c.lineCap = 'round'; c.beginPath(); c.moveTo(J.rhand[0] - ux * 5, J.rhand[1] - uy * 5); c.lineTo(ex, ey); c.stroke();
+        c.fillStyle = '#d7dde4'; c.translate(ex, ey); c.rotate(Math.atan2(uy, ux)); c.fillRect(-5 * K, -11 * K, 10 * K, 22 * K); c.restore();
+      }
+      return this.place(i, t);
+    });
   },
 };

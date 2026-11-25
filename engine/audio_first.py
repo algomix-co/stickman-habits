@@ -177,6 +177,9 @@ rw = [rw] if rw and not isinstance(rw[0], list) else rw
 for r0, r1 in rw:
     L = tvec(r1 - r0); u = L / max(L[-1], 1e-3)
     add(fx, r0, (np.sin(2 * np.pi * np.cumsum(300 + 2500 * u ** 1.5 + 200 * np.sin(2 * np.pi * 18 * L)) / SR) * 0.12 + onepole(rng.standard_normal(len(L)), 3000) * 0.08) * (0.45 + 0.55 * np.sin(np.pi * u) ** 0.5))   # round 3: never fades to silence
+for s0, s1 in cues.get('storm', []):   # round 3: a storm is heard as well as seen (rain and wind wash; the hit comes from 'shake')
+    L = tvec(s1 - s0); env = np.minimum(1, L / 0.3) * np.clip((L[-1] - L) / 0.5, 0, 1) if len(L) else L
+    add(fx, s0, onepole(rng.standard_normal(len(L)), 2200) * env * 0.11, pan=-0.2); add(fx, s0, onepole(rng.standard_normal(len(L)), 600) * env * (0.6 + 0.4 * np.sin(2 * np.pi * 0.7 * L)) * 0.09, pan=0.25)
 for s0, s1 in cues.get('slow', []):
     t = tvec(0.8); add(fx, s0, np.sin(2 * np.pi * np.cumsum(500 * np.exp(-t / 0.25) + 60) / SR) * np.exp(-t / 0.5) * 0.18)
 if cues.get('endcard') is not None:

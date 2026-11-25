@@ -1,0 +1,279 @@
+{
+ "id": "he-quit-two-planks-short",
+ "brand": "mind-the-gap",
+ "scene": "bridge",
+ "keywords": [
+  "quitting",
+  "consistency",
+  "discipline",
+  "results"
+ ],
+ "characters": [
+  {
+   "name": "ALL IN",
+   "color": "#ff5a6e",
+   "accessory": "headband"
+  },
+  {
+   "name": "PLANK A DAY",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  },
+  {
+   "name": "FAIR WEATHER",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "CUTS CORNERS",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  }
+ ],
+ "start": {
+  "ALL IN": 0,
+  "PLANK A DAY": 0,
+  "FAIR WEATHER": 0,
+  "CUTS CORNERS": 0
+ },
+ "metric": {
+  "suffix": " PLANKS",
+  "scale": 1,
+  "max": 22
+ },
+ "counter": {
+  "label": "DAY",
+  "start": 1
+ },
+ "footnote": "Illustrative",
+ "upload": {
+  "title": "He Quit Two Planks Short",
+  "description": "Four people, one gap, the same wood. One goes all in, one only builds on sunny days, one cuts corners, one lays a plank a day. Day 100... someone stopped two planks short. Which one are you? (Illustrative.)",
+  "hashtags": [
+   "discipline",
+   "consistency",
+   "nevergiveup",
+   "motivation",
+   "selfimprovement",
+   "shorts"
+  ]
+ },
+ "endcard": {
+  "tagline": "ONE PLANK A DAY CROSSES ANY GAP."
+ },
+ "beats": [
+  {
+   "dur": 2.8,
+   "caption": "SAME GAP. SAME WOOD.",
+   "counter": 3,
+   "values": {
+    "ALL IN": 5,
+    "PLANK A DAY": 1,
+    "FAIR WEATHER": 2,
+    "CUTS CORNERS": 3
+   },
+   "curves": {
+    "ALL IN": "accel"
+   },
+   "bubbles": [
+    {
+     "who": "ALL IN",
+     "text": "done by Friday!",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "ALL IN BUILDS ALL NIGHT.",
+   "counter": 8,
+   "values": {
+    "ALL IN": 13,
+    "PLANK A DAY": 3,
+    "FAIR WEATHER": 4,
+    "CUTS CORNERS": 7
+   },
+   "curves": {
+    "ALL IN": "decel"
+   },
+   "bubbles": [
+    {
+     "who": "CUTS CORNERS",
+     "text": "who needs nails?",
+     "at": 1.3
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THEN THE STORM HITS.",
+   "counter": 14,
+   "values": {
+    "ALL IN": 16,
+    "PLANK A DAY": 5,
+    "CUTS CORNERS": 9
+   },
+   "states": {
+    "FAIR WEATHER": "sad"
+   },
+   "stateAt": {
+    "FAIR WEATHER": 0.6
+   },
+   "events": [
+    {
+     "type": "storm",
+     "at": 0.2,
+     "dur": 2.6
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "FAIR WEATHER",
+     "text": "I'll wait for sun.",
+     "at": 0.9
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "CHEAP PLANKS DON'T HOLD.",
+   "counter": 20,
+   "values": {
+    "CUTS CORNERS": 2,
+    "FAIR WEATHER": 6,
+    "ALL IN": 19,
+    "PLANK A DAY": 7
+   },
+   "states": {
+    "FAIR WEATHER": "active"
+   },
+   "stateAt": {
+    "FAIR WEATHER": 0.8
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "CUTS CORNERS",
+     "at": 0.3
+    }
+   ],
+   "tags": {
+    "CUTS CORNERS": "COLLAPSED"
+   }
+  },
+  {
+   "dur": 3.2,
+   "caption": "TWO PLANKS LEFT.",
+   "counter": 30,
+   "values": {
+    "ALL IN": 20,
+    "PLANK A DAY": 10,
+    "CUTS CORNERS": 4,
+    "FAIR WEATHER": 7
+   },
+   "curves": {
+    "ALL IN": "decel"
+   },
+   "states": {
+    "ALL IN": "quit",
+    "CUTS CORNERS": "active"
+   },
+   "stateAt": {
+    "ALL IN": 1.8,
+    "CUTS CORNERS": 0.6
+   },
+   "tags": {
+    "CUTS CORNERS": "REBUILDING"
+   },
+   "events": [
+    {
+     "type": "gap",
+     "who": "ALL IN",
+     "text": "2 PLANKS SHORT",
+     "at": 1.85,
+     "dur": 1.3
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "ALL IN",
+     "text": "I'm exhausted.",
+     "at": 0.4
+    }
+   ]
+  },
+  {
+   "dur": 3.4,
+   "caption": "PLANK A DAY. EVERY DAY.",
+   "counter": 75,
+   "curve": "linear",
+   "values": {
+    "PLANK A DAY": 19,
+    "FAIR WEATHER": 9,
+    "CUTS CORNERS": 7
+   },
+   "states": {
+    "FAIR WEATHER": "sad"
+   },
+   "stateAt": {
+    "FAIR WEATHER": 1.6
+   },
+   "events": [
+    {
+     "type": "storm",
+     "at": 1.4,
+     "dur": 1.8
+    }
+   ],
+   "tags": {
+    "ALL IN": "QUIT"
+   },
+   "bubbles": [
+    {
+     "who": "PLANK A DAY",
+     "text": "just one more.",
+     "at": 0.3
+    },
+    {
+     "who": "FAIR WEATHER",
+     "text": "not in this weather",
+     "at": 1.8
+    }
+   ]
+  },
+  {
+   "dur": 3.6,
+   "caption": "DAY 100: ACROSS.",
+   "counter": 100,
+   "curve": "accel",
+   "values": {
+    "PLANK A DAY": 22,
+    "FAIR WEATHER": 11,
+    "CUTS CORNERS": 9
+   },
+   "states": {
+    "PLANK A DAY": "win",
+    "FAIR WEATHER": "active"
+   },
+   "stateAt": {
+    "PLANK A DAY": 3.3,
+    "FAIR WEATHER": 0.2
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "PLANK A DAY",
+     "at": 3.35
+    }
+   ],
+   "tags": {
+    "FAIR WEATHER": "SUNNY DAYS ONLY"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

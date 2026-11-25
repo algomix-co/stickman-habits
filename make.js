@@ -16,9 +16,10 @@ const CHECK = flag('--check'), REVIEW = flag('--review'), SKIP_REVIEW = flag('--
 const WORKERS = +(opt('--workers') || 4) || 4;
 const specs = args.filter(a => a.endsWith('.json') && a !== opt('--brand') && a !== SHEET);
 const FPS = +(opt('--fps') || 60) || 60, ROOT = __dirname, PAGE = 'file://' + path.join(ROOT, 'engine', 'page.html');
-const SCENES = ['towers', 'race', 'climb', 'pullup', 'lift', 'dig', 'bricks', 'buckets', 'swords', 'doors'];
+const SCENES = ['towers', 'race', 'climb', 'pullup', 'lift', 'dig', 'bridge', 'bricks', 'buckets', 'swords', 'doors'];
 const STATES = ['active', 'idle', 'boast', 'win', 'quit', 'sad', 'shock', 'fall', 'throw', 'cheer', 'stand', 'sit'];
-const EVENTS = ['crash', 'shake', 'marker', 'burst', 'rain', 'fling', 'flash'];
+const EVENTS = ['crash', 'shake', 'marker', 'burst', 'rain', 'fling', 'flash', 'gap', 'storm'];
+const GAP_SCENES = ['climb', 'race', 'dig', 'bridge'];   // scenes that can show a near-miss gap
 
 // ---------------------------------------------------------------- variation ("smart" style picker)
 const DIMS = {
@@ -88,11 +89,12 @@ function validate(s, brand = {}) {
     if (b.states) for (const n in b.states) need(STATES.includes(b.states[n]), `${at}: state "${b.states[n]}" not in ${STATES.join('|')}`);
     for (const bb of b.bubbles || []) { need(names.includes(bb.who), `${at}: bubble who "${bb.who}"`); need(bb.text && bb.text.length <= 24, `${at}: bubble "${bb.text}" must be <= 24 chars`); }
     for (const e of b.events || []) { need(EVENTS.includes(e.type), `${at}: event type "${e.type}"`); if (e.who) need(names.includes(e.who), `${at}: event who "${e.who}"`); }
+    for (const e of b.events || []) if (e.type === 'gap') { need(GAP_SCENES.includes(s.scene), `${at}: a near-miss "gap" needs a scene with a visible goal (${GAP_SCENES.join(', ')})`); need(e.who && e.text && e.text.length <= 18, `${at}: gap needs who and text <= 18 chars ("2 PLANKS SHORT")`); }
   });
   /* on-screen logic (round 3: runners ran backwards to show a restart; a QUIT tag stayed on a character who was back at work).
      Every motion must mean what the number means, and every tag must match what the character is doing now. */
-  const MONO = { race: 'total distance run', dig: 'depth dug' }, cumulative = (s.metric && s.metric.cumulative) || MONO[s.scene];
-  if (cumulative) { const pv = { ...(s.start || {}) }; (s.beats || []).forEach((b, k) => { const crashed = new Set((b.events || []).filter(e => e.type === 'crash').map(e => e.who)); for (const n in b.values || {}) { const from = pv[n] || 0, to = b.values[n]; if (to < from && !(s.scene === 'dig' && crashed.has(n))) E.push(`beat ${k + 1}: ${n} goes from ${from} to ${to}, but the number is ${cumulative} and can never go down (on screen the character would move backwards). Show a restart or plan switch as slow progress plus a bubble${s.scene === 'dig' ? '; only a crash (cave-in) may refill a hole' : ''}.`); pv[n] = to; } }); }
+  const MONO = { race: 'total distance run', dig: 'depth dug', bridge: 'planks laid' }, cumulative = (s.metric && s.metric.cumulative) || MONO[s.scene];
+  if (cumulative) { const pv = { ...(s.start || {}) }; (s.beats || []).forEach((b, k) => { const crashed = new Set((b.events || []).filter(e => e.type === 'crash').map(e => e.who)); for (const n in b.values || {}) { const from = pv[n] || 0, to = b.values[n]; if (to < from && !(['dig', 'bridge'].includes(s.scene) && crashed.has(n))) E.push(`beat ${k + 1}: ${n} goes from ${from} to ${to}, but the number is ${cumulative} and can never go down (on screen the character would move backwards). Show a restart or plan switch as slow progress plus a bubble${['dig', 'bridge'].includes(s.scene) ? '; only a crash (cave-in, collapse) may take it back' : ''}.`); pv[n] = to; } }); }
   { const DOWN = new Set(['quit', 'fall', 'sad', 'sit', 'idle', 'stand']), UP = new Set(['active', 'win', 'boast', 'cheer']), st = {}, tag = {};
     (s.beats || []).forEach((b, k) => { const crashed = (b.events || []).filter(e => e.type === 'crash').map(e => e.who);
       for (const n in b.tags || {}) { const v = b.tags[n]; tag[n] = v == null ? null : (typeof v === 'string' ? v : v.text); }

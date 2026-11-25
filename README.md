@@ -180,6 +180,7 @@ Requirements: Node 18+, `playwright` with Chromium, Python 3 + numpy, ffmpeg, th
 | `pullup` | hanging from one bar doing reps | a weaker set; drop off the bar only via quit/crash | effort/volume: reps, sessions |
 | `lift` | side-view deadlift; plate grows with the value | lighter plates | strength, load, capacity |
 | `dig` | shafts dug down toward a treasure | **only via a crash** (cave-in); otherwise the hole refills | deep work, mastery, focus |
+| `bridge` | stacked full-width lanes: each character builds a bridge across the gap, one plank per unit (`metric.max` = planks to the far side) | **only via a crash** (collapse) | consistency, finishing, quitting (and the brand: mind the gap) |
 
 Ideas for next scenes: tug-of-war (you vs. excuses), stairs vs. elevator, mountain path, garden/roots.
 
@@ -217,7 +218,10 @@ Ideas for next scenes: tug-of-war (you vs. excuses), stairs vs. elevator, mounta
         {"type": "marker", "who": "INVESTOR", "text": "−35%", "at": 2.3, "dur": 1.7, "dx": -110, "dy": 120},
         {"type": "rain", "at": 0.1},                     // towers: coins fall onto every stack
         {"type": "fling", "who": "SPENDER", "at": 0.6},  // coins thrown away
-        {"type": "burst", "who": "INVESTOR", "at": 5.35} // the climax: gold rings, glow, sparkles, music hit
+        {"type": "burst", "who": "INVESTOR", "at": 5.35}, // the climax: gold rings, glow, sparkles, a photo-finish flash, music hit
+        {"type": "gap", "who": "ALL IN", "text": "2 PLANKS SHORT", "at": 1.9, "dur": 1.3}, // near-miss (climb, race, dig, bridge): gold line and ghost from the
+                                                          // best point they reached to the goal; stays to the end, label for dur
+        {"type": "storm", "at": 0.2, "dur": 2.6}          // the world pushes back: rain, wind, lightning and everyone flinches (sound included)
       ],
       "style": "question",               // gold caption, use on the last beat
       "mood": "tense"                    // music override: normal|build|tense|crash|climax|end
@@ -238,6 +242,16 @@ Read `LEARNINGS.md` first: it is the owner's feedback, and it overrides anything
 - **Captions**: one idea, ≤ 30 chars, period at the end. Bubbles are the characters' inner voice.
 - **Numbers**: plausible and labelled "illustrative" in `footnote`; avoid precise claims you can't back.
 - **Variety**: rotate scenes, niches, palettes and `music.seed`; don't reuse the same metaphor every week.
+
+### Retention tools (from the reference-channel study, `research/reference-channel.md`)
+- **Near-miss** (`gap`): when someone quits close to the goal, show how close. Show it after they stop
+  (after the fall), not while their own labels are in the way; the gold line remains to the end.
+- **The world pushes back** (`storm`): one setback hits everyone; the steady one keeps working through it,
+  the others shelter (`sad`) or slow down. Use it once or twice per video, not as decoration.
+- **Stacked lanes** (`race`, `bridge`) for 4+ characters: nobody is crowded and characters stay big.
+- **Split captions**: a punchline on the next beat ("MOTIVATION STARTS FAST." then "...FOR 4 REPS.").
+- **Story titles**: third person + a number, e.g. "He Quit Two Planks Short", "She Quit 6 Metres Short".
+- Numbers in KM / M / KG / H show one decimal while small, so they tick visibly.
 
 ### On-screen logic: watch it with the sound off before you write it
 The number and the picture are the same thing. Before finishing a spec, play each beat in your head as a

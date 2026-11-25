@@ -13,7 +13,9 @@ This repo turns story specs (`specs/*.json`) into YouTube Shorts for the channel
    - tags describe what the character is doing now;
    - bubbles match the motion;
    - nobody stands around.
-3. Play each beat in your head with the sound off. If anything could look like a glitch to a viewer,
+3. Use the retention tools in README (near-miss, storm, stacked lanes, story titles); the evidence is in
+   `research/reference-channel.md`.
+4. Play each beat in your head with the sound off. If anything could look like a glitch to a viewer,
    change the story.
 
 ## Building

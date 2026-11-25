@@ -29,6 +29,9 @@ are enforced by `make.js` (see "Enforced" at the bottom); a spec that breaks one
 - **Don't:** metaphor scenes where props change while people stand (round 2: bricks, buckets, swords,
   doors). The owner called it the worst generation: "the characters simply don't do anything... just wave
   their hands". Waving, nodding and fidgets are not action.
+- **Do (round 3, from the reference study):** use the retention tools in README: a near-miss reveal when
+  someone quits close to the goal, a setback that hits everyone (`storm`), stacked lanes for 4+ characters,
+  story titles (third person + a number). Their best Shorts win on story structure, not fancier art.
 - **Don't:** hide the numbers or drop the counter. Visible numbers are the retention engine, not clutter.
   (Round 2's "no counters" rule was my own recommendation and it was wrong.)
 - **Do:** a hook in the first second: a flash-forward of the climax ("HOW DID THIS HAPPEN?" then rewind)
@@ -116,3 +119,4 @@ are enforced by `make.js` (see "Enforced" at the bottom); a spec that breaks one
 - 2026-11-24: round 3 feedback: characters too close together (widened to ~310px columns); music must be the very first score, not drive (restored generation-1 score, gaps filled).
 - 2026-11-25: owner asked why two runners ran the opposite direction: restarts were drawn as running back to the start. Fixed: distance only goes up, restarters crawl forward; validator forbids a falling race distance.
 - 2026-11-25: owner asked to fix such mistakes in the code/prompt rather than per video. Added the on-screen logic checklist (README), CLAUDE.md for every session, and validator rules (no falling totals, no stale tags). The new rules flag the delivered climb, race and dig specs (stale tags; dig hole refilling); not re-rendered, per the owner.
+- 2026-11-25: owner asked to pick the best improvements from the reference channel. Built: bridge scene (stacked lanes), near-miss `gap`, `storm`, climax flash, live decimals. Videos: He Quit Two Planks Short (new), She Quit 6 Metres Short (climb upgraded).

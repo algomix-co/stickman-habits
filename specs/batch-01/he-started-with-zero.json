@@ -78,7 +78,7 @@
  "beats": [
   {
    "dur": 2.8,
-   "caption": "WEEK 1. HE CAN'T DO ONE.",
+   "caption": "WEEK 1: ZERO REPS.",
    "counter": 1,
    "values": {
     "NATURAL": 8,
@@ -209,7 +209,7 @@
   },
   {
    "dur": 3.6,
-   "caption": "STARTED WITH ZERO. NOW 20.",
+   "caption": "ZERO TO 20.",
    "counter": 52,
    "values": {
     "STARTED AT 0": 20,

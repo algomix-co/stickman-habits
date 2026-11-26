@@ -1,0 +1,245 @@
+{
+ "id": "oldest-beginner-crossed-first",
+ "brand": "mind-the-gap",
+ "batch": 1,
+ "batchIndex": 1,
+ "scene": "bridge",
+ "twist": "The 41-year-old who thought it was too late crosses first.",
+ "keywords": [
+  "progress",
+  "potential",
+  "consistency"
+ ],
+ "characters": [
+  {
+   "name": "AGE 22",
+   "color": "#ff5a6e",
+   "accessory": "headband"
+  },
+  {
+   "name": "AGE 41",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  },
+  {
+   "name": "AGE 33",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "AGE 28",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  }
+ ],
+ "start": {
+  "AGE 22": 0,
+  "AGE 41": 0,
+  "AGE 33": 0,
+  "AGE 28": 0
+ },
+ "metric": {
+  "suffix": " PLANKS",
+  "scale": 1,
+  "max": 22
+ },
+ "counter": {
+  "label": "DAY",
+  "start": 1
+ },
+ "footnote": "Illustrative",
+ "upload": {
+  "title": "Oldest Beginner Crossed First",
+  "description": "Four people start the same bridge at 22, 28, 33 and 41. The youngest has all the energy. The oldest thinks she is too late. Which one are you? (Illustrative.)",
+  "hashtags": [
+   "discipline",
+   "neverlate",
+   "consistency",
+   "motivation",
+   "shorts"
+  ],
+  "tags": [
+   "never too late",
+   "late bloomer",
+   "starting at 40",
+   "discipline",
+   "self improvement",
+   "motivation",
+   "consistency",
+   "mindset",
+   "stickman animation",
+   "shorts"
+  ],
+  "pinned": "Be honest: which age are you building at? A, B, C or D 👇"
+ },
+ "endcard": {
+  "tagline": "IT'S NOT LATE. IT'S DAY ONE."
+ },
+ "beats": [
+  {
+   "dur": 2.8,
+   "caption": "SAME GAP. DIFFERENT AGES.",
+   "counter": 3,
+   "values": {
+    "AGE 22": 5,
+    "AGE 41": 1,
+    "AGE 33": 2,
+    "AGE 28": 3
+   },
+   "curves": {
+    "AGE 22": "accel"
+   },
+   "bubbles": [
+    {
+     "who": "AGE 41",
+     "text": "too late for me?",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "AGE 22 HAS ALL THE ENERGY.",
+   "counter": 9,
+   "values": {
+    "AGE 22": 12,
+    "AGE 41": 3,
+    "AGE 33": 3,
+    "AGE 28": 6
+   },
+   "curves": {
+    "AGE 22": "decel"
+   },
+   "bubbles": [
+    {
+     "who": "AGE 22",
+     "text": "easy.",
+     "at": 1.2
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "AGE 28 GETS DISTRACTED.",
+   "counter": 15,
+   "values": {
+    "AGE 22": 15,
+    "AGE 41": 5,
+    "AGE 33": 4
+   },
+   "states": {
+    "AGE 28": "sad"
+   },
+   "stateAt": {
+    "AGE 28": 1.0
+   },
+   "bubbles": [
+    {
+     "who": "AGE 28",
+     "text": "maybe next year.",
+     "at": 0.5
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THEN THE STORM HITS.",
+   "counter": 22,
+   "values": {
+    "AGE 22": 16,
+    "AGE 41": 7,
+    "AGE 33": 5
+   },
+   "states": {
+    "AGE 22": "sad"
+   },
+   "stateAt": {
+    "AGE 22": 1.4
+   },
+   "events": [
+    {
+     "type": "storm",
+     "at": 0.2,
+     "dur": 2.4
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "AGE 22",
+     "text": "this got boring.",
+     "at": 0.5
+    }
+   ]
+  },
+  {
+   "dur": 3.2,
+   "caption": "AGE 41 NEVER MISSES A DAY.",
+   "counter": 45,
+   "values": {
+    "AGE 41": 12,
+    "AGE 33": 7,
+    "AGE 28": 8
+   },
+   "curve": "linear",
+   "states": {
+    "AGE 28": "active"
+   },
+   "stateAt": {
+    "AGE 28": 0.5
+   }
+  },
+  {
+   "dur": 3.4,
+   "caption": "AGE 22 TRIES AGAIN.",
+   "counter": 70,
+   "values": {
+    "AGE 22": 18,
+    "AGE 41": 18,
+    "AGE 33": 9,
+    "AGE 28": 10
+   },
+   "states": {
+    "AGE 22": "active"
+   },
+   "stateAt": {
+    "AGE 22": 0.3
+   },
+   "tags": {
+    "AGE 33": "STILL PLANNING"
+   }
+  },
+  {
+   "dur": 3.6,
+   "caption": "DAY 100: ACROSS AT 41.",
+   "counter": 100,
+   "values": {
+    "AGE 41": 22,
+    "AGE 22": 19,
+    "AGE 33": 10,
+    "AGE 28": 11
+   },
+   "curve": "accel",
+   "states": {
+    "AGE 41": "win"
+   },
+   "stateAt": {
+    "AGE 41": 3.3
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "AGE 41",
+     "at": 3.35
+    }
+   ],
+   "tags": {
+    "AGE 28": "ON AND OFF"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

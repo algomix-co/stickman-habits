@@ -1,0 +1,235 @@
+{
+ "id": "head-start-still-lost",
+ "brand": "mind-the-gap",
+ "batch": 1,
+ "batchIndex": 20,
+ "scene": "race",
+ "twist": "The runner who starts 80 km ahead coasts and loses to the one born behind.",
+ "keywords": [
+  "luck",
+  "discipline",
+  "potential"
+ ],
+ "characters": [
+  {
+   "name": "HEAD START",
+   "color": "#ff5a6e",
+   "accessory": "headband"
+  },
+  {
+   "name": "BORN BEHIND",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  },
+  {
+   "name": "MIDDLE START",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "NEEDS LUCK",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  }
+ ],
+ "start": {
+  "HEAD START": 80,
+  "BORN BEHIND": 0,
+  "MIDDLE START": 30,
+  "NEEDS LUCK": 20
+ },
+ "metric": {
+  "suffix": " KM",
+  "scale": 1,
+  "max": 200
+ },
+ "counter": {
+  "label": "DAY",
+  "start": 1
+ },
+ "footnote": "Illustrative",
+ "upload": {
+  "title": "Head Start, Still Lost",
+  "description": "One starts 80 km ahead. One starts at zero. One starts in the middle. One waits for a lucky break. 90 days later... Which one are you? (Illustrative.)",
+  "hashtags": [
+   "discipline",
+   "luck",
+   "mindset",
+   "motivation",
+   "shorts"
+  ],
+  "tags": [
+   "head start",
+   "privilege vs hard work",
+   "luck vs discipline",
+   "discipline",
+   "self improvement",
+   "motivation",
+   "consistency",
+   "mindset",
+   "stickman animation",
+   "shorts"
+  ],
+  "pinned": "Did you get a head start, or start from zero? 👇"
+ },
+ "endcard": {
+  "tagline": "WHERE YOU START ISN'T WHERE YOU FINISH."
+ },
+ "beats": [
+  {
+   "dur": 2.6,
+   "caption": "NOT EVERYONE STARTS EQUAL.",
+   "counter": 1,
+   "values": {
+    "HEAD START": 82,
+    "BORN BEHIND": 4,
+    "MIDDLE START": 34,
+    "NEEDS LUCK": 22
+   },
+   "curves": {
+    "BORN BEHIND": "accel"
+   },
+   "bubbles": [
+    {
+     "who": "HEAD START",
+     "text": "I'm already ahead.",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "HEAD START TAKES IT EASY.",
+   "counter": 10,
+   "values": {
+    "HEAD START": 88,
+    "BORN BEHIND": 22,
+    "MIDDLE START": 48,
+    "NEEDS LUCK": 26
+   },
+   "bubbles": [
+    {
+     "who": "NEEDS LUCK",
+     "text": "waiting for my break",
+     "at": 1.2
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "BORN BEHIND RUNS EVERY DAY.",
+   "counter": 25,
+   "values": {
+    "BORN BEHIND": 50,
+    "HEAD START": 92,
+    "MIDDLE START": 62,
+    "NEEDS LUCK": 30
+   },
+   "bubbles": [
+    {
+     "who": "HEAD START",
+     "text": "no rush.",
+     "at": 0.6
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THEN THE STORM HITS.",
+   "counter": 35,
+   "values": {
+    "BORN BEHIND": 72,
+    "MIDDLE START": 74,
+    "HEAD START": 93,
+    "NEEDS LUCK": 31
+   },
+   "states": {
+    "HEAD START": "sad",
+    "NEEDS LUCK": "sad"
+   },
+   "stateAt": {
+    "HEAD START": 0.8,
+    "NEEDS LUCK": 1.2
+   },
+   "events": [
+    {
+     "type": "storm",
+     "at": 0.2,
+     "dur": 2.4
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "HEAD START",
+     "text": "I'll wait it out.",
+     "at": 1.0
+    }
+   ]
+  },
+  {
+   "dur": 3.2,
+   "caption": "BORN BEHIND PASSES HIM.",
+   "counter": 50,
+   "values": {
+    "BORN BEHIND": 100,
+    "HEAD START": 96,
+    "MIDDLE START": 90,
+    "NEEDS LUCK": 34
+   },
+   "states": {
+    "HEAD START": "active",
+    "NEEDS LUCK": "active"
+   },
+   "stateAt": {
+    "HEAD START": 1.0,
+    "NEEDS LUCK": 0.6
+   }
+  },
+  {
+   "dur": 3.4,
+   "caption": "LUCK STARTS THE RACE. IT DOESN'T RUN IT.",
+   "counter": 75,
+   "values": {
+    "BORN BEHIND": 160,
+    "MIDDLE START": 120,
+    "HEAD START": 100,
+    "NEEDS LUCK": 40
+   },
+   "curve": "linear"
+  },
+  {
+   "dur": 3.6,
+   "caption": "DAY 90: HEAD START LOST.",
+   "counter": 90,
+   "values": {
+    "BORN BEHIND": 200,
+    "MIDDLE START": 140,
+    "HEAD START": 104,
+    "NEEDS LUCK": 44
+   },
+   "curve": "accel",
+   "states": {
+    "BORN BEHIND": "win"
+   },
+   "stateAt": {
+    "BORN BEHIND": 3.3
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "BORN BEHIND",
+     "at": 3.35
+    }
+   ],
+   "tags": {
+    "HEAD START": "80 KM HEAD START",
+    "NEEDS LUCK": "STILL WAITING"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

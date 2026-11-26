@@ -1,0 +1,282 @@
+{
+ "id": "the-crowd-stopped-cheering",
+ "brand": "mind-the-gap",
+ "batch": 1,
+ "batchIndex": 5,
+ "scene": "race",
+ "twist": "The runner fuelled by applause stops when the crowd goes home; the one running for himself finishes in silence.",
+ "keywords": [
+  "motivation",
+  "discipline",
+  "silence"
+ ],
+ "characters": [
+  {
+   "name": "FOR APPLAUSE",
+   "color": "#ff5a6e",
+   "accessory": "headband"
+  },
+  {
+   "name": "FOR HIMSELF",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  },
+  {
+   "name": "FOR A MEDAL",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "FOR A BET",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  }
+ ],
+ "start": {
+  "FOR APPLAUSE": 0,
+  "FOR HIMSELF": 0,
+  "FOR A MEDAL": 0,
+  "FOR A BET": 0
+ },
+ "metric": {
+  "suffix": " KM",
+  "scale": 1,
+  "max": 200
+ },
+ "counter": {
+  "label": "DAY",
+  "start": 1
+ },
+ "footnote": "Illustrative",
+ "upload": {
+  "title": "The Crowd Stopped Cheering",
+  "description": "Four runners, four reasons: applause, a medal, a bet, and himself. Then the crowd goes home. Which one are you? (Illustrative.)",
+  "hashtags": [
+   "discipline",
+   "motivation",
+   "workinsilence",
+   "mindset",
+   "shorts"
+  ],
+  "tags": [
+   "work in silence",
+   "intrinsic motivation",
+   "do it for yourself",
+   "discipline",
+   "self improvement",
+   "motivation",
+   "consistency",
+   "mindset",
+   "stickman animation",
+   "shorts"
+  ],
+  "pinned": "Who are you really running for? A, B, C or D 👇"
+ },
+ "endcard": {
+  "tagline": "APPLAUSE ENDS. DISCIPLINE DOESN'T."
+ },
+ "beats": [
+  {
+   "dur": 2.6,
+   "caption": "SAME TRACK. DIFFERENT REASONS.",
+   "counter": 2,
+   "values": {
+    "FOR APPLAUSE": 8,
+    "FOR HIMSELF": 4,
+    "FOR A MEDAL": 5,
+    "FOR A BET": 6
+   },
+   "curves": {
+    "FOR APPLAUSE": "accel"
+   },
+   "events": [
+    {
+     "type": "marker",
+     "who": "FOR APPLAUSE",
+     "at": 0.4,
+     "text": "CHEERS!",
+     "dur": 1.8,
+     "color": "#ffc53d"
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "APPLAUSE FEELS LIKE FUEL.",
+   "counter": 12,
+   "values": {
+    "FOR APPLAUSE": 35,
+    "FOR HIMSELF": 24,
+    "FOR A MEDAL": 27,
+    "FOR A BET": 30
+   },
+   "events": [
+    {
+     "type": "marker",
+     "who": "FOR APPLAUSE",
+     "at": 0.6,
+     "text": "CHEERS!",
+     "dur": 1.6,
+     "color": "#ffc53d"
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "FOR A BET",
+     "text": "easy money.",
+     "at": 2.0
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THEN THE CROWD GOES HOME.",
+   "counter": 25,
+   "values": {
+    "FOR APPLAUSE": 48,
+    "FOR HIMSELF": 50,
+    "FOR A MEDAL": 46,
+    "FOR A BET": 52
+   },
+   "curves": {
+    "FOR APPLAUSE": "decel"
+   },
+   "states": {
+    "FOR APPLAUSE": "sad"
+   },
+   "stateAt": {
+    "FOR APPLAUSE": 1.8
+   },
+   "events": [
+    {
+     "type": "marker",
+     "who": "FOR APPLAUSE",
+     "at": 0.5,
+     "text": "CROWD LEFT",
+     "dur": 1.8
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "FOR APPLAUSE",
+     "text": "where is everyone?",
+     "at": 2.0
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THE BET ENDS. SO DOES HE.",
+   "counter": 35,
+   "values": {
+    "FOR A BET": 60,
+    "FOR HIMSELF": 70,
+    "FOR A MEDAL": 60
+   },
+   "states": {
+    "FOR A BET": "sad"
+   },
+   "stateAt": {
+    "FOR A BET": 2.2
+   },
+   "tags": {
+    "FOR A BET": "BET OVER"
+   },
+   "bubbles": [
+    {
+     "who": "FOR A BET",
+     "text": "won the bet. done.",
+     "at": 0.4
+    }
+   ]
+  },
+  {
+   "dur": 3.2,
+   "caption": "NOBODY WATCHING. STILL RUNNING.",
+   "counter": 55,
+   "values": {
+    "FOR HIMSELF": 110,
+    "FOR A MEDAL": 78,
+    "FOR APPLAUSE": 52
+   },
+   "states": {
+    "FOR APPLAUSE": "active",
+    "FOR A MEDAL": "sad"
+   },
+   "stateAt": {
+    "FOR APPLAUSE": 1.0,
+    "FOR A MEDAL": 1.8
+   },
+   "events": [
+    {
+     "type": "storm",
+     "at": 0.3,
+     "dur": 2.4
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "FOR A MEDAL",
+     "text": "not worth it.",
+     "at": 2.0
+    }
+   ]
+  },
+  {
+   "dur": 3.4,
+   "caption": "HE RUNS FOR HIMSELF.",
+   "counter": 80,
+   "values": {
+    "FOR HIMSELF": 165,
+    "FOR A MEDAL": 92,
+    "FOR APPLAUSE": 60,
+    "FOR A BET": 75
+   },
+   "curve": "linear",
+   "states": {
+    "FOR A MEDAL": "active",
+    "FOR A BET": "active"
+   },
+   "stateAt": {
+    "FOR A MEDAL": 0.4,
+    "FOR A BET": 0.6
+   },
+   "tags": {
+    "FOR A BET": "NEW BET"
+   }
+  },
+  {
+   "dur": 3.6,
+   "caption": "DAY 90: NO CROWD. FINISHED.",
+   "counter": 90,
+   "values": {
+    "FOR HIMSELF": 200,
+    "FOR A MEDAL": 104,
+    "FOR APPLAUSE": 66,
+    "FOR A BET": 82
+   },
+   "curve": "accel",
+   "states": {
+    "FOR HIMSELF": "win"
+   },
+   "stateAt": {
+    "FOR HIMSELF": 3.3
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "FOR HIMSELF",
+     "at": 3.35
+    }
+   ],
+   "tags": {
+    "FOR APPLAUSE": "NEEDS AN AUDIENCE"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

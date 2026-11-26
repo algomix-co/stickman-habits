@@ -1,0 +1,274 @@
+{
+ "id": "perfect-planks-unfinished-bridge",
+ "brand": "mind-the-gap",
+ "batch": 1,
+ "batchIndex": 19,
+ "scene": "bridge",
+ "twist": "The perfectionist keeps redoing plank one; good enough crosses on day 100.",
+ "keywords": [
+  "perfection",
+  "progress",
+  "overthinking"
+ ],
+ "characters": [
+  {
+   "name": "COPYCAT",
+   "color": "#ff5a6e",
+   "accessory": "headband"
+  },
+  {
+   "name": "GOOD ENOUGH",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  },
+  {
+   "name": "PERFECT ONLY",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "NEEDS A PLAN",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  }
+ ],
+ "start": {
+  "COPYCAT": 0,
+  "GOOD ENOUGH": 0,
+  "PERFECT ONLY": 0,
+  "NEEDS A PLAN": 0
+ },
+ "metric": {
+  "suffix": " PLANKS",
+  "scale": 1,
+  "max": 22
+ },
+ "counter": {
+  "label": "DAY",
+  "start": 1
+ },
+ "footnote": "Illustrative",
+ "upload": {
+  "title": "Perfect Planks, Unfinished Bridge",
+  "description": "One needs every plank perfect. One needs a full blueprint first. One copies everyone. One builds good enough, every day. Which one are you? (Illustrative.)",
+  "hashtags": [
+   "discipline",
+   "perfectionism",
+   "progress",
+   "productivity",
+   "shorts"
+  ],
+  "tags": [
+   "perfectionism",
+   "done is better than perfect",
+   "overthinking",
+   "discipline",
+   "self improvement",
+   "motivation",
+   "consistency",
+   "mindset",
+   "stickman animation",
+   "shorts"
+  ],
+  "pinned": "Is perfectionism keeping your bridge unfinished? 👇"
+ },
+ "endcard": {
+  "tagline": "DONE IS BETTER THAN PERFECT."
+ },
+ "beats": [
+  {
+   "dur": 2.8,
+   "caption": "ONE GAP. FOUR BUILDERS.",
+   "counter": 3,
+   "values": {
+    "COPYCAT": 2,
+    "GOOD ENOUGH": 3,
+    "PERFECT ONLY": 1,
+    "NEEDS A PLAN": 1
+   },
+   "bubbles": [
+    {
+     "who": "PERFECT ONLY",
+     "text": "it has to be perfect.",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "PERFECT ONLY REDOES PLANK ONE.",
+   "counter": 8,
+   "values": {
+    "COPYCAT": 4,
+    "GOOD ENOUGH": 6,
+    "PERFECT ONLY": 2,
+    "NEEDS A PLAN": 2
+   },
+   "events": [
+    {
+     "type": "marker",
+     "who": "PERFECT ONLY",
+     "at": 1.0,
+     "text": "REDO",
+     "dur": 1.4,
+     "color": "#ffc53d"
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "NEEDS A PLAN",
+     "text": "need a blueprint first",
+     "at": 0.4
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "GOOD ENOUGH KEEPS GOING.",
+   "counter": 15,
+   "values": {
+    "GOOD ENOUGH": 9,
+    "PERFECT ONLY": 3,
+    "NEEDS A PLAN": 3,
+    "COPYCAT": 7
+   },
+   "events": [
+    {
+     "type": "marker",
+     "who": "PERFECT ONLY",
+     "at": 0.6,
+     "text": "REDO",
+     "dur": 1.0,
+     "color": "#ffc53d"
+    },
+    {
+     "type": "marker",
+     "who": "PERFECT ONLY",
+     "at": 2.0,
+     "text": "REDO",
+     "dur": 0.9,
+     "color": "#ffc53d"
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "COPYCAT",
+     "text": "doing what she does",
+     "at": 1.2
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THEN THE STORM HITS.",
+   "counter": 22,
+   "values": {
+    "GOOD ENOUGH": 11,
+    "NEEDS A PLAN": 4,
+    "COPYCAT": 8
+   },
+   "states": {
+    "PERFECT ONLY": "sad"
+   },
+   "stateAt": {
+    "PERFECT ONLY": 1.0
+   },
+   "events": [
+    {
+     "type": "storm",
+     "at": 0.2,
+     "dur": 2.4
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "PERFECT ONLY",
+     "text": "the wood is ruined!",
+     "at": 1.2
+    }
+   ]
+  },
+  {
+   "dur": 3.2,
+   "caption": "IMPERFECT. BUT MOVING.",
+   "counter": 40,
+   "values": {
+    "GOOD ENOUGH": 15,
+    "PERFECT ONLY": 4,
+    "NEEDS A PLAN": 5,
+    "COPYCAT": 11
+   },
+   "states": {
+    "PERFECT ONLY": "active"
+   },
+   "stateAt": {
+    "PERFECT ONLY": 0.6
+   },
+   "events": [
+    {
+     "type": "marker",
+     "who": "PERFECT ONLY",
+     "at": 1.8,
+     "text": "REDO",
+     "dur": 1.0,
+     "color": "#ffc53d"
+    }
+   ]
+  },
+  {
+   "dur": 3.4,
+   "caption": "COPIED PLANKS DON'T HOLD.",
+   "counter": 75,
+   "values": {
+    "GOOD ENOUGH": 20,
+    "PERFECT ONLY": 5,
+    "NEEDS A PLAN": 6,
+    "COPYCAT": 9
+   },
+   "curve": "linear",
+   "events": [
+    {
+     "type": "crash",
+     "who": "COPYCAT",
+     "at": 1.6
+    }
+   ],
+   "tags": {
+    "COPYCAT": "COLLAPSED"
+   }
+  },
+  {
+   "dur": 3.6,
+   "caption": "DAY 100: GOOD ENOUGH IS ACROSS.",
+   "counter": 100,
+   "values": {
+    "GOOD ENOUGH": 22,
+    "PERFECT ONLY": 6,
+    "NEEDS A PLAN": 7
+   },
+   "curve": "accel",
+   "states": {
+    "GOOD ENOUGH": "win"
+   },
+   "stateAt": {
+    "GOOD ENOUGH": 3.3
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "GOOD ENOUGH",
+     "at": 3.35
+    }
+   ],
+   "tags": {
+    "PERFECT ONLY": "6 PERFECT PLANKS",
+    "NEEDS A PLAN": "STILL PLANNING"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

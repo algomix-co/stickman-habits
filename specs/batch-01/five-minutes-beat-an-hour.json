@@ -1,0 +1,236 @@
+{
+ "id": "five-minutes-beat-an-hour",
+ "brand": "mind-the-gap",
+ "batch": 1,
+ "batchIndex": 16,
+ "scene": "pullup",
+ "twist": "Five minutes every day beats one big hour every Sunday.",
+ "keywords": [
+  "consistency",
+  "fitness",
+  "discipline"
+ ],
+ "characters": [
+  {
+   "name": "SUNDAY HOUR",
+   "color": "#ff5a6e",
+   "accessory": "headband"
+  },
+  {
+   "name": "5 MIN DAILY",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  },
+  {
+   "name": "IF INSPIRED",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "NO PLAN",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  }
+ ],
+ "start": {
+  "SUNDAY HOUR": 0,
+  "5 MIN DAILY": 0,
+  "IF INSPIRED": 0,
+  "NO PLAN": 0
+ },
+ "metric": {
+  "suffix": " REPS",
+  "scale": 1,
+  "max": 20
+ },
+ "counter": {
+  "label": "WEEK",
+  "start": 1
+ },
+ "footnote": "Illustrative",
+ "upload": {
+  "title": "Five Minutes Beat An Hour",
+  "description": "One trains one big hour every Sunday and is sore all week. One trains when inspired. One has no plan. One does 5 minutes every day. Which one are you? (Illustrative.)",
+  "hashtags": [
+   "discipline",
+   "fitness",
+   "consistency",
+   "habits",
+   "shorts"
+  ],
+  "tags": [
+   "5 minute workout",
+   "daily habits",
+   "consistency over intensity",
+   "discipline",
+   "self improvement",
+   "motivation",
+   "consistency",
+   "mindset",
+   "stickman animation",
+   "shorts"
+  ],
+  "pinned": "Which is you: 5 minutes daily or 1 hour on Sunday? 👇"
+ },
+ "endcard": {
+  "tagline": "SMALL AND DAILY BEATS BIG AND RARE."
+ },
+ "beats": [
+  {
+   "dur": 2.8,
+   "caption": "SAME GOAL. DIFFERENT SCHEDULE.",
+   "counter": 1,
+   "values": {
+    "SUNDAY HOUR": 4,
+    "5 MIN DAILY": 2,
+    "IF INSPIRED": 3,
+    "NO PLAN": 3
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "SUNDAY: ONE BIG HOUR.",
+   "counter": 2,
+   "values": {
+    "SUNDAY HOUR": 7,
+    "5 MIN DAILY": 3,
+    "IF INSPIRED": 3,
+    "NO PLAN": 4
+   },
+   "curves": {
+    "SUNDAY HOUR": "accel"
+   },
+   "bubbles": [
+    {
+     "who": "SUNDAY HOUR",
+     "text": "beast mode!",
+     "at": 0.5
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "MONDAY: TOO SORE TO MOVE.",
+   "counter": 3,
+   "values": {
+    "5 MIN DAILY": 4,
+    "IF INSPIRED": 5,
+    "NO PLAN": 3
+   },
+   "states": {
+    "SUNDAY HOUR": "quit"
+   },
+   "stateAt": {
+    "SUNDAY HOUR": 0.6
+   },
+   "tags": {
+    "SUNDAY HOUR": "SORE"
+   },
+   "bubbles": [
+    {
+     "who": "SUNDAY HOUR",
+     "text": "everything hurts.",
+     "at": 0.9
+    },
+    {
+     "who": "IF INSPIRED",
+     "text": "feeling it today!",
+     "at": 1.9
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "FIVE MINUTES. EVERY DAY.",
+   "counter": 8,
+   "values": {
+    "5 MIN DAILY": 7,
+    "SUNDAY HOUR": 8,
+    "IF INSPIRED": 4,
+    "NO PLAN": 5
+   },
+   "states": {
+    "SUNDAY HOUR": "active"
+   },
+   "stateAt": {
+    "SUNDAY HOUR": 1.6
+   },
+   "tags": {
+    "SUNDAY HOUR": "SUNDAY AGAIN"
+   }
+  },
+  {
+   "dur": 3.2,
+   "caption": "SUNDAY. SORE. REPEAT.",
+   "counter": 16,
+   "values": {
+    "5 MIN DAILY": 11,
+    "IF INSPIRED": 6,
+    "NO PLAN": 4
+   },
+   "states": {
+    "SUNDAY HOUR": "quit"
+   },
+   "stateAt": {
+    "SUNDAY HOUR": 1.4
+   },
+   "tags": {
+    "SUNDAY HOUR": "SORE AGAIN"
+   }
+  },
+  {
+   "dur": 3.4,
+   "caption": "SMALL DOSES ADD UP.",
+   "counter": 34,
+   "values": {
+    "5 MIN DAILY": 17,
+    "SUNDAY HOUR": 9,
+    "IF INSPIRED": 6,
+    "NO PLAN": 6
+   },
+   "curve": "linear",
+   "states": {
+    "SUNDAY HOUR": "active"
+   },
+   "stateAt": {
+    "SUNDAY HOUR": 0.6
+   },
+   "tags": {
+    "SUNDAY HOUR": "SUNDAY AGAIN"
+   }
+  },
+  {
+   "dur": 3.6,
+   "caption": "5 MINUTES A DAY: 20 REPS.",
+   "counter": 52,
+   "values": {
+    "5 MIN DAILY": 20,
+    "SUNDAY HOUR": 9,
+    "IF INSPIRED": 7,
+    "NO PLAN": 6
+   },
+   "curve": "accel",
+   "states": {
+    "5 MIN DAILY": "win"
+   },
+   "stateAt": {
+    "5 MIN DAILY": 3.3
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "5 MIN DAILY",
+     "at": 3.35
+    }
+   ],
+   "tags": {
+    "IF INSPIRED": "WAITING TO FEEL IT"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

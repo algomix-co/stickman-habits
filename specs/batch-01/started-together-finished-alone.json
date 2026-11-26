@@ -1,0 +1,255 @@
+{
+ "id": "started-together-finished-alone",
+ "brand": "mind-the-gap",
+ "batch": 1,
+ "batchIndex": 6,
+ "scene": "race",
+ "twist": "His friends quit one by one; finishing alone is still finishing.",
+ "keywords": [
+  "social",
+  "discipline",
+  "consistency"
+ ],
+ "characters": [
+  {
+   "name": "HYPE FRIEND",
+   "color": "#ff5a6e",
+   "accessory": "headband"
+  },
+  {
+   "name": "KEEPS GOING",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  },
+  {
+   "name": "LAZY FRIEND",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "BUSY FRIEND",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  }
+ ],
+ "start": {
+  "HYPE FRIEND": 0,
+  "KEEPS GOING": 0,
+  "LAZY FRIEND": 0,
+  "BUSY FRIEND": 0
+ },
+ "metric": {
+  "suffix": " KM",
+  "scale": 1,
+  "max": 200
+ },
+ "counter": {
+  "label": "DAY",
+  "start": 1
+ },
+ "footnote": "Illustrative",
+ "upload": {
+  "title": "Started Together, Finished Alone",
+  "description": "Four friends start the same goal together. One by one they find a reason to stop. One keeps going. Which one are you? (Illustrative.)",
+  "hashtags": [
+   "discipline",
+   "consistency",
+   "friends",
+   "keepgoing",
+   "shorts"
+  ],
+  "tags": [
+   "friends quit",
+   "going alone",
+   "stay consistent alone",
+   "discipline",
+   "self improvement",
+   "motivation",
+   "consistency",
+   "mindset",
+   "stickman animation",
+   "shorts"
+  ],
+  "pinned": "Did your friends quit before you did? 👇"
+ },
+ "endcard": {
+  "tagline": "FINISH, EVEN IF YOU FINISH ALONE."
+ },
+ "beats": [
+  {
+   "dur": 2.6,
+   "caption": "FOUR FRIENDS. ONE GOAL.",
+   "counter": 2,
+   "values": {
+    "HYPE FRIEND": 6,
+    "KEEPS GOING": 5,
+    "LAZY FRIEND": 5,
+    "BUSY FRIEND": 5
+   },
+   "bubbles": [
+    {
+     "who": "HYPE FRIEND",
+     "text": "let's do this together!",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "TOGETHER, IT'S EASY.",
+   "counter": 12,
+   "values": {
+    "HYPE FRIEND": 28,
+    "KEEPS GOING": 27,
+    "LAZY FRIEND": 26,
+    "BUSY FRIEND": 27
+   },
+   "bubbles": [
+    {
+     "who": "LAZY FRIEND",
+     "text": "same pace, guys",
+     "at": 1.0
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "LAZY FRIEND STOPS FIRST.",
+   "counter": 20,
+   "values": {
+    "LAZY FRIEND": 34,
+    "HYPE FRIEND": 45,
+    "KEEPS GOING": 44,
+    "BUSY FRIEND": 44
+   },
+   "states": {
+    "LAZY FRIEND": "quit"
+   },
+   "stateAt": {
+    "LAZY FRIEND": 1.4
+   },
+   "tags": {
+    "LAZY FRIEND": "PARTY TONIGHT"
+   },
+   "bubbles": [
+    {
+     "who": "LAZY FRIEND",
+     "text": "you guys go ahead",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "BUSY FRIEND STOPS NEXT.",
+   "counter": 30,
+   "values": {
+    "BUSY FRIEND": 58,
+    "HYPE FRIEND": 64,
+    "KEEPS GOING": 64
+   },
+   "states": {
+    "BUSY FRIEND": "quit"
+   },
+   "stateAt": {
+    "BUSY FRIEND": 1.6
+   },
+   "tags": {
+    "BUSY FRIEND": "NO TIME"
+   },
+   "bubbles": [
+    {
+     "who": "BUSY FRIEND",
+     "text": "work's crazy now.",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "dur": 3.2,
+   "caption": "HYPE FRIEND NEEDS A GROUP.",
+   "counter": 45,
+   "values": {
+    "HYPE FRIEND": 78,
+    "KEEPS GOING": 92
+   },
+   "states": {
+    "HYPE FRIEND": "sad"
+   },
+   "stateAt": {
+    "HYPE FRIEND": 1.8
+   },
+   "bubbles": [
+    {
+     "who": "HYPE FRIEND",
+     "text": "no fun alone.",
+     "at": 2.0
+    }
+   ]
+  },
+  {
+   "dur": 3.4,
+   "caption": "HE KEEPS GOING. ALONE.",
+   "counter": 75,
+   "values": {
+    "KEEPS GOING": 160,
+    "HYPE FRIEND": 85,
+    "LAZY FRIEND": 40
+   },
+   "curve": "linear",
+   "states": {
+    "HYPE FRIEND": "active",
+    "LAZY FRIEND": "active"
+   },
+   "stateAt": {
+    "HYPE FRIEND": 0.6,
+    "LAZY FRIEND": 1.0
+   },
+   "tags": {
+    "LAZY FRIEND": "TRYING AGAIN"
+   },
+   "events": [
+    {
+     "type": "storm",
+     "at": 1.2,
+     "dur": 1.8
+    }
+   ]
+  },
+  {
+   "dur": 3.6,
+   "caption": "DAY 90: FINISHED ALONE.",
+   "counter": 90,
+   "values": {
+    "KEEPS GOING": 200,
+    "HYPE FRIEND": 92,
+    "LAZY FRIEND": 46,
+    "BUSY FRIEND": 66
+   },
+   "curve": "accel",
+   "states": {
+    "KEEPS GOING": "win",
+    "BUSY FRIEND": "active"
+   },
+   "stateAt": {
+    "KEEPS GOING": 3.3,
+    "BUSY FRIEND": 0.4
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "KEEPS GOING",
+     "at": 3.35
+    }
+   ],
+   "tags": {
+    "BUSY FRIEND": "WEEKENDS NOW"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

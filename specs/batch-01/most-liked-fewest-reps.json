@@ -1,0 +1,273 @@
+{
+ "id": "most-liked-fewest-reps",
+ "brand": "mind-the-gap",
+ "batch": 1,
+ "batchIndex": 14,
+ "scene": "pullup",
+ "twist": "Likes pile up for the one who posts every rep while his reps stay flat; the quiet one gets 20.",
+ "keywords": [
+  "ego",
+  "silence",
+  "fitness"
+ ],
+ "characters": [
+  {
+   "name": "POSTS DAILY",
+   "color": "#ff5a6e",
+   "accessory": "headband"
+  },
+  {
+   "name": "QUIET REPS",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  },
+  {
+   "name": "BEST ANGLE",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "COPIES REELS",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  }
+ ],
+ "start": {
+  "POSTS DAILY": 0,
+  "QUIET REPS": 0,
+  "BEST ANGLE": 0,
+  "COPIES REELS": 0
+ },
+ "metric": {
+  "suffix": " REPS",
+  "scale": 1,
+  "max": 20
+ },
+ "counter": {
+  "label": "WEEK",
+  "start": 1
+ },
+ "footnote": "Illustrative",
+ "upload": {
+  "title": "Most Liked, Fewest Reps",
+  "description": "One posts every rep. One needs the perfect angle. One copies every viral routine. One trains with no camera at all. Which one are you? (Illustrative.)",
+  "hashtags": [
+   "discipline",
+   "fitness",
+   "workinsilence",
+   "gym",
+   "shorts"
+  ],
+  "tags": [
+   "work in silence",
+   "social media vs reality",
+   "gym motivation",
+   "pull ups",
+   "discipline",
+   "self improvement",
+   "motivation",
+   "consistency",
+   "mindset",
+   "stickman animation",
+   "shorts"
+  ],
+  "pinned": "Would you train the same if nobody could see it? 👇"
+ },
+ "endcard": {
+  "tagline": "BUILD IT FIRST. POST IT LATER."
+ },
+ "beats": [
+  {
+   "dur": 2.8,
+   "caption": "SAME BAR. ONE CAMERA.",
+   "counter": 1,
+   "values": {
+    "POSTS DAILY": 3,
+    "QUIET REPS": 1,
+    "BEST ANGLE": 2,
+    "COPIES REELS": 2
+   },
+   "events": [
+    {
+     "type": "marker",
+     "who": "POSTS DAILY",
+     "at": 0.6,
+     "text": "+40 LIKES",
+     "dur": 1.6,
+     "color": "#ffc53d"
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "HE POSTS EVERY REP.",
+   "counter": 3,
+   "values": {
+    "POSTS DAILY": 4,
+    "QUIET REPS": 2,
+    "BEST ANGLE": 3,
+    "COPIES REELS": 3
+   },
+   "events": [
+    {
+     "type": "marker",
+     "who": "POSTS DAILY",
+     "at": 0.4,
+     "text": "+120 LIKES",
+     "dur": 1.2,
+     "color": "#ffc53d"
+    },
+    {
+     "type": "marker",
+     "who": "POSTS DAILY",
+     "at": 1.8,
+     "text": "+300 LIKES",
+     "dur": 1.1,
+     "color": "#ffc53d"
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "BEST ANGLE",
+     "text": "wait, bad angle",
+     "at": 0.9
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THE LIKES GO UP.",
+   "counter": 6,
+   "values": {
+    "POSTS DAILY": 4,
+    "QUIET REPS": 4,
+    "BEST ANGLE": 3,
+    "COPIES REELS": 5
+   },
+   "events": [
+    {
+     "type": "marker",
+     "who": "POSTS DAILY",
+     "at": 0.5,
+     "text": "+900 LIKES",
+     "dur": 1.6,
+     "color": "#ffc53d"
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "COPIES REELS",
+     "text": "new viral routine!",
+     "at": 1.3
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THE REPS DON'T.",
+   "counter": 10,
+   "values": {
+    "POSTS DAILY": 5,
+    "QUIET REPS": 7,
+    "BEST ANGLE": 4,
+    "COPIES REELS": 4
+   },
+   "events": [
+    {
+     "type": "marker",
+     "who": "POSTS DAILY",
+     "at": 0.8,
+     "text": "+2K LIKES",
+     "dur": 1.6,
+     "color": "#ffc53d"
+    },
+    {
+     "type": "shake",
+     "who": "COPIES REELS",
+     "at": 1.6
+    }
+   ]
+  },
+  {
+   "dur": 3.2,
+   "caption": "QUIET REPS. NO CAMERA.",
+   "counter": 22,
+   "values": {
+    "QUIET REPS": 12,
+    "POSTS DAILY": 5,
+    "BEST ANGLE": 5,
+    "COPIES REELS": 6
+   },
+   "bubbles": [
+    {
+     "who": "POSTS DAILY",
+     "text": "post now, reps later",
+     "at": 0.5
+    }
+   ]
+  },
+  {
+   "dur": 3.4,
+   "caption": "THE ALGORITHM MOVES ON.",
+   "counter": 36,
+   "values": {
+    "QUIET REPS": 17,
+    "BEST ANGLE": 6,
+    "COPIES REELS": 7
+   },
+   "states": {
+    "POSTS DAILY": "quit"
+   },
+   "stateAt": {
+    "POSTS DAILY": 1.6
+   },
+   "events": [
+    {
+     "type": "marker",
+     "who": "POSTS DAILY",
+     "at": 0.5,
+     "text": "-80% REACH",
+     "dur": 1.4
+    }
+   ],
+   "tags": {
+    "POSTS DAILY": "NO LIKES. NO REPS."
+   }
+  },
+  {
+   "dur": 3.6,
+   "caption": "WEEK 52: 20 QUIET REPS.",
+   "counter": 52,
+   "values": {
+    "QUIET REPS": 20,
+    "POSTS DAILY": 6,
+    "BEST ANGLE": 7,
+    "COPIES REELS": 8
+   },
+   "curve": "accel",
+   "states": {
+    "QUIET REPS": "win",
+    "POSTS DAILY": "active"
+   },
+   "stateAt": {
+    "QUIET REPS": 3.3,
+    "POSTS DAILY": 0.4
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "QUIET REPS",
+     "at": 3.35
+    }
+   ],
+   "tags": {
+    "POSTS DAILY": "STARTING OVER"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

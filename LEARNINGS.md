@@ -125,3 +125,6 @@ are enforced by `make.js` (see "Enforced" at the bottom); a spec that breaks one
 - 2026-11-25: owner asked to fix such mistakes in the code/prompt rather than per video. Added the on-screen logic checklist (README), CLAUDE.md for every session, and validator rules (no falling totals, no stale tags). The new rules flag the delivered climb, race and dig specs (stale tags; dig hole refilling); not re-rendered, per the owner.
 - 2026-11-25: owner asked to pick the best improvements from the reference channel. Built: bridge scene (stacked lanes), near-miss `gap`, `storm`, climax flash, live decimals. Videos: He Quit Two Planks Short (new), She Quit 6 Metres Short (climb upgraded).
 - 2026-11-25: independent review of the bridge and climb videos: lane hops, label flips, washed-out flash and a weak near-miss fixed in the engine (bigger 3 s near-miss label above the quitter, peak marker, numbers land with a falling character).
+- 2026-11-26: approved "He Quit Two Planks Short"
+- 2026-11-26: approved "She Quit 6 Metres Short"
+- 2026-11-26: Owner approved the bridge lanes, near-miss, storm, flash and decimals upgrades

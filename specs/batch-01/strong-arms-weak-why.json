@@ -1,0 +1,254 @@
+{
+ "id": "strong-arms-weak-why",
+ "brand": "mind-the-gap",
+ "batch": 1,
+ "batchIndex": 8,
+ "scene": "climb",
+ "twist": "The strongest climber quits when it gets boring; the weakest has a reason and reaches the top.",
+ "keywords": [
+  "motivation",
+  "vision",
+  "strengths"
+ ],
+ "characters": [
+  {
+   "name": "STRONGEST",
+   "color": "#ff5a6e",
+   "accessory": "headband"
+  },
+  {
+   "name": "FOR HIS KIDS",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  },
+  {
+   "name": "WANTS ABS",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "DOCTOR SAID",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  }
+ ],
+ "start": {
+  "STRONGEST": 0,
+  "FOR HIS KIDS": 0,
+  "WANTS ABS": 0,
+  "DOCTOR SAID": 0
+ },
+ "metric": {
+  "suffix": " M",
+  "scale": 1,
+  "max": 30
+ },
+ "counter": {
+  "label": "MONTH",
+  "start": 1
+ },
+ "footnote": "Illustrative",
+ "upload": {
+  "title": "Strong Arms, Weak Why",
+  "description": "The strongest arms on the wall. The weakest reason. Watch what happens when climbing stops being exciting. Which one are you? (Illustrative.)",
+  "hashtags": [
+   "discipline",
+   "motivation",
+   "findyourwhy",
+   "fitness",
+   "shorts"
+  ],
+  "tags": [
+   "find your why",
+   "purpose",
+   "motivation fades",
+   "discipline",
+   "self improvement",
+   "motivation",
+   "consistency",
+   "mindset",
+   "stickman animation",
+   "shorts"
+  ],
+  "pinned": "What's your why? Drop it below 👇"
+ },
+ "endcard": {
+  "tagline": "FIND YOUR WHY. THE ARMS FOLLOW."
+ },
+ "beats": [
+  {
+   "dur": 2.8,
+   "caption": "SAME ROPE. DIFFERENT WHY.",
+   "counter": 1,
+   "values": {
+    "STRONGEST": 5,
+    "FOR HIS KIDS": 1,
+    "WANTS ABS": 3,
+    "DOCTOR SAID": 2
+   },
+   "curves": {
+    "STRONGEST": "accel"
+   },
+   "bubbles": [
+    {
+     "who": "FOR HIS KIDS",
+     "text": "for my kids.",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THE STRONGEST STARTS FAST.",
+   "counter": 2,
+   "values": {
+    "STRONGEST": 12,
+    "FOR HIS KIDS": 3,
+    "WANTS ABS": 7,
+    "DOCTOR SAID": 4
+   },
+   "bubbles": [
+    {
+     "who": "STRONGEST",
+     "text": "too easy.",
+     "at": 1.4
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THEN IT GETS BORING.",
+   "counter": 4,
+   "values": {
+    "STRONGEST": 0,
+    "FOR HIS KIDS": 5,
+    "WANTS ABS": 9,
+    "DOCTOR SAID": 5
+   },
+   "curves": {
+    "STRONGEST": "late"
+   },
+   "states": {
+    "STRONGEST": "quit"
+   },
+   "stateAt": {
+    "STRONGEST": 2.8
+   },
+   "tags": {
+    "STRONGEST": "BORED"
+   },
+   "bubbles": [
+    {
+     "who": "STRONGEST",
+     "text": "this is boring.",
+     "at": 0.2
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "ABS DON'T SHOW UP FAST.",
+   "counter": 6,
+   "values": {
+    "WANTS ABS": 4,
+    "FOR HIS KIDS": 9,
+    "DOCTOR SAID": 6
+   },
+   "curves": {
+    "WANTS ABS": "late"
+   },
+   "states": {
+    "WANTS ABS": "quit"
+   },
+   "stateAt": {
+    "WANTS ABS": 2.7
+   },
+   "events": [
+    {
+     "type": "shake",
+     "who": "WANTS ABS",
+     "at": 1.0
+    }
+   ],
+   "tags": {
+    "WANTS ABS": "NO ABS YET"
+   },
+   "bubbles": [
+    {
+     "who": "WANTS ABS",
+     "text": "where are my abs?",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "dur": 3.2,
+   "caption": "FOR HIS KIDS: ONE MORE GRIP.",
+   "counter": 8,
+   "values": {
+    "FOR HIS KIDS": 15,
+    "DOCTOR SAID": 8
+   },
+   "bubbles": [
+    {
+     "who": "DOCTOR SAID",
+     "text": "doctor's orders.",
+     "at": 0.5
+    }
+   ]
+  },
+  {
+   "dur": 3.4,
+   "caption": "A STRONG WHY OUTLASTS STRONG ARMS.",
+   "counter": 10,
+   "values": {
+    "FOR HIS KIDS": 23,
+    "STRONGEST": 6,
+    "DOCTOR SAID": 10,
+    "WANTS ABS": 6
+   },
+   "states": {
+    "STRONGEST": "active",
+    "WANTS ABS": "active"
+   },
+   "stateAt": {
+    "STRONGEST": 0.4,
+    "WANTS ABS": 0.6
+   },
+   "tags": {
+    "STRONGEST": "TRYING AGAIN",
+    "WANTS ABS": "BACK AT IT"
+   }
+  },
+  {
+   "dur": 3.6,
+   "caption": "THE WEAKEST REACHED THE TOP.",
+   "counter": 12,
+   "values": {
+    "FOR HIS KIDS": 30,
+    "DOCTOR SAID": 12,
+    "STRONGEST": 8,
+    "WANTS ABS": 7
+   },
+   "curve": "accel",
+   "states": {
+    "FOR HIS KIDS": "win"
+   },
+   "stateAt": {
+    "FOR HIS KIDS": 3.3
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "FOR HIS KIDS",
+     "at": 3.35
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

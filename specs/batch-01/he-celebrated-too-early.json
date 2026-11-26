@@ -1,0 +1,229 @@
+{
+ "id": "he-celebrated-too-early",
+ "brand": "mind-the-gap",
+ "batch": 1,
+ "batchIndex": 13,
+ "scene": "dig",
+ "twist": "The one who throws a party at every milestone loses the gold to the one who keeps digging.",
+ "keywords": [
+  "success",
+  "discipline",
+  "goal"
+ ],
+ "characters": [
+  {
+   "name": "CELEBRATES",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  },
+  {
+   "name": "KEEPS GOING",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  },
+  {
+   "name": "TAKES BREAKS",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "HALF IS FINE",
+   "color": "#ff5a6e",
+   "accessory": "headband"
+  }
+ ],
+ "start": {
+  "CELEBRATES": 0,
+  "KEEPS GOING": 0,
+  "TAKES BREAKS": 0,
+  "HALF IS FINE": 0
+ },
+ "metric": {
+  "suffix": " M",
+  "scale": 1,
+  "max": 40
+ },
+ "counter": {
+  "label": "MONTH",
+  "start": 1
+ },
+ "footnote": "Illustrative",
+ "upload": {
+  "title": "He Celebrated Too Early",
+  "description": "One celebrates every milestone like it is the finish. One takes long breaks. One is happy at halfway. One keeps digging. Which one are you? (Illustrative.)",
+  "hashtags": [
+   "discipline",
+   "success",
+   "keepgoing",
+   "goals",
+   "shorts"
+  ],
+  "tags": [
+   "celebrating too early",
+   "complacency",
+   "keep going",
+   "discipline",
+   "self improvement",
+   "motivation",
+   "consistency",
+   "mindset",
+   "stickman animation",
+   "shorts"
+  ],
+  "pinned": "Have you ever celebrated before the finish line? 👇"
+ },
+ "endcard": {
+  "tagline": "CELEBRATE AT THE FINISH LINE."
+ },
+ "beats": [
+  {
+   "dur": 2.8,
+   "caption": "SAME SHOVEL. SAME GOLD.",
+   "counter": 1,
+   "values": {
+    "CELEBRATES": 4,
+    "KEEPS GOING": 3,
+    "TAKES BREAKS": 2,
+    "HALF IS FINE": 3
+   },
+   "curves": {
+    "CELEBRATES": "accel"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "10 METRES! TIME TO PARTY.",
+   "counter": 4,
+   "values": {
+    "CELEBRATES": 10,
+    "KEEPS GOING": 7,
+    "TAKES BREAKS": 5,
+    "HALF IS FINE": 8
+   },
+   "states": {
+    "CELEBRATES": "cheer"
+   },
+   "stateAt": {
+    "CELEBRATES": 1.6
+   },
+   "bubbles": [
+    {
+     "who": "CELEBRATES",
+     "text": "10 metres!!",
+     "at": 1.7
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THE PARTY LASTS A WEEK.",
+   "counter": 6,
+   "values": {
+    "KEEPS GOING": 12,
+    "TAKES BREAKS": 6,
+    "HALF IS FINE": 13
+   },
+   "bubbles": [
+    {
+     "who": "TAKES BREAKS",
+     "text": "just a quick break",
+     "at": 0.6
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "BACK TO WORK. BRIEFLY.",
+   "counter": 9,
+   "values": {
+    "CELEBRATES": 18,
+    "KEEPS GOING": 17,
+    "TAKES BREAKS": 8,
+    "HALF IS FINE": 19
+   },
+   "states": {
+    "CELEBRATES": "active"
+   },
+   "stateAt": {
+    "CELEBRATES": 0.3
+   }
+  },
+  {
+   "dur": 3.2,
+   "caption": "20 METRES! PARTY AGAIN.",
+   "counter": 13,
+   "values": {
+    "CELEBRATES": 20,
+    "KEEPS GOING": 24,
+    "TAKES BREAKS": 10,
+    "HALF IS FINE": 21
+   },
+   "states": {
+    "CELEBRATES": "cheer",
+    "HALF IS FINE": "sad"
+   },
+   "stateAt": {
+    "CELEBRATES": 1.2,
+    "HALF IS FINE": 1.8
+   },
+   "tags": {
+    "HALF IS FINE": "GOOD ENOUGH"
+   },
+   "bubbles": [
+    {
+     "who": "CELEBRATES",
+     "text": "20!! let's go!",
+     "at": 1.3
+    }
+   ]
+  },
+  {
+   "dur": 3.4,
+   "caption": "THE GOLD WAS STILL DOWN THERE.",
+   "counter": 20,
+   "values": {
+    "KEEPS GOING": 34,
+    "CELEBRATES": 22,
+    "TAKES BREAKS": 12
+   },
+   "states": {
+    "CELEBRATES": "active"
+   },
+   "stateAt": {
+    "CELEBRATES": 1.0
+   }
+  },
+  {
+   "dur": 3.6,
+   "caption": "NO PARTY. JUST GOLD.",
+   "counter": 24,
+   "values": {
+    "KEEPS GOING": 40,
+    "CELEBRATES": 24,
+    "TAKES BREAKS": 13
+   },
+   "curve": "accel",
+   "states": {
+    "KEEPS GOING": "win"
+   },
+   "stateAt": {
+    "KEEPS GOING": 3.3
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "KEEPS GOING",
+     "at": 3.35
+    }
+   ],
+   "tags": {
+    "CELEBRATES": "PARTIED AT 10 AND 20"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

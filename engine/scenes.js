@@ -13,7 +13,7 @@ const FLOOR_MAX = 1470;
 // ---------------------------------------------------------------- towers
 SCENES.towers = {
   debris: 'coins', facing: 'front', noBoard: true, K: 1.4, HMAX: 700,
-  setup(T) { this.xs = colsX(T.chars.length, 230); },
+  setup(T) { this.xs = colsX(T.chars.length, 310, 1240); },   /* owner: 4 characters must not stand close together */
   cam(t) { let m = 0; for (let k = 0; k < 10; k++) { const tk = Math.max(0, t - k * 0.1); m += Math.max(...T.chars.map((_, i) => this.HMAX * fracAt(i, tk))); } return { z: 1, fy: FLOOR_MAX }; },   // still camera: the towers scene no longer zooms as stacks grow
   floorY(t) { return this.cam(t).fy; },
   place(i, t) { const cam = this.cam(t), h = this.HMAX * fracAt(i, t), y = cam.fy - h * cam.z, s = cam.z * this.K; return { x: 540 + (this.xs[i] - 540) * cam.z, top: y - figH() * s, s, floor: cam.fy, footY: y }; },
@@ -126,7 +126,7 @@ const LIFT_RACK = { la: [-0.5, -2.7], ra: [0.5, 2.7], ll: [-0.2, -0.1], rl: [0.2
 SCENES.lift = {
   facing: 'front', upperBodyFree: false,   // hands stay on the bar: reactions and fidgets use the legs
   workAt(i, t) { return Math.max(moving(i, t), 0.8 * energyAt(t)); },
-  setup(T) { const n = T.chars.length; this.sp = Math.min(300, 920 / n); this.xs = colsX(n, 300); this.s = clamp(this.sp / 165, 0.9, 1.8); this.F = 1450; },
+  setup(T) { const n = T.chars.length; this.sp = Math.min(310, 1240 / n); this.xs = colsX(n, 310, 1240); this.s = clamp(this.sp / 190, 0.9, 1.6); this.F = 1450; },
   floorY() { return this.F; },
   extent() { const h = 90 * this.s; return { x0: this.xs[0] - h, x1: this.xs[this.xs.length - 1] + h, y0: this.F - 300 * this.s, y1: this.F + 12 }; },
   place(i, t) { return { x: this.xs[i], top: this.F - (figH() + 18) * this.s, s: this.s, floor: this.F }; },

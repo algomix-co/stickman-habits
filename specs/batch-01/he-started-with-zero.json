@@ -1,0 +1,245 @@
+{
+ "id": "he-started-with-zero",
+ "brand": "mind-the-gap",
+ "batch": 1,
+ "batchIndex": 15,
+ "scene": "pullup",
+ "twist": "The one who couldn't do a single pull-up ends with 20; the natural stays at 9.",
+ "keywords": [
+  "talent",
+  "practice",
+  "progress"
+ ],
+ "characters": [
+  {
+   "name": "NATURAL",
+   "color": "#ff5a6e",
+   "accessory": "headband"
+  },
+  {
+   "name": "STARTED AT 0",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  },
+  {
+   "name": "ALL OR NONE",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "SKIPS WEEKS",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  }
+ ],
+ "start": {
+  "NATURAL": 0,
+  "STARTED AT 0": 0,
+  "ALL OR NONE": 0,
+  "SKIPS WEEKS": 0
+ },
+ "metric": {
+  "suffix": " REPS",
+  "scale": 1,
+  "max": 20
+ },
+ "counter": {
+  "label": "WEEK",
+  "start": 1
+ },
+ "footnote": "Illustrative",
+ "upload": {
+  "title": "He Started With Zero",
+  "description": "One is a natural. One goes all or nothing. One skips weeks. One can't do a single pull-up on day one. Which one are you? (Illustrative.)",
+  "hashtags": [
+   "discipline",
+   "fitness",
+   "pullups",
+   "beginner",
+   "shorts"
+  ],
+  "tags": [
+   "beginner pull ups",
+   "zero to hero",
+   "calisthenics progress",
+   "discipline",
+   "self improvement",
+   "motivation",
+   "consistency",
+   "mindset",
+   "stickman animation",
+   "shorts"
+  ],
+  "pinned": "How many pull-ups could you do on day one? 👇"
+ },
+ "endcard": {
+  "tagline": "EVERYONE STARTS AT ZERO."
+ },
+ "beats": [
+  {
+   "dur": 2.8,
+   "caption": "WEEK 1. HE CAN'T DO ONE.",
+   "counter": 1,
+   "values": {
+    "NATURAL": 8,
+    "STARTED AT 0": 1,
+    "ALL OR NONE": 5,
+    "SKIPS WEEKS": 4
+   },
+   "curves": {
+    "STARTED AT 0": "late"
+   },
+   "bubbles": [
+    {
+     "who": "STARTED AT 0",
+     "text": "can't even do one.",
+     "at": 0.2
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THE NATURAL DOESN'T TRY HARD.",
+   "counter": 3,
+   "values": {
+    "NATURAL": 9,
+    "STARTED AT 0": 2,
+    "ALL OR NONE": 9,
+    "SKIPS WEEKS": 2
+   },
+   "bubbles": [
+    {
+     "who": "NATURAL",
+     "text": "I'm built for this.",
+     "at": 0.5
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "ALL OR NOTHING GOES ALL IN.",
+   "counter": 6,
+   "values": {
+    "ALL OR NONE": 0,
+    "STARTED AT 0": 3,
+    "NATURAL": 9,
+    "SKIPS WEEKS": 5
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "ALL OR NONE",
+     "at": 2.0
+    }
+   ],
+   "tags": {
+    "ALL OR NONE": "INJURED"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "ZERO ADDS ONE.",
+   "counter": 12,
+   "values": {
+    "STARTED AT 0": 6,
+    "SKIPS WEEKS": 3
+   },
+   "states": {
+    "NATURAL": "quit"
+   },
+   "stateAt": {
+    "NATURAL": 1.8
+   },
+   "tags": {
+    "NATURAL": "BORED"
+   },
+   "bubbles": [
+    {
+     "who": "NATURAL",
+     "text": "boring now.",
+     "at": 0.5
+    }
+   ]
+  },
+  {
+   "dur": 3.2,
+   "caption": "ONE MORE. EVERY WEEK.",
+   "counter": 25,
+   "values": {
+    "STARTED AT 0": 11,
+    "SKIPS WEEKS": 6,
+    "ALL OR NONE": 2
+   },
+   "states": {
+    "ALL OR NONE": "active"
+   },
+   "stateAt": {
+    "ALL OR NONE": 1.0
+   },
+   "tags": {
+    "ALL OR NONE": "REHAB"
+   }
+  },
+  {
+   "dur": 3.4,
+   "caption": "THE NATURAL COMES BACK.",
+   "counter": 40,
+   "values": {
+    "NATURAL": 9,
+    "STARTED AT 0": 16,
+    "SKIPS WEEKS": 5,
+    "ALL OR NONE": 5
+   },
+   "states": {
+    "NATURAL": "active"
+   },
+   "stateAt": {
+    "NATURAL": 0.4
+   },
+   "tags": {
+    "NATURAL": "BACK"
+   },
+   "bubbles": [
+    {
+     "who": "NATURAL",
+     "text": "still got it?",
+     "at": 0.6
+    }
+   ]
+  },
+  {
+   "dur": 3.6,
+   "caption": "STARTED WITH ZERO. NOW 20.",
+   "counter": 52,
+   "values": {
+    "STARTED AT 0": 20,
+    "NATURAL": 9,
+    "SKIPS WEEKS": 7,
+    "ALL OR NONE": 7
+   },
+   "curve": "accel",
+   "states": {
+    "STARTED AT 0": "win"
+   },
+   "stateAt": {
+    "STARTED AT 0": 3.3
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "STARTED AT 0",
+     "at": 3.35
+    }
+   ],
+   "tags": {
+    "NATURAL": "STILL 9",
+    "SKIPS WEEKS": "ON AND OFF"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

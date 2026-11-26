@@ -1,0 +1,228 @@
+{
+ "id": "skipped-warmups-lost-months",
+ "brand": "mind-the-gap",
+ "batch": 1,
+ "batchIndex": 18,
+ "scene": "lift",
+ "twist": "The heaviest lifter skips warm-ups and loses six months; five boring minutes win.",
+ "keywords": [
+  "discipline",
+  "ego",
+  "fitness"
+ ],
+ "characters": [
+  {
+   "name": "SKIPS WARMUP",
+   "color": "#ff5a6e",
+   "accessory": "headband"
+  },
+  {
+   "name": "WARMS UP",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  },
+  {
+   "name": "MAXES DAILY",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "COMFORT ZONE",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  }
+ ],
+ "start": {
+  "SKIPS WARMUP": 0,
+  "WARMS UP": 0,
+  "MAXES DAILY": 0,
+  "COMFORT ZONE": 0
+ },
+ "metric": {
+  "suffix": " KG",
+  "scale": 1,
+  "max": 160
+ },
+ "counter": {
+  "label": "MONTH",
+  "start": 1
+ },
+ "footnote": "Illustrative",
+ "upload": {
+  "title": "Skipped Warmups, Lost Months",
+  "description": "One skips warm-ups. One maxes out every day. One stays in his comfort zone. One spends five boring minutes warming up. Which one are you? (Illustrative.)",
+  "hashtags": [
+   "discipline",
+   "gym",
+   "deadlift",
+   "injuryprevention",
+   "shorts"
+  ],
+  "tags": [
+   "warm up",
+   "gym injury",
+   "deadlift",
+   "lifting progress",
+   "discipline",
+   "self improvement",
+   "motivation",
+   "consistency",
+   "mindset",
+   "stickman animation",
+   "shorts"
+  ],
+  "pinned": "Be honest: do you skip warm-ups? 👇"
+ },
+ "endcard": {
+  "tagline": "FIVE BORING MINUTES SAVE FIVE MONTHS."
+ },
+ "beats": [
+  {
+   "dur": 2.8,
+   "caption": "SAME BAR. SAME GOAL.",
+   "counter": 1,
+   "values": {
+    "SKIPS WARMUP": 80,
+    "WARMS UP": 60,
+    "MAXES DAILY": 70,
+    "COMFORT ZONE": 50
+   },
+   "curves": {
+    "SKIPS WARMUP": "accel"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHO NEEDS A WARM-UP?",
+   "counter": 2,
+   "values": {
+    "SKIPS WARMUP": 110,
+    "WARMS UP": 70,
+    "MAXES DAILY": 85,
+    "COMFORT ZONE": 52
+   },
+   "curves": {
+    "SKIPS WARMUP": "decel"
+   },
+   "bubbles": [
+    {
+     "who": "SKIPS WARMUP",
+     "text": "warm-ups are for kids",
+     "at": 0.4
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THEN THE BACK GOES.",
+   "counter": 3,
+   "values": {
+    "SKIPS WARMUP": 0,
+    "WARMS UP": 80,
+    "MAXES DAILY": 90,
+    "COMFORT ZONE": 54
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "SKIPS WARMUP",
+     "at": 0.4
+    }
+   ],
+   "tags": {
+    "SKIPS WARMUP": "INJURED"
+   },
+   "bubbles": [
+    {
+     "who": "MAXES DAILY",
+     "text": "new max? new max?",
+     "at": 1.4
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "SIX MONTHS ON THE BENCH.",
+   "counter": 9,
+   "values": {
+    "WARMS UP": 110,
+    "MAXES DAILY": 90,
+    "COMFORT ZONE": 55
+   },
+   "bubbles": [
+    {
+     "who": "COMFORT ZONE",
+     "text": "this feels safe.",
+     "at": 0.6
+    }
+   ]
+  },
+  {
+   "dur": 3.2,
+   "caption": "FIVE BORING MINUTES OF WARM-UP.",
+   "counter": 12,
+   "values": {
+    "WARMS UP": 125,
+    "SKIPS WARMUP": 40,
+    "MAXES DAILY": 92,
+    "COMFORT ZONE": 56
+   },
+   "states": {
+    "SKIPS WARMUP": "active"
+   },
+   "stateAt": {
+    "SKIPS WARMUP": 1.0
+   },
+   "tags": {
+    "SKIPS WARMUP": "REHAB"
+   }
+  },
+  {
+   "dur": 3.4,
+   "caption": "WARM-UPS: BORING. RESULTS: NOT.",
+   "counter": 18,
+   "values": {
+    "WARMS UP": 145,
+    "SKIPS WARMUP": 70,
+    "MAXES DAILY": 92,
+    "COMFORT ZONE": 58
+   },
+   "tags": {
+    "MAXES DAILY": "STUCK AT 92"
+   }
+  },
+  {
+   "dur": 3.6,
+   "caption": "TWO YEARS: 160 KG.",
+   "counter": 24,
+   "values": {
+    "WARMS UP": 160,
+    "SKIPS WARMUP": 85,
+    "MAXES DAILY": 92,
+    "COMFORT ZONE": 60
+   },
+   "curve": "accel",
+   "states": {
+    "WARMS UP": "win"
+   },
+   "stateAt": {
+    "WARMS UP": 3.3
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "WARMS UP",
+     "at": 3.35
+    }
+   ],
+   "tags": {
+    "COMFORT ZONE": "STILL COMFORTABLE"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

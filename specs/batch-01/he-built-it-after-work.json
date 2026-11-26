@@ -1,0 +1,242 @@
+{
+ "id": "he-built-it-after-work",
+ "brand": "mind-the-gap",
+ "batch": 1,
+ "batchIndex": 3,
+ "scene": "bridge",
+ "twist": "The busiest one, building one plank after work, crosses before the one who quit his job for it.",
+ "keywords": [
+  "discipline",
+  "consistency",
+  "goal"
+ ],
+ "characters": [
+  {
+   "name": "NO TIME",
+   "color": "#ff5a6e",
+   "accessory": "headband"
+  },
+  {
+   "name": "AFTER WORK",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  },
+  {
+   "name": "VACATIONS",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "QUIT HIS JOB",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  }
+ ],
+ "start": {
+  "NO TIME": 0,
+  "AFTER WORK": 0,
+  "VACATIONS": 0,
+  "QUIT HIS JOB": 0
+ },
+ "metric": {
+  "suffix": " PLANKS",
+  "scale": 1,
+  "max": 22
+ },
+ "counter": {
+  "label": "DAY",
+  "start": 1
+ },
+ "footnote": "Illustrative",
+ "upload": {
+  "title": "He Built It After Work",
+  "description": "Same 24 hours. One has no time, one waits for vacation, one quits his job to go all in, one lays a single plank every evening after work. Which one are you? (Illustrative.)",
+  "hashtags": [
+   "discipline",
+   "sidehustle",
+   "nineToFive",
+   "consistency",
+   "shorts"
+  ],
+  "tags": [
+   "side hustle",
+   "after work routine",
+   "no time excuse",
+   "9 to 5",
+   "discipline",
+   "self improvement",
+   "motivation",
+   "consistency",
+   "mindset",
+   "stickman animation",
+   "shorts"
+  ],
+  "pinned": "What's the one plank you could lay after work tonight? 👇"
+ },
+ "endcard": {
+  "tagline": "ONE PLANK AFTER WORK BEATS SOMEDAY."
+ },
+ "beats": [
+  {
+   "dur": 2.8,
+   "caption": "SAME GAP. SAME 24 HOURS.",
+   "counter": 3,
+   "values": {
+    "NO TIME": 1,
+    "AFTER WORK": 2,
+    "VACATIONS": 1,
+    "QUIT HIS JOB": 5
+   },
+   "curves": {
+    "QUIT HIS JOB": "accel"
+   },
+   "bubbles": [
+    {
+     "who": "NO TIME",
+     "text": "no time this week.",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "QUIT HIS JOB FOR IT.",
+   "counter": 10,
+   "values": {
+    "QUIT HIS JOB": 12,
+    "AFTER WORK": 4,
+    "NO TIME": 2,
+    "VACATIONS": 2
+   },
+   "curves": {
+    "QUIT HIS JOB": "decel"
+   },
+   "bubbles": [
+    {
+     "who": "QUIT HIS JOB",
+     "text": "full time on it!",
+     "at": 0.4
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "AFTER WORK: ONE PLANK.",
+   "counter": 20,
+   "values": {
+    "AFTER WORK": 7,
+    "QUIT HIS JOB": 15,
+    "NO TIME": 3,
+    "VACATIONS": 3
+   },
+   "bubbles": [
+    {
+     "who": "AFTER WORK",
+     "text": "tired. one plank.",
+     "at": 0.5
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THEN THE MONEY RUNS OUT.",
+   "counter": 35,
+   "values": {
+    "QUIT HIS JOB": 16,
+    "AFTER WORK": 10,
+    "NO TIME": 4,
+    "VACATIONS": 4
+   },
+   "states": {
+    "QUIT HIS JOB": "sad"
+   },
+   "stateAt": {
+    "QUIT HIS JOB": 1.0
+   },
+   "tags": {
+    "QUIT HIS JOB": "BROKE"
+   }
+  },
+  {
+   "dur": 3.2,
+   "caption": "VACATION WEEK!",
+   "counter": 42,
+   "values": {
+    "VACATIONS": 12,
+    "AFTER WORK": 12,
+    "NO TIME": 5
+   },
+   "curves": {
+    "VACATIONS": "decel"
+   },
+   "bubbles": [
+    {
+     "who": "VACATIONS",
+     "text": "vacation mode!",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "dur": 3.4,
+   "caption": "BACK TO WORK. BACK TO NOTHING.",
+   "counter": 75,
+   "values": {
+    "AFTER WORK": 18,
+    "NO TIME": 6,
+    "QUIT HIS JOB": 18
+   },
+   "states": {
+    "VACATIONS": "sad",
+    "QUIT HIS JOB": "active"
+   },
+   "stateAt": {
+    "VACATIONS": 1.0,
+    "QUIT HIS JOB": 0.8
+   },
+   "tags": {
+    "QUIT HIS JOB": "PART TIME NOW"
+   },
+   "bubbles": [
+    {
+     "who": "VACATIONS",
+     "text": "too tired after work",
+     "at": 1.2
+    }
+   ]
+  },
+  {
+   "dur": 3.6,
+   "caption": "DAY 100: BUILT AFTER WORK.",
+   "counter": 100,
+   "values": {
+    "AFTER WORK": 22,
+    "QUIT HIS JOB": 19,
+    "NO TIME": 7
+   },
+   "curve": "accel",
+   "states": {
+    "AFTER WORK": "win"
+   },
+   "stateAt": {
+    "AFTER WORK": 3.3
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "AFTER WORK",
+     "at": 3.35
+    }
+   ],
+   "tags": {
+    "NO TIME": "STILL NO TIME",
+    "VACATIONS": "NEXT VACATION"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

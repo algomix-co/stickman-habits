@@ -1,0 +1,249 @@
+{
+ "id": "fell-twice-still-won",
+ "brand": "mind-the-gap",
+ "batch": 1,
+ "batchIndex": 9,
+ "scene": "climb",
+ "twist": "The one who fell most reached the top; the one who never fell never left the middle.",
+ "keywords": [
+  "failure",
+  "mistakes",
+  "progress"
+ ],
+ "characters": [
+  {
+   "name": "RECKLESS",
+   "color": "#ff5a6e",
+   "accessory": "headband"
+  },
+  {
+   "name": "FALLS A LOT",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  },
+  {
+   "name": "NEVER FALLS",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "AFRAID",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  }
+ ],
+ "start": {
+  "RECKLESS": 0,
+  "FALLS A LOT": 0,
+  "NEVER FALLS": 0,
+  "AFRAID": 0
+ },
+ "metric": {
+  "suffix": " M",
+  "scale": 1,
+  "max": 30
+ },
+ "counter": {
+  "label": "MONTH",
+  "start": 1
+ },
+ "footnote": "Illustrative",
+ "upload": {
+  "title": "Fell Twice, Still Won",
+  "description": "One climbs recklessly. One never falls. One is too afraid to try. One falls twice and gets back up every time. Which one are you? (Illustrative.)",
+  "hashtags": [
+   "discipline",
+   "failure",
+   "nevergiveup",
+   "growth",
+   "shorts"
+  ],
+  "tags": [
+   "fear of failure",
+   "fail forward",
+   "getting back up",
+   "discipline",
+   "self improvement",
+   "motivation",
+   "consistency",
+   "mindset",
+   "stickman animation",
+   "shorts"
+  ],
+  "pinned": "How many times did you fall before you got where you are? 👇"
+ },
+ "endcard": {
+  "tagline": "FALLING IS PART OF CLIMBING."
+ },
+ "beats": [
+  {
+   "dur": 2.8,
+   "caption": "SAME ROPE. SAME FEAR.",
+   "counter": 1,
+   "values": {
+    "RECKLESS": 5,
+    "FALLS A LOT": 6,
+    "NEVER FALLS": 3,
+    "AFRAID": 1
+   },
+   "curves": {
+    "RECKLESS": "accel"
+   },
+   "bubbles": [
+    {
+     "who": "AFRAID",
+     "text": "what if I fall?",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "HE FALLS.",
+   "counter": 2,
+   "values": {
+    "FALLS A LOT": 0,
+    "RECKLESS": 10,
+    "NEVER FALLS": 6,
+    "AFRAID": 2
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "FALLS A LOT",
+     "at": 1.0
+    }
+   ],
+   "tags": {
+    "FALLS A LOT": "FALL #1"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "AND CLIMBS AGAIN.",
+   "counter": 3,
+   "values": {
+    "FALLS A LOT": 9,
+    "RECKLESS": 15,
+    "NEVER FALLS": 9,
+    "AFRAID": 3
+   },
+   "states": {
+    "FALLS A LOT": "active"
+   },
+   "stateAt": {
+    "FALLS A LOT": 0.2
+   },
+   "tags": {
+    "FALLS A LOT": "BACK UP"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "RECKLESS FALLS ONCE. FOR GOOD.",
+   "counter": 5,
+   "values": {
+    "RECKLESS": 0,
+    "FALLS A LOT": 0,
+    "NEVER FALLS": 11,
+    "AFRAID": 3
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "RECKLESS",
+     "at": 0.5
+    },
+    {
+     "type": "crash",
+     "who": "FALLS A LOT",
+     "at": 2.0
+    }
+   ],
+   "tags": {
+    "RECKLESS": "NEVER AGAIN",
+    "FALLS A LOT": "FALL #2"
+   }
+  },
+  {
+   "dur": 3.2,
+   "caption": "FALL NUMBER TWO. STILL CLIMBING.",
+   "counter": 7,
+   "values": {
+    "FALLS A LOT": 16,
+    "NEVER FALLS": 12,
+    "AFRAID": 4
+   },
+   "states": {
+    "FALLS A LOT": "active"
+   },
+   "stateAt": {
+    "FALLS A LOT": 0.2
+   },
+   "tags": {
+    "FALLS A LOT": "BACK UP"
+   },
+   "bubbles": [
+    {
+     "who": "NEVER FALLS",
+     "text": "good enough for me.",
+     "at": 1.2
+    }
+   ]
+  },
+  {
+   "dur": 3.4,
+   "caption": "NEVER FALLS NEVER RISES.",
+   "counter": 10,
+   "values": {
+    "FALLS A LOT": 24,
+    "NEVER FALLS": 13,
+    "AFRAID": 4,
+    "RECKLESS": 5
+   },
+   "states": {
+    "RECKLESS": "active"
+   },
+   "stateAt": {
+    "RECKLESS": 0.6
+   },
+   "tags": {
+    "RECKLESS": "CAREFUL NOW"
+   }
+  },
+  {
+   "dur": 3.6,
+   "caption": "FELL TWICE. REACHED THE TOP.",
+   "counter": 12,
+   "values": {
+    "FALLS A LOT": 30,
+    "NEVER FALLS": 14,
+    "AFRAID": 5,
+    "RECKLESS": 8
+   },
+   "curve": "accel",
+   "states": {
+    "FALLS A LOT": "win"
+   },
+   "stateAt": {
+    "FALLS A LOT": 3.3
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "FALLS A LOT",
+     "at": 3.35
+    }
+   ],
+   "tags": {
+    "NEVER FALLS": "NEVER FELL. NEVER ROSE.",
+    "AFRAID": "STILL AFRAID"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

@@ -1,0 +1,258 @@
+{
+ "id": "comparison-slowed-him-down",
+ "brand": "mind-the-gap",
+ "batch": 1,
+ "batchIndex": 4,
+ "scene": "race",
+ "twist": "The fastest runner finishes third because he keeps checking the others.",
+ "keywords": [
+  "focus",
+  "mindset",
+  "progress"
+ ],
+ "characters": [
+  {
+   "name": "LOOKS AROUND",
+   "color": "#ff5a6e",
+   "accessory": "headband"
+  },
+  {
+   "name": "OWN LANE",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  },
+  {
+   "name": "COPYCAT",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "WORRIER",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  }
+ ],
+ "start": {
+  "LOOKS AROUND": 0,
+  "OWN LANE": 0,
+  "COPYCAT": 0,
+  "WORRIER": 0
+ },
+ "metric": {
+  "suffix": " KM",
+  "scale": 1,
+  "max": 200
+ },
+ "counter": {
+  "label": "DAY",
+  "start": 1
+ },
+ "footnote": "Illustrative",
+ "upload": {
+  "title": "Comparison Slowed Him Down",
+  "description": "The fastest legs on the road belong to the runner who keeps checking everyone else. Every look costs him. Which one are you? (Illustrative.)",
+  "hashtags": [
+   "discipline",
+   "comparison",
+   "focus",
+   "mindset",
+   "shorts"
+  ],
+  "tags": [
+   "stop comparing yourself",
+   "comparison is the thief of joy",
+   "run your own race",
+   "discipline",
+   "self improvement",
+   "motivation",
+   "consistency",
+   "mindset",
+   "stickman animation",
+   "shorts"
+  ],
+  "pinned": "Who do you keep checking on instead of running your race? 👇"
+ },
+ "endcard": {
+  "tagline": "EYES ON YOUR OWN LANE."
+ },
+ "beats": [
+  {
+   "dur": 2.6,
+   "caption": "SAME ROAD. SAME LEGS.",
+   "counter": 2,
+   "values": {
+    "LOOKS AROUND": 6,
+    "OWN LANE": 4,
+    "COPYCAT": 5,
+    "WORRIER": 3
+   },
+   "curves": {
+    "LOOKS AROUND": "accel"
+   },
+   "bubbles": [
+    {
+     "who": "LOOKS AROUND",
+     "text": "too easy.",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "HE CHECKS THE OTHERS.",
+   "counter": 15,
+   "values": {
+    "LOOKS AROUND": 30,
+    "OWN LANE": 25,
+    "COPYCAT": 28,
+    "WORRIER": 20
+   },
+   "events": [
+    {
+     "type": "shake",
+     "who": "LOOKS AROUND",
+     "at": 1.4
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "LOOKS AROUND",
+     "text": "who's catching up?",
+     "at": 1.6
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "EVERY LOOK COSTS HIM.",
+   "counter": 30,
+   "values": {
+    "LOOKS AROUND": 46,
+    "OWN LANE": 50,
+    "COPYCAT": 48,
+    "WORRIER": 40
+   },
+   "curves": {
+    "LOOKS AROUND": "decel"
+   },
+   "events": [
+    {
+     "type": "shake",
+     "who": "LOOKS AROUND",
+     "at": 0.8
+    },
+    {
+     "type": "shake",
+     "who": "LOOKS AROUND",
+     "at": 2.1
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "OWN LANE",
+     "text": "eyes forward.",
+     "at": 0.4
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "COPYCAT CAN'T KEEP UP.",
+   "counter": 45,
+   "values": {
+    "COPYCAT": 62,
+    "OWN LANE": 75,
+    "LOOKS AROUND": 64,
+    "WORRIER": 60
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "COPYCAT",
+     "at": 1.6
+    }
+   ],
+   "tags": {
+    "COPYCAT": "BURNT OUT"
+   }
+  },
+  {
+   "dur": 3.2,
+   "caption": "HE LOOKS AGAIN.",
+   "counter": 60,
+   "values": {
+    "LOOKS AROUND": 80,
+    "OWN LANE": 105,
+    "WORRIER": 85
+   },
+   "events": [
+    {
+     "type": "shake",
+     "who": "LOOKS AROUND",
+     "at": 0.6
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "LOOKS AROUND",
+     "text": "is she faster?",
+     "at": 0.8
+    }
+   ]
+  },
+  {
+   "dur": 3.4,
+   "caption": "RUN YOUR OWN RACE.",
+   "counter": 80,
+   "values": {
+    "OWN LANE": 160,
+    "WORRIER": 130,
+    "LOOKS AROUND": 110,
+    "COPYCAT": 70
+   },
+   "curve": "linear",
+   "states": {
+    "COPYCAT": "active"
+   },
+   "stateAt": {
+    "COPYCAT": 0.5
+   },
+   "tags": {
+    "COPYCAT": "WALKING NOW"
+   }
+  },
+  {
+   "dur": 3.6,
+   "caption": "DAY 90: SHE FINISHES.",
+   "counter": 90,
+   "values": {
+    "OWN LANE": 200,
+    "WORRIER": 168,
+    "LOOKS AROUND": 140,
+    "COPYCAT": 80
+   },
+   "curve": "accel",
+   "states": {
+    "OWN LANE": "win"
+   },
+   "stateAt": {
+    "OWN LANE": 3.3
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "OWN LANE",
+     "at": 3.35
+    }
+   ],
+   "tags": {
+    "LOOKS AROUND": "FASTEST LEGS. 3RD."
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

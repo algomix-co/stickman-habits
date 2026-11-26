@@ -1,0 +1,268 @@
+{
+ "id": "night-owl-dug-less",
+ "brand": "mind-the-gap",
+ "batch": 1,
+ "batchIndex": 11,
+ "scene": "dig",
+ "twist": "The one who works the most hours digs the least; the one who sleeps 8 hours goes deepest.",
+ "keywords": [
+  "discipline",
+  "focus",
+  "results"
+ ],
+ "characters": [
+  {
+   "name": "NIGHT OWL",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "EARLY BED",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  },
+  {
+   "name": "ALL NIGHTER",
+   "color": "#ff5a6e",
+   "accessory": "headband"
+  },
+  {
+   "name": "FIVE COFFEES",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  }
+ ],
+ "start": {
+  "NIGHT OWL": 0,
+  "EARLY BED": 0,
+  "ALL NIGHTER": 0,
+  "FIVE COFFEES": 0
+ },
+ "metric": {
+  "suffix": " M",
+  "scale": 1,
+  "max": 40
+ },
+ "counter": {
+  "label": "DAY",
+  "start": 1
+ },
+ "footnote": "Illustrative",
+ "upload": {
+  "title": "Night Owl Dug Less",
+  "description": "One works best at 2am. One pulls all-nighters. One lives on coffee. One goes to bed early. Who digs deepest? Which one are you? (Illustrative.)",
+  "hashtags": [
+   "discipline",
+   "sleep",
+   "productivity",
+   "nightowl",
+   "shorts"
+  ],
+  "tags": [
+   "sleep and productivity",
+   "all nighter",
+   "night owl",
+   "sleep schedule",
+   "discipline",
+   "self improvement",
+   "motivation",
+   "consistency",
+   "mindset",
+   "stickman animation",
+   "shorts"
+  ],
+  "pinned": "What time did you go to bed last night? 👇"
+ },
+ "endcard": {
+  "tagline": "GO TO BED. DIG DEEPER."
+ },
+ "beats": [
+  {
+   "dur": 2.8,
+   "caption": "SAME SHOVEL. DIFFERENT BEDTIMES.",
+   "counter": 1,
+   "values": {
+    "NIGHT OWL": 3,
+    "EARLY BED": 2,
+    "ALL NIGHTER": 4,
+    "FIVE COFFEES": 3
+   },
+   "curves": {
+    "NIGHT OWL": "accel",
+    "ALL NIGHTER": "accel"
+   },
+   "bubbles": [
+    {
+     "who": "NIGHT OWL",
+     "text": "I work best at 2am",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THE NIGHT OWL DIGS AT 2AM.",
+   "counter": 7,
+   "values": {
+    "NIGHT OWL": 9,
+    "EARLY BED": 6,
+    "ALL NIGHTER": 12,
+    "FIVE COFFEES": 8
+   },
+   "curves": {
+    "NIGHT OWL": "decel",
+    "ALL NIGHTER": "decel"
+   },
+   "bubbles": [
+    {
+     "who": "ALL NIGHTER",
+     "text": "all night!",
+     "at": 1.2
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THE NEXT DAY, HE'S WRECKED.",
+   "counter": 14,
+   "values": {
+    "NIGHT OWL": 10,
+    "EARLY BED": 11,
+    "FIVE COFFEES": 13
+   },
+   "states": {
+    "ALL NIGHTER": "sit"
+   },
+   "stateAt": {
+    "ALL NIGHTER": 0.4
+   },
+   "events": [
+    {
+     "type": "shake",
+     "who": "NIGHT OWL",
+     "at": 0.6
+    },
+    {
+     "type": "shake",
+     "who": "FIVE COFFEES",
+     "at": 1.6
+    }
+   ],
+   "tags": {
+    "ALL NIGHTER": "ASLEEP"
+   },
+   "bubbles": [
+    {
+     "who": "NIGHT OWL",
+     "text": "so tired...",
+     "at": 1.0
+    },
+    {
+     "who": "FIVE COFFEES",
+     "text": "third coffee!",
+     "at": 1.9
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "EARLY BED. EARLY SHOVEL.",
+   "counter": 21,
+   "values": {
+    "EARLY BED": 16,
+    "NIGHT OWL": 12,
+    "ALL NIGHTER": 14,
+    "FIVE COFFEES": 14
+   },
+   "states": {
+    "ALL NIGHTER": "active"
+   },
+   "stateAt": {
+    "ALL NIGHTER": 0.8
+   },
+   "tags": {
+    "ALL NIGHTER": "WOKE UP"
+   },
+   "bubbles": [
+    {
+     "who": "FIVE COFFEES",
+     "text": "crashing...",
+     "at": 1.4
+    }
+   ]
+  },
+  {
+   "dur": 3.2,
+   "caption": "AWAKE HOURS ARE NOT WORK HOURS.",
+   "counter": 40,
+   "values": {
+    "EARLY BED": 24,
+    "NIGHT OWL": 15,
+    "ALL NIGHTER": 16,
+    "FIVE COFFEES": 17
+   },
+   "states": {
+    "ALL NIGHTER": "sit"
+   },
+   "stateAt": {
+    "ALL NIGHTER": 2.0
+   },
+   "tags": {
+    "ALL NIGHTER": "ASLEEP AGAIN"
+   }
+  },
+  {
+   "dur": 3.4,
+   "caption": "SLEEP IS A SHOVEL.",
+   "counter": 70,
+   "values": {
+    "EARLY BED": 34,
+    "NIGHT OWL": 18,
+    "ALL NIGHTER": 18,
+    "FIVE COFFEES": 19
+   },
+   "states": {
+    "ALL NIGHTER": "active"
+   },
+   "stateAt": {
+    "ALL NIGHTER": 0.6
+   },
+   "tags": {
+    "ALL NIGHTER": "WOKE UP"
+   }
+  },
+  {
+   "dur": 3.6,
+   "caption": "8 HOURS OF SLEEP. 40 M DEEP.",
+   "counter": 100,
+   "values": {
+    "EARLY BED": 40,
+    "NIGHT OWL": 20,
+    "ALL NIGHTER": 20,
+    "FIVE COFFEES": 21
+   },
+   "curve": "accel",
+   "states": {
+    "EARLY BED": "win"
+   },
+   "stateAt": {
+    "EARLY BED": 3.3
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "EARLY BED",
+     "at": 3.35
+    }
+   ],
+   "tags": {
+    "NIGHT OWL": "MOST HOURS. LEAST DEPTH."
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

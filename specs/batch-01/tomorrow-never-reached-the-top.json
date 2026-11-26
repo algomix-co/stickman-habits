@@ -1,0 +1,250 @@
+{
+ "id": "tomorrow-never-reached-the-top",
+ "brand": "mind-the-gap",
+ "batch": 1,
+ "batchIndex": 10,
+ "scene": "climb",
+ "twist": "TOMORROW never climbs today; TODAY climbs every day and reaches the top.",
+ "keywords": [
+  "procrastination",
+  "discipline",
+  "decision"
+ ],
+ "characters": [
+  {
+   "name": "TOMORROW",
+   "color": "#ff5a6e",
+   "accessory": "headband"
+  },
+  {
+   "name": "TODAY",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  },
+  {
+   "name": "WHEN READY",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "AFTER COFFEE",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  }
+ ],
+ "start": {
+  "TOMORROW": 0,
+  "TODAY": 0,
+  "WHEN READY": 0,
+  "AFTER COFFEE": 0
+ },
+ "metric": {
+  "suffix": " M",
+  "scale": 1,
+  "max": 30
+ },
+ "counter": {
+  "label": "DAY",
+  "start": 1
+ },
+ "footnote": "Illustrative",
+ "upload": {
+  "title": "Tomorrow Never Reached The Top",
+  "description": "Four climbers: TOMORROW, TODAY, WHEN READY and AFTER COFFEE. Only one of them actually climbs today. Which one are you? (Illustrative.)",
+  "hashtags": [
+   "discipline",
+   "procrastination",
+   "startnow",
+   "productivity",
+   "shorts"
+  ],
+  "tags": [
+   "stop procrastinating",
+   "procrastination",
+   "start today",
+   "discipline",
+   "self improvement",
+   "motivation",
+   "consistency",
+   "mindset",
+   "stickman animation",
+   "shorts"
+  ],
+  "pinned": "What are you putting off until tomorrow? 👇"
+ },
+ "endcard": {
+  "tagline": "TODAY IS THE ONLY DAY YOU CLIMB."
+ },
+ "beats": [
+  {
+   "dur": 2.8,
+   "caption": "SAME ROPE. SAME MORNING.",
+   "counter": 1,
+   "values": {
+    "TOMORROW": 1,
+    "TODAY": 3,
+    "WHEN READY": 1,
+    "AFTER COFFEE": 2
+   },
+   "curves": {
+    "TOMORROW": "late",
+    "AFTER COFFEE": "late"
+   },
+   "bubbles": [
+    {
+     "who": "TOMORROW",
+     "text": "I'll start tomorrow.",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "TODAY CLIMBS. TOMORROW PLANS.",
+   "counter": 10,
+   "values": {
+    "TOMORROW": 2,
+    "TODAY": 8,
+    "WHEN READY": 2,
+    "AFTER COFFEE": 5
+   },
+   "curves": {
+    "TOMORROW": "late",
+    "AFTER COFFEE": "late"
+   },
+   "bubbles": [
+    {
+     "who": "AFTER COFFEE",
+     "text": "after coffee.",
+     "at": 0.4
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "TOMORROW BECOMES NEXT WEEK.",
+   "counter": 25,
+   "values": {
+    "TOMORROW": 3,
+    "TODAY": 13,
+    "WHEN READY": 3,
+    "AFTER COFFEE": 7
+   },
+   "curves": {
+    "TOMORROW": "late"
+   },
+   "bubbles": [
+    {
+     "who": "TOMORROW",
+     "text": "next week, for sure.",
+     "at": 0.4
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THEN THE STORM HITS.",
+   "counter": 40,
+   "values": {
+    "TODAY": 16,
+    "AFTER COFFEE": 8,
+    "WHEN READY": 3
+   },
+   "states": {
+    "TOMORROW": "sad"
+   },
+   "stateAt": {
+    "TOMORROW": 1.0
+   },
+   "events": [
+    {
+     "type": "storm",
+     "at": 0.2,
+     "dur": 2.4
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "TOMORROW",
+     "text": "see? bad timing.",
+     "at": 1.2
+    }
+   ]
+  },
+  {
+   "dur": 3.2,
+   "caption": "TODAY KEEPS GOING.",
+   "counter": 60,
+   "values": {
+    "TODAY": 21,
+    "TOMORROW": 5,
+    "AFTER COFFEE": 10,
+    "WHEN READY": 4
+   },
+   "curves": {
+    "TOMORROW": "late"
+   },
+   "states": {
+    "TOMORROW": "active"
+   },
+   "stateAt": {
+    "TOMORROW": 0.6
+   }
+  },
+  {
+   "dur": 3.4,
+   "caption": "TOMORROW NEVER COMES.",
+   "counter": 80,
+   "values": {
+    "TODAY": 26,
+    "TOMORROW": 6,
+    "AFTER COFFEE": 11,
+    "WHEN READY": 5
+   },
+   "curves": {
+    "TOMORROW": "late"
+   },
+   "bubbles": [
+    {
+     "who": "TOMORROW",
+     "text": "tomorrow, I promise.",
+     "at": 0.4
+    }
+   ]
+  },
+  {
+   "dur": 3.6,
+   "caption": "TODAY REACHED THE TOP.",
+   "counter": 100,
+   "values": {
+    "TODAY": 30,
+    "TOMORROW": 6,
+    "AFTER COFFEE": 12,
+    "WHEN READY": 5
+   },
+   "curve": "accel",
+   "states": {
+    "TODAY": "win"
+   },
+   "stateAt": {
+    "TODAY": 3.3
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "TODAY",
+     "at": 3.35
+    }
+   ],
+   "tags": {
+    "TOMORROW": "STARTS TOMORROW",
+    "WHEN READY": "STILL NOT READY"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

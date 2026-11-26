@@ -1,0 +1,244 @@
+{
+ "id": "small-spoon-deep-hole",
+ "brand": "mind-the-gap",
+ "batch": 1,
+ "batchIndex": 12,
+ "scene": "dig",
+ "twist": "The smallest tool digs deepest; the rented digger breaks down and the gear collector never digs.",
+ "keywords": [
+  "discipline",
+  "consistency",
+  "results"
+ ],
+ "characters": [
+  {
+   "name": "BIG MACHINE",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  },
+  {
+   "name": "TINY SPOON",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  },
+  {
+   "name": "GEAR FIRST",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "LEARNS FIRST",
+   "color": "#ff5a6e",
+   "accessory": "headband"
+  }
+ ],
+ "start": {
+  "BIG MACHINE": 0,
+  "TINY SPOON": 0,
+  "GEAR FIRST": 0,
+  "LEARNS FIRST": 0
+ },
+ "metric": {
+  "suffix": " M",
+  "scale": 1,
+  "max": 40
+ },
+ "counter": {
+  "label": "MONTH",
+  "start": 1
+ },
+ "footnote": "Illustrative",
+ "upload": {
+  "title": "Small Spoon, Deep Hole",
+  "description": "One rents a digger. One keeps buying better shovels. One watches tutorials first. One digs with a tiny spoon, every day. Which one are you? (Illustrative.)",
+  "hashtags": [
+   "discipline",
+   "startnow",
+   "consistency",
+   "mindset",
+   "shorts"
+  ],
+  "tags": [
+   "start with what you have",
+   "no excuses",
+   "gear excuse",
+   "discipline",
+   "self improvement",
+   "motivation",
+   "consistency",
+   "mindset",
+   "stickman animation",
+   "shorts"
+  ],
+  "pinned": "What 'better tool' are you waiting for before you start? 👇"
+ },
+ "endcard": {
+  "tagline": "START WITH WHAT YOU HAVE."
+ },
+ "beats": [
+  {
+   "dur": 2.8,
+   "caption": "SAME DIRT. DIFFERENT TOOLS.",
+   "counter": 1,
+   "values": {
+    "BIG MACHINE": 6,
+    "TINY SPOON": 1,
+    "GEAR FIRST": 2,
+    "LEARNS FIRST": 1
+   },
+   "curves": {
+    "BIG MACHINE": "accel"
+   },
+   "bubbles": [
+    {
+     "who": "TINY SPOON",
+     "text": "it's just a spoon.",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THE DIGGER MOVES FAST.",
+   "counter": 3,
+   "values": {
+    "BIG MACHINE": 16,
+    "TINY SPOON": 3,
+    "GEAR FIRST": 3,
+    "LEARNS FIRST": 2
+   },
+   "curves": {
+    "BIG MACHINE": "decel"
+   },
+   "events": [
+    {
+     "type": "marker",
+     "who": "GEAR FIRST",
+     "at": 1.0,
+     "text": "NEW SHOVEL",
+     "dur": 1.6,
+     "color": "#ffc53d"
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "LEARNS FIRST",
+     "text": "one more tutorial",
+     "at": 0.4
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THE SPOON NEVER STOPS.",
+   "counter": 6,
+   "values": {
+    "TINY SPOON": 7,
+    "BIG MACHINE": 22,
+    "GEAR FIRST": 5,
+    "LEARNS FIRST": 3
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "THEN THE DIGGER BREAKS.",
+   "counter": 9,
+   "values": {
+    "BIG MACHINE": 4,
+    "TINY SPOON": 11,
+    "GEAR FIRST": 6,
+    "LEARNS FIRST": 5
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "BIG MACHINE",
+     "at": 0.4
+    },
+    {
+     "type": "marker",
+     "who": "GEAR FIRST",
+     "at": 1.6,
+     "text": "BETTER SHOVEL",
+     "dur": 1.2,
+     "color": "#ffc53d"
+    }
+   ],
+   "tags": {
+    "BIG MACHINE": "BROKE DOWN"
+   }
+  },
+  {
+   "dur": 3.2,
+   "caption": "WAITING FOR PARTS.",
+   "counter": 14,
+   "values": {
+    "TINY SPOON": 17,
+    "GEAR FIRST": 8,
+    "LEARNS FIRST": 7
+   },
+   "bubbles": [
+    {
+     "who": "BIG MACHINE",
+     "text": "parts come next month",
+     "at": 0.5
+    }
+   ]
+  },
+  {
+   "dur": 3.4,
+   "caption": "SMALL TOOL. EVERY DAY.",
+   "counter": 20,
+   "values": {
+    "TINY SPOON": 33,
+    "BIG MACHINE": 8,
+    "GEAR FIRST": 10,
+    "LEARNS FIRST": 9
+   },
+   "curve": "linear",
+   "states": {
+    "BIG MACHINE": "active"
+   },
+   "stateAt": {
+    "BIG MACHINE": 0.6
+   },
+   "tags": {
+    "BIG MACHINE": "BY HAND NOW"
+   }
+  },
+  {
+   "dur": 3.6,
+   "caption": "THE SPOON HIT GOLD.",
+   "counter": 24,
+   "values": {
+    "TINY SPOON": 40,
+    "BIG MACHINE": 10,
+    "GEAR FIRST": 11,
+    "LEARNS FIRST": 10
+   },
+   "curve": "accel",
+   "states": {
+    "TINY SPOON": "win"
+   },
+   "stateAt": {
+    "TINY SPOON": 3.3
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "TINY SPOON",
+     "at": 3.35
+    }
+   ],
+   "tags": {
+    "GEAR FIRST": "4 SHOVELS. 11 M.",
+    "LEARNS FIRST": "STILL LEARNING"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

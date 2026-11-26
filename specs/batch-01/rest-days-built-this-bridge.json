@@ -1,0 +1,256 @@
+{
+ "id": "rest-days-built-this-bridge",
+ "brand": "mind-the-gap",
+ "batch": 1,
+ "batchIndex": 2,
+ "scene": "bridge",
+ "twist": "The one who never rests burns out; the one who rests every Sunday crosses first.",
+ "keywords": [
+  "discipline",
+  "consistency",
+  "pain"
+ ],
+ "characters": [
+  {
+   "name": "NEVER RESTS",
+   "color": "#ff5a6e",
+   "accessory": "headband"
+  },
+  {
+   "name": "RESTS SUNDAY",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  },
+  {
+   "name": "ALWAYS TIRED",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "WEEKEND ONLY",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  }
+ ],
+ "start": {
+  "NEVER RESTS": 0,
+  "RESTS SUNDAY": 0,
+  "ALWAYS TIRED": 0,
+  "WEEKEND ONLY": 0
+ },
+ "metric": {
+  "suffix": " PLANKS",
+  "scale": 1,
+  "max": 22
+ },
+ "counter": {
+  "label": "DAY",
+  "start": 1
+ },
+ "footnote": "Illustrative",
+ "upload": {
+  "title": "Rest Days Built This Bridge",
+  "description": "One never rests. One rests every Sunday. One is always tired. One only builds on weekends. Guess who burns out. Which one are you? (Illustrative.)",
+  "hashtags": [
+   "discipline",
+   "burnout",
+   "restday",
+   "consistency",
+   "shorts"
+  ],
+  "tags": [
+   "burnout",
+   "rest day",
+   "avoid burnout",
+   "work life balance",
+   "discipline",
+   "self improvement",
+   "motivation",
+   "consistency",
+   "mindset",
+   "stickman animation",
+   "shorts"
+  ],
+  "pinned": "Do you take rest days, or do you wait until you break? 👇"
+ },
+ "endcard": {
+  "tagline": "REST IS NOT QUITTING."
+ },
+ "beats": [
+  {
+   "dur": 2.8,
+   "caption": "SAME GAP. SAME HANDS.",
+   "counter": 3,
+   "values": {
+    "NEVER RESTS": 4,
+    "RESTS SUNDAY": 2,
+    "ALWAYS TIRED": 2,
+    "WEEKEND ONLY": 1
+   },
+   "curves": {
+    "NEVER RESTS": "accel"
+   },
+   "bubbles": [
+    {
+     "who": "NEVER RESTS",
+     "text": "rest is for the weak",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "NEVER RESTS. NEVER STOPS.",
+   "counter": 8,
+   "values": {
+    "NEVER RESTS": 11,
+    "RESTS SUNDAY": 5,
+    "ALWAYS TIRED": 3,
+    "WEEKEND ONLY": 3
+   },
+   "curves": {
+    "NEVER RESTS": "decel"
+   },
+   "states": {
+    "RESTS SUNDAY": "sit"
+   },
+   "stateAt": {
+    "RESTS SUNDAY": 1.7
+   },
+   "bubbles": [
+    {
+     "who": "RESTS SUNDAY",
+     "text": "Sunday off.",
+     "at": 1.8
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "HIS HANDS START SHAKING.",
+   "counter": 14,
+   "values": {
+    "NEVER RESTS": 15,
+    "RESTS SUNDAY": 8,
+    "ALWAYS TIRED": 4,
+    "WEEKEND ONLY": 6
+   },
+   "states": {
+    "RESTS SUNDAY": "active"
+   },
+   "stateAt": {
+    "RESTS SUNDAY": 0.2
+   },
+   "events": [
+    {
+     "type": "shake",
+     "who": "NEVER RESTS",
+     "at": 1.2
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "NEVER RESTS",
+     "text": "just push through.",
+     "at": 1.5
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THEN HE BREAKS.",
+   "counter": 20,
+   "values": {
+    "NEVER RESTS": 6,
+    "RESTS SUNDAY": 11,
+    "ALWAYS TIRED": 5,
+    "WEEKEND ONLY": 7
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "NEVER RESTS",
+     "at": 0.4
+    }
+   ],
+   "tags": {
+    "NEVER RESTS": "BURNT OUT"
+   }
+  },
+  {
+   "dur": 3.2,
+   "caption": "RESTS SUNDAY. BUILDS MONDAY.",
+   "counter": 40,
+   "values": {
+    "RESTS SUNDAY": 15,
+    "ALWAYS TIRED": 7,
+    "WEEKEND ONLY": 10
+   },
+   "states": {
+    "RESTS SUNDAY": "sit"
+   },
+   "stateAt": {
+    "RESTS SUNDAY": 2.2
+   },
+   "bubbles": [
+    {
+     "who": "RESTS SUNDAY",
+     "text": "back tomorrow.",
+     "at": 2.3
+    }
+   ]
+  },
+  {
+   "dur": 3.4,
+   "caption": "REST IS PART OF THE WORK.",
+   "counter": 75,
+   "values": {
+    "RESTS SUNDAY": 20,
+    "NEVER RESTS": 8,
+    "ALWAYS TIRED": 9,
+    "WEEKEND ONLY": 12
+   },
+   "states": {
+    "RESTS SUNDAY": "active",
+    "NEVER RESTS": "active"
+   },
+   "stateAt": {
+    "RESTS SUNDAY": 0.2,
+    "NEVER RESTS": 1.0
+   },
+   "tags": {
+    "NEVER RESTS": "STARTING OVER"
+   }
+  },
+  {
+   "dur": 3.6,
+   "caption": "DAY 100: RESTED. ACROSS.",
+   "counter": 100,
+   "values": {
+    "RESTS SUNDAY": 22,
+    "NEVER RESTS": 10,
+    "ALWAYS TIRED": 10,
+    "WEEKEND ONLY": 14
+   },
+   "curve": "accel",
+   "states": {
+    "RESTS SUNDAY": "win"
+   },
+   "stateAt": {
+    "RESTS SUNDAY": 3.3
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "RESTS SUNDAY",
+     "at": 3.35
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

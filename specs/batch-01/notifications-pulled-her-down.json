@@ -1,0 +1,267 @@
+{
+ "id": "notifications-pulled-her-down",
+ "brand": "mind-the-gap",
+ "batch": 1,
+ "batchIndex": 7,
+ "scene": "climb",
+ "twist": "The most talented climber slips at every notification; the one with her phone off reaches the top.",
+ "keywords": [
+  "focus",
+  "talent",
+  "discipline"
+ ],
+ "characters": [
+  {
+   "name": "PHONE ON",
+   "color": "#ff5a6e",
+   "accessory": "headband"
+  },
+  {
+   "name": "PHONE OFF",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  },
+  {
+   "name": "PERFECT SONG",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "HALF ASLEEP",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  }
+ ],
+ "start": {
+  "PHONE ON": 0,
+  "PHONE OFF": 0,
+  "PERFECT SONG": 0,
+  "HALF ASLEEP": 0
+ },
+ "metric": {
+  "suffix": " M",
+  "scale": 1,
+  "max": 30
+ },
+ "counter": {
+  "label": "MONTH",
+  "start": 1
+ },
+ "footnote": "Illustrative",
+ "upload": {
+  "title": "Notifications Pulled Her Down",
+  "description": "She's the best climber on the wall. She also checks every notification. Ping by ping, the others catch up. Which one are you? (Illustrative.)",
+  "hashtags": [
+   "discipline",
+   "focus",
+   "phoneaddiction",
+   "productivity",
+   "shorts"
+  ],
+  "tags": [
+   "phone addiction",
+   "deep focus",
+   "distractions",
+   "dopamine detox",
+   "discipline",
+   "self improvement",
+   "motivation",
+   "consistency",
+   "mindset",
+   "stickman animation",
+   "shorts"
+  ],
+  "pinned": "How many times did you check your phone today? Be honest 👇"
+ },
+ "endcard": {
+  "tagline": "PHONE DOWN. CLIMB UP."
+ },
+ "beats": [
+  {
+   "dur": 2.8,
+   "caption": "SAME ROPE. ONE PHONE.",
+   "counter": 1,
+   "values": {
+    "PHONE ON": 4,
+    "PHONE OFF": 2,
+    "PERFECT SONG": 3,
+    "HALF ASLEEP": 1
+   },
+   "curves": {
+    "PHONE ON": "accel"
+   },
+   "bubbles": [
+    {
+     "who": "PHONE ON",
+     "text": "I'm a natural.",
+     "at": 0.3
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "SHE'S THE BEST CLIMBER HERE.",
+   "counter": 2,
+   "values": {
+    "PHONE ON": 10,
+    "PHONE OFF": 5,
+    "PERFECT SONG": 5,
+    "HALF ASLEEP": 3
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "THEN: PING.",
+   "counter": 3,
+   "values": {
+    "PHONE ON": 8,
+    "PHONE OFF": 8,
+    "PERFECT SONG": 6,
+    "HALF ASLEEP": 4
+   },
+   "curves": {
+    "PHONE ON": "early"
+   },
+   "events": [
+    {
+     "type": "marker",
+     "who": "PHONE ON",
+     "at": 0.3,
+     "text": "PING",
+     "dur": 1.2
+    },
+    {
+     "type": "shake",
+     "who": "PHONE ON",
+     "at": 0.35
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "PERFECT SONG",
+     "text": "wait, wrong song",
+     "at": 1.4
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "PING. PING. PING.",
+   "counter": 5,
+   "values": {
+    "PHONE ON": 9,
+    "PHONE OFF": 13,
+    "PERFECT SONG": 8,
+    "HALF ASLEEP": 6
+   },
+   "events": [
+    {
+     "type": "marker",
+     "who": "PHONE ON",
+     "at": 0.2,
+     "text": "PING",
+     "dur": 0.9
+    },
+    {
+     "type": "shake",
+     "who": "PHONE ON",
+     "at": 0.25
+    },
+    {
+     "type": "marker",
+     "who": "PHONE ON",
+     "at": 1.3,
+     "text": "PING",
+     "dur": 0.9
+    },
+    {
+     "type": "shake",
+     "who": "PHONE ON",
+     "at": 1.35
+    }
+   ],
+   "bubbles": [
+    {
+     "who": "HALF ASLEEP",
+     "text": "so tired today",
+     "at": 1.8
+    }
+   ]
+  },
+  {
+   "dur": 3.2,
+   "caption": "ONE MORE SCROLL.",
+   "counter": 7,
+   "values": {
+    "PHONE ON": 0,
+    "PHONE OFF": 18,
+    "PERFECT SONG": 10,
+    "HALF ASLEEP": 8
+   },
+   "events": [
+    {
+     "type": "crash",
+     "who": "PHONE ON",
+     "at": 0.9
+    }
+   ],
+   "tags": {
+    "PHONE ON": "SLIPPED"
+   }
+  },
+  {
+   "dur": 3.4,
+   "caption": "PHONE OFF. EYES UP.",
+   "counter": 10,
+   "values": {
+    "PHONE OFF": 26,
+    "PHONE ON": 6,
+    "PERFECT SONG": 13,
+    "HALF ASLEEP": 10
+   },
+   "states": {
+    "PHONE ON": "active"
+   },
+   "stateAt": {
+    "PHONE ON": 0.5
+   },
+   "tags": {
+    "PHONE ON": "STARTING OVER"
+   }
+  },
+  {
+   "dur": 3.6,
+   "caption": "THE TOP HAS NO SIGNAL.",
+   "counter": 12,
+   "values": {
+    "PHONE OFF": 30,
+    "PHONE ON": 9,
+    "PERFECT SONG": 15,
+    "HALF ASLEEP": 11
+   },
+   "curve": "accel",
+   "states": {
+    "PHONE OFF": "win"
+   },
+   "stateAt": {
+    "PHONE OFF": 3.3
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "PHONE OFF",
+     "at": 3.35
+    }
+   ],
+   "tags": {
+    "PERFECT SONG": "PICKING SONGS",
+    "HALF ASLEEP": "TIRED AGAIN"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

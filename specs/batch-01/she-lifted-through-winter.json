@@ -1,0 +1,250 @@
+{
+ "id": "she-lifted-through-winter",
+ "brand": "mind-the-gap",
+ "batch": 1,
+ "batchIndex": 17,
+ "scene": "lift",
+ "twist": "Every winter resets the seasonal lifters; the one who lifts all year doubles them.",
+ "keywords": [
+  "discipline",
+  "consistency",
+  "fitness"
+ ],
+ "characters": [
+  {
+   "name": "SUMMER BODY",
+   "color": "#ff5a6e",
+   "accessory": "headband"
+  },
+  {
+   "name": "ALL YEAR",
+   "color": "#36e0c8",
+   "accessory": "glasses"
+  },
+  {
+   "name": "TOO COLD",
+   "color": "#b98cff",
+   "accessory": "headphones"
+  },
+  {
+   "name": "NEEDS BUDDY",
+   "color": "#ffc53d",
+   "accessory": "cap"
+  }
+ ],
+ "start": {
+  "SUMMER BODY": 0,
+  "ALL YEAR": 0,
+  "TOO COLD": 0,
+  "NEEDS BUDDY": 0
+ },
+ "metric": {
+  "suffix": " KG",
+  "scale": 1,
+  "max": 120
+ },
+ "counter": {
+  "label": "MONTH",
+  "start": 1
+ },
+ "footnote": "Illustrative",
+ "upload": {
+  "title": "She Lifted Through Winter",
+  "description": "One trains for summer. One stops when it is cold. One needs a gym buddy. One lifts all year, through every winter. Which one are you? (Illustrative.)",
+  "hashtags": [
+   "discipline",
+   "fitness",
+   "gym",
+   "consistency",
+   "shorts"
+  ],
+  "tags": [
+   "winter motivation",
+   "summer body",
+   "gym all year",
+   "deadlift progress",
+   "discipline",
+   "self improvement",
+   "motivation",
+   "consistency",
+   "mindset",
+   "stickman animation",
+   "shorts"
+  ],
+  "pinned": "Do you train through winter, or wait for summer? 👇"
+ },
+ "endcard": {
+  "tagline": "SEASONS CHANGE. YOUR HABITS DON'T."
+ },
+ "beats": [
+  {
+   "dur": 2.8,
+   "caption": "SAME BAR. SAME SPRING.",
+   "counter": 3,
+   "values": {
+    "SUMMER BODY": 50,
+    "ALL YEAR": 40,
+    "TOO COLD": 42,
+    "NEEDS BUDDY": 45
+   },
+   "curves": {
+    "SUMMER BODY": "accel"
+   }
+  },
+  {
+   "dur": 3.0,
+   "caption": "SUMMER IS COMING.",
+   "counter": 5,
+   "values": {
+    "SUMMER BODY": 70,
+    "ALL YEAR": 48,
+    "TOO COLD": 50,
+    "NEEDS BUDDY": 55
+   },
+   "curves": {
+    "SUMMER BODY": "decel"
+   },
+   "bubbles": [
+    {
+     "who": "SUMMER BODY",
+     "text": "beach ready!",
+     "at": 0.5
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "THEN WINTER HITS.",
+   "counter": 11,
+   "values": {
+    "ALL YEAR": 60,
+    "NEEDS BUDDY": 56
+   },
+   "states": {
+    "SUMMER BODY": "quit",
+    "TOO COLD": "quit"
+   },
+   "stateAt": {
+    "SUMMER BODY": 0.8,
+    "TOO COLD": 1.2
+   },
+   "events": [
+    {
+     "type": "storm",
+     "at": 0.2,
+     "dur": 2.6
+    }
+   ],
+   "tags": {
+    "SUMMER BODY": "SEE YOU IN MAY",
+    "TOO COLD": "TOO COLD"
+   },
+   "bubbles": [
+    {
+     "who": "NEEDS BUDDY",
+     "text": "buddy cancelled.",
+     "at": 1.5
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "SHE LIFTS THROUGH THE COLD.",
+   "counter": 13,
+   "values": {
+    "ALL YEAR": 68
+   },
+   "states": {
+    "NEEDS BUDDY": "quit"
+   },
+   "stateAt": {
+    "NEEDS BUDDY": 1.0
+   },
+   "tags": {
+    "NEEDS BUDDY": "NO BUDDY"
+   }
+  },
+  {
+   "dur": 3.2,
+   "caption": "SPRING. THEY'RE BACK. WEAKER.",
+   "counter": 15,
+   "values": {
+    "SUMMER BODY": 55,
+    "TOO COLD": 45,
+    "ALL YEAR": 75,
+    "NEEDS BUDDY": 50
+   },
+   "states": {
+    "SUMMER BODY": "active",
+    "TOO COLD": "active",
+    "NEEDS BUDDY": "active"
+   },
+   "stateAt": {
+    "SUMMER BODY": 0.4,
+    "TOO COLD": 0.6,
+    "NEEDS BUDDY": 1.2
+   },
+   "tags": {
+    "SUMMER BODY": "SUMMER AGAIN",
+    "TOO COLD": "WARMER NOW",
+    "NEEDS BUDDY": "NEW BUDDY"
+   }
+  },
+  {
+   "dur": 3.4,
+   "caption": "EVERY WINTER, THE SAME RESET.",
+   "counter": 20,
+   "values": {
+    "ALL YEAR": 95,
+    "NEEDS BUDDY": 55
+   },
+   "states": {
+    "SUMMER BODY": "quit",
+    "TOO COLD": "quit"
+   },
+   "stateAt": {
+    "SUMMER BODY": 1.4,
+    "TOO COLD": 1.6
+   },
+   "events": [
+    {
+     "type": "storm",
+     "at": 1.2,
+     "dur": 1.8
+    }
+   ],
+   "tags": {
+    "SUMMER BODY": "SEE YOU IN MAY",
+    "TOO COLD": "TOO COLD"
+   }
+  },
+  {
+   "dur": 3.6,
+   "caption": "TWO YEARS: 120 KG.",
+   "counter": 24,
+   "values": {
+    "ALL YEAR": 120,
+    "NEEDS BUDDY": 58
+   },
+   "curve": "accel",
+   "states": {
+    "ALL YEAR": "win"
+   },
+   "stateAt": {
+    "ALL YEAR": 3.3
+   },
+   "events": [
+    {
+     "type": "burst",
+     "who": "ALL YEAR",
+     "at": 3.35
+    }
+   ]
+  },
+  {
+   "dur": 3.0,
+   "caption": "WHICH ONE ARE YOU?",
+   "style": "question"
+  }
+ ]
+}

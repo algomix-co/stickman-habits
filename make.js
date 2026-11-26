@@ -246,7 +246,12 @@ async function sheet(page, times, cols) {
     const mp4 = path.join(out, spec.id + '.mp4');
     execFileSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', '-framerate', String(FPS), '-i', path.join(frames, '%05d.png'), '-i', path.join(out, 'audio.wav'), '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-tune', 'animation', '-pix_fmt', 'yuv420p', '-af', 'loudnorm=I=-14:TP=-1.5:LRA=11', '-ar', '48000', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', mp4]);
     if (!KEEP) fs.rmSync(frames, { recursive: true, force: true });
-    const u = spec.upload; fs.writeFileSync(path.join(out, 'upload.txt'), `TITLE:\n${u.title}\n\nDESCRIPTION:\n${u.description || ''}\n\n${(u.hashtags || []).map(h => '#' + h.replace(/^#/, '')).join(' ')}\n`);
+    const u = spec.upload, tags = (u.hashtags || []).map(h => '#' + h.replace(/^#/, '')).join(' ');
+    fs.writeFileSync(path.join(out, 'upload.txt'), `TITLE:\n${u.title}\n\nDESCRIPTION:\n${u.description || ''}\n\n${tags}\n\nTAGS:\n${(u.tags || []).join(', ')}\n\nPINNED COMMENT:\n${u.pinned || 'Which one are you? A, B, C or D 👇'}\n`);
+    /* launch kit: everything needed to publish, plus a thumbnail frame at the climax */
+    let thumbAt = Math.min(info.realDur - 3, 2.5); try { const cu = JSON.parse(fs.readFileSync(path.join(out, 'cues.json'))); if (cu.burst && cu.burst.length) thumbAt = cu.burst[cu.burst.length - 1] + 0.7; } catch (e) {}
+    try { execFileSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', '-ss', String(thumbAt), '-i', mp4, '-frames:v', '1', '-q:v', '3', path.join(out, 'thumbnail.jpg')]); } catch (e) { console.log('  thumbnail failed'); }
+    fs.writeFileSync(path.join(out, 'launch.json'), JSON.stringify({ id: spec.id, title: u.title, description: u.description || '', hashtags: (u.hashtags || []).map(h => h.replace(/^#/, '')), tags: u.tags || [], pinned: u.pinned || 'Which one are you? A, B, C or D 👇', twist: spec.twist || '', scene: spec.scene, keywords: spec.keywords || [], duration: +info.realDur.toFixed(1), thumbnailAt: +thumbAt.toFixed(2) }, null, 1));
     // motion check: no quiet second allowed in the first 60% of the video (a planned breather later is fine)
     const mot = JSON.parse(execFileSync('python3', ['-I', path.join(ROOT, 'tools_motion.py'), mp4, '--json']).toString());
     const quiet = mot.per_second.map((v, k) => [k, v]).filter(([k, v]) => v < 0.35);

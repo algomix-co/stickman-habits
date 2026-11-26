@@ -226,7 +226,7 @@
     "PHONE ON": 0.5
    },
    "tags": {
-    "PHONE ON": "STARTING OVER"
+    "PHONE ON": "AGAIN"
    }
   },
   {
@@ -254,8 +254,8 @@
     }
    ],
    "tags": {
-    "PERFECT SONG": "PICKING SONGS",
-    "HALF ASLEEP": "TIRED AGAIN"
+    "PERFECT SONG": "NEXT SONG",
+    "HALF ASLEEP": "TIRED"
    }
   },
   {

@@ -33,8 +33,11 @@ validator in `make.js`, so it cannot happen again.
 Tracker page: https://claude.ai/artifact/PZrHJGJHpy8NAUTzmv3nmE (database collection `videos`, one document per
 Short, id = spec id; fields: batch, idx, title, scene, twist, duration, version, status, video, thumb, launch
 {description, hashtags, tags, pinned}, feedback, history).
-- **Statuses:** `review` (waiting for the owner), `regenerate` (owner wrote feedback), `approved`, `published`,
-  `rejected`. The owner sets them on the page; Claude sets `review` after every new render.
+- **Statuses:** `review` (waiting for the owner), `regenerate` (owner wrote feedback), `regenerating` (Claude
+  picked it up: set `workStartedAt` and a one-line `workNote` FIRST, so the owner sees progress), `approved`,
+  `published`, `rejected`. Claude sets `review` with `doneAt` after every new render.
+- **Hourly check:** a scheduled task ("Mind the Gap tracker check", trig_01TWZ7sYnvmsnewSCCAfX9ub) wakes this
+  session every hour to process `regenerate` rows; the owner can also say "check the tracker".
 - **Publishing a batch:** write the stories (`tools/stories/batchNN.py`), review and render
   (`tools/render_batch.sh specs/batch-NN <log>`, resumable), check frames and run the independent review,
   upload each mp4 + `thumbnail.jpg` with the Artifact tool (`asset: true`, up to 25 files per call; re-encode

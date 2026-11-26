@@ -221,7 +221,7 @@
     }
    ],
    "tags": {
-    "QUITS AT 80%": "STARTING OVER"
+    "QUITS AT 80%": "AGAIN"
    }
   },
   {
@@ -249,8 +249,8 @@
     }
    ],
    "tags": {
-    "COMPARER": "STILL LOOKING",
-    "OVERTHINKER": "STILL PLANNING"
+    "COMPARER": "LOOKING",
+    "OVERTHINKER": "PLANNING"
    }
   },
   {

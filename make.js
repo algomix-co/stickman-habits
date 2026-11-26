@@ -93,6 +93,9 @@ function validate(s, brand = {}) {
   });
   /* on-screen logic (round 3: runners ran backwards to show a restart; a QUIT tag stayed on a character who was back at work).
      Every motion must mean what the number means, and every tag must match what the character is doing now. */
+  /* climb labels sit in a fixed scoreboard row above the bar (owner: labels riding up the rope flickered); with 4+
+     climbers each column is narrow, so tags must stay short to stay readable */
+  if (s.scene === 'climb' && (s.characters || []).length >= 4) (s.beats || []).forEach((b, k) => { for (const n in b.tags || {}) { const v = b.tags[n], tx = v == null ? '' : typeof v === 'string' ? v : v.text; if (tx.length > 10) E.push(`beat ${k + 1}: tag "${tx}" for ${n} is ${tx.length} characters; climb tags sit in the fixed row above the bar and must be <= 10 ("AGAIN", "PLANNING")`); } });
   const MONO = { race: 'total distance run', dig: 'depth dug', bridge: 'planks laid' }, cumulative = (s.metric && s.metric.cumulative) || MONO[s.scene];
   if (cumulative) { const pv = { ...(s.start || {}) }; (s.beats || []).forEach((b, k) => { const crashed = new Set((b.events || []).filter(e => e.type === 'crash').map(e => e.who)); for (const n in b.values || {}) { const from = pv[n] || 0, to = b.values[n]; if (to < from && !(['dig', 'bridge'].includes(s.scene) && crashed.has(n))) E.push(`beat ${k + 1}: ${n} goes from ${from} to ${to}, but the number is ${cumulative} and can never go down (on screen the character would move backwards). Show a restart or plan switch as slow progress plus a bubble${['dig', 'bridge'].includes(s.scene) ? '; only a crash (cave-in, collapse) may take it back' : ''}.`); pv[n] = to; } }); }
   { const DOWN = new Set(['quit', 'fall', 'sad', 'sit', 'idle', 'stand']), UP = new Set(['active', 'win', 'boast', 'cheer']), st = {}, tag = {};

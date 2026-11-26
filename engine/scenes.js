@@ -70,13 +70,16 @@ SCENES.race = {
 // ---------------------------------------------------------------- climb
 function climbPose(ph) { const s = Math.sin(ph); return { la: [-2.95 + 0.75 * Math.max(0, s), -3.05 + 0.5 * Math.max(0, s)], ra: [2.95 - 0.75 * Math.max(0, -s), 3.05 - 0.5 * Math.max(0, -s)], ll: [0.9 + 0.5 * s, -0.35], rl: [0.4 - 0.5 * s, -0.7], lean: 0.05, drop: -0.35 }; }
 SCENES.climb = {
-  facing: 'front', boardMax: 3, upperBodyFree: false, steadyCam: true, K: 1.35,
+  facing: 'front', boardMax: 3, upperBodyFree: false, steadyCam: true, K: 1.35, fixedLabels: true, labelRoom: 40, labelScale: 1.06,   /* labels live in the fixed row (extent), not above each climber */
   workAt(i, t) { return Math.max(moving(i, t), ss(this.stand - 5, this.stand - 45, this.hip(i, t)) * 0.8 * energyAt(t)); },
   gapPoints(i, t0) { const x = this.xs[i] + 34 * this.K, y = this.hipAt(i, t0) - 100 * this.K; return { tip: [x, y], goal: [x, this.BAR + 8], kind: 'v', labelAt: [this.xs[i], y + 70] }; },   /* label just below her best point, on her own rope */
   freeUpper(i, t) { return this.hip(i, t) > this.stand - 8; },
-  setup(T) { this.xs = colsX(T.chars.length, 380, 1240);   /* owner: characters were too close together */ this.BAR = T.style.labels === 'board' || T.spec.question ? 660 : 560; this.F = FLOOR_MAX; this.stand = this.F - 72.5 * this.K; this.high = this.BAR + 115 * this.K; },
+  labelTop() { return this.BAR - 64; },
+  hopScaleAt(i, t) { return 1 - ss(0.9, 0.97, fracAt(i, t)); },   /* the climber at the top stays below the scoreboard row */
+  winPose(i, t) { const k = Math.sin(t * 6 + i); return { la: [-2.95, -3.05], ra: [1.45 + 0.12 * k, 2.05 + 0.15 * k], ll: [0.6, -0.4], rl: [0.2, -0.7], lean: 0.05, drop: -0.35 }; },   /* one hand on the rope, a fist out to the side: the winner never reaches into the scoreboard row */   /* owner: names and numbers sit in a fixed row above the top bar; riding up the rope with the climber they flickered */
+  setup(T) { this.xs = colsX(T.chars.length, 380, 1240);   /* owner: characters were too close together */ this.BAR = T.style.labels === 'board' ? 860 : 760;   /* room above the bar for the fixed scoreboard */ this.F = FLOOR_MAX; this.stand = this.F - 72.5 * this.K; this.high = this.BAR + 115 * this.K; },
   floorY() { return this.F; },
-  extent() { return { x0: this.xs[0] - 130, x1: this.xs[this.xs.length - 1] + 130, y0: this.BAR - 40, y1: this.F + 12 }; },
+  extent() { return { x0: this.xs[0] - 130, x1: this.xs[this.xs.length - 1] + 130, y0: this.BAR - 280, y1: this.F + 12 }; },
   hipAt(i, t) { return lerp(this.stand, this.high, fracAt(i, t)); },
   hip(i, t) { const since = fallStart(i, t); if (since != null) { const y0 = this.hipAt(i, since), u = clamp((t - since) / 0.6); return lerp(y0, this.F - 14 * this.K, u * u); } return this.hipAt(i, t); },
   place(i, t) { const y = this.hip(i, t); return { x: this.xs[i], top: y - (105 + figH() - 160) * this.K, s: this.K, floor: this.F }; },

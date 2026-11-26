@@ -161,7 +161,7 @@
     }
    ],
    "tags": {
-    "RECKLESS": "NEVER AGAIN",
+    "RECKLESS": "DONE",
     "FALLS A LOT": "FALL #2"
    }
   },
@@ -208,7 +208,7 @@
     "RECKLESS": 0.6
    },
    "tags": {
-    "RECKLESS": "CAREFUL NOW"
+    "RECKLESS": "CAREFUL"
    }
   },
   {
@@ -236,8 +236,8 @@
     }
    ],
    "tags": {
-    "NEVER FALLS": "NEVER FELL. NEVER ROSE.",
-    "AFRAID": "STILL AFRAID"
+    "NEVER FALLS": "NEVER ROSE",
+    "AFRAID": "STILL LOW"
    }
   },
   {

@@ -65,6 +65,8 @@ are enforced by `make.js` (see "Enforced" at the bottom); a spec that breaks one
 - **Don't:** fluorescent backgrounds or ultra-bright characters; they look low-res.
 - **Don't:** full-frame white flashes (round 3 review: a climax flash washed whole frames grey). Flashes are
   short and warm; the reviewer fails any frame with mean luma above 90.
+- **Don't:** let names and numbers ride up and down with a climber (round 3: they flickered). In the climb they
+  sit in a fixed scoreboard row above the bar; climb tags are at most 10 characters (enforced).
 - **Do:** in stacked lanes, everything stays in its lane: hops are small, labels don't grow or flip sides,
   the A·B·C·D badge sits beside the body.
 - **Don't:** static frames toward the end, or a quiet opening. Use big movements, not small tweaks.
@@ -128,3 +130,4 @@ are enforced by `make.js` (see "Enforced" at the bottom); a spec that breaks one
 - 2026-11-26: approved "He Quit Two Planks Short"
 - 2026-11-26: approved "She Quit 6 Metres Short"
 - 2026-11-26: Owner approved the bridge lanes, near-miss, storm, flash and decimals upgrades
+- 2026-11-26: She Quit 6 Metres Short (regenerate): labels flickered riding up the rope; now a fixed scoreboard row above the bar for every climb

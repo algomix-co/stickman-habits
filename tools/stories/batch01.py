@@ -52,7 +52,9 @@ def story(num, title, scene, cast, beats, *, counter, keywords, twist, tagline, 
     }
     spec['beats'][-1].pop('counter')
     os.makedirs(OUT, exist_ok=True)
-    with open(os.path.join(OUT, sid + '.json'), 'w') as f: json.dump(spec, f, indent=1, ensure_ascii=False)
+    fp, txt = os.path.join(OUT, sid + '.json'), json.dumps(spec, indent=1, ensure_ascii=False)
+    if not os.path.exists(fp) or open(fp).read() != txt:   # unchanged specs keep their date, so finished renders are not redone
+        with open(fp, 'w') as f: f.write(txt)
     return sid
 
 
@@ -155,8 +157,8 @@ S.append(story(7, 'Notifications Pulled Her Down', 'climb',
   B(3.0, 'THEN: PING.', 3, {'PHONE ON': 8, 'PHONE OFF': 8, 'PERFECT SONG': 6, 'HALF ASLEEP': 4}, curves={'PHONE ON': 'early'}, events=[ev('marker', 'PHONE ON', 0.3, text='PING', dur=1.2), ev('shake', 'PHONE ON', 0.35)], bubbles=[bub('PERFECT SONG', 'wait, wrong song', 1.4)]),
   B(3.0, 'PING. PING. PING.', 5, {'PHONE ON': 9, 'PHONE OFF': 13, 'PERFECT SONG': 8, 'HALF ASLEEP': 6}, events=[ev('marker', 'PHONE ON', 0.2, text='PING', dur=0.9), ev('shake', 'PHONE ON', 0.25), ev('marker', 'PHONE ON', 1.3, text='PING', dur=0.9), ev('shake', 'PHONE ON', 1.35)], bubbles=[bub('HALF ASLEEP', 'so tired today', 1.8)]),
   B(3.2, 'ONE MORE SCROLL.', 7, {'PHONE ON': 0, 'PHONE OFF': 18, 'PERFECT SONG': 10, 'HALF ASLEEP': 8}, events=[ev('crash', 'PHONE ON', 0.9)], tags={'PHONE ON': 'SLIPPED'}),
-  B(3.4, 'PHONE OFF. EYES UP.', 10, {'PHONE OFF': 26, 'PHONE ON': 6, 'PERFECT SONG': 13, 'HALF ASLEEP': 10}, states={'PHONE ON': 'active'}, stateAt={'PHONE ON': 0.5}, tags={'PHONE ON': 'STARTING OVER'}),
-  B(3.6, 'THE TOP HAS NO SIGNAL.', 12, {'PHONE OFF': 30, 'PHONE ON': 9, 'PERFECT SONG': 15, 'HALF ASLEEP': 11}, curve='accel', states={'PHONE OFF': 'win'}, stateAt={'PHONE OFF': 3.3}, events=[ev('burst', 'PHONE OFF', 3.35)], tags={'PERFECT SONG': 'PICKING SONGS', 'HALF ASLEEP': 'TIRED AGAIN'}),
+  B(3.4, 'PHONE OFF. EYES UP.', 10, {'PHONE OFF': 26, 'PHONE ON': 6, 'PERFECT SONG': 13, 'HALF ASLEEP': 10}, states={'PHONE ON': 'active'}, stateAt={'PHONE ON': 0.5}, tags={'PHONE ON': 'AGAIN'}),
+  B(3.6, 'THE TOP HAS NO SIGNAL.', 12, {'PHONE OFF': 30, 'PHONE ON': 9, 'PERFECT SONG': 15, 'HALF ASLEEP': 11}, curve='accel', states={'PHONE OFF': 'win'}, stateAt={'PHONE OFF': 3.3}, events=[ev('burst', 'PHONE OFF', 3.35)], tags={'PERFECT SONG': 'NEXT SONG', 'HALF ASLEEP': 'TIRED'}),
   ], counter='MONTH', keywords=['focus', 'talent', 'discipline'],
   twist='The most talented climber slips at every notification; the one with her phone off reaches the top.', tagline='PHONE DOWN. CLIMB UP.',
   description="She's the best climber on the wall. She also checks every notification. Ping by ping, the others catch up.",
@@ -170,7 +172,7 @@ S.append(story(8, 'Strong Arms, Weak Why', 'climb',
   B(3.0, 'THEN IT GETS BORING.', 4, {'STRONGEST': 0, 'FOR HIS KIDS': 5, 'WANTS ABS': 9, 'DOCTOR SAID': 5}, curves={'STRONGEST': 'late'}, states={'STRONGEST': 'quit'}, stateAt={'STRONGEST': 2.8}, tags={'STRONGEST': 'BORED'}, bubbles=[bub('STRONGEST', 'this is boring.', 0.2)]),
   B(3.0, "ABS DON'T SHOW UP FAST.", 6, {'WANTS ABS': 4, 'FOR HIS KIDS': 9, 'DOCTOR SAID': 6}, curves={'WANTS ABS': 'late'}, states={'WANTS ABS': 'quit'}, stateAt={'WANTS ABS': 2.7}, events=[ev('shake', 'WANTS ABS', 1.0)], tags={'WANTS ABS': 'NO ABS YET'}, bubbles=[bub('WANTS ABS', 'where are my abs?', 0.3)]),
   B(3.2, 'FOR HIS KIDS: ONE MORE GRIP.', 8, {'FOR HIS KIDS': 15, 'DOCTOR SAID': 8}, bubbles=[bub('DOCTOR SAID', "doctor's orders.", 0.5)]),
-  B(3.4, 'A STRONG WHY OUTLASTS STRONG ARMS.', 10, {'FOR HIS KIDS': 23, 'STRONGEST': 6, 'DOCTOR SAID': 10, 'WANTS ABS': 6}, states={'STRONGEST': 'active', 'WANTS ABS': 'active'}, stateAt={'STRONGEST': 0.4, 'WANTS ABS': 0.6}, tags={'STRONGEST': 'TRYING AGAIN', 'WANTS ABS': 'BACK AT IT'}),
+  B(3.4, 'A STRONG WHY OUTLASTS STRONG ARMS.', 10, {'FOR HIS KIDS': 23, 'STRONGEST': 6, 'DOCTOR SAID': 10, 'WANTS ABS': 6}, states={'STRONGEST': 'active', 'WANTS ABS': 'active'}, stateAt={'STRONGEST': 0.4, 'WANTS ABS': 0.6}, tags={'STRONGEST': 'AGAIN', 'WANTS ABS': 'BACK AT IT'}),
   B(3.6, 'THE WEAKEST REACHED THE TOP.', 12, {'FOR HIS KIDS': 30, 'DOCTOR SAID': 12, 'STRONGEST': 8, 'WANTS ABS': 7}, curve='accel', states={'FOR HIS KIDS': 'win'}, stateAt={'FOR HIS KIDS': 3.3}, events=[ev('burst', 'FOR HIS KIDS', 3.35)]),
   ], counter='MONTH', keywords=['motivation', 'vision', 'strengths'],
   twist='The strongest climber quits when it gets boring; the weakest has a reason and reaches the top.', tagline='FIND YOUR WHY. THE ARMS FOLLOW.',
@@ -183,10 +185,10 @@ S.append(story(9, 'Fell Twice, Still Won', 'climb',
   B(2.8, 'SAME ROPE. SAME FEAR.', 1, {'RECKLESS': 5, 'FALLS A LOT': 6, 'NEVER FALLS': 3, 'AFRAID': 1}, curves={'RECKLESS': 'accel'}, bubbles=[bub('AFRAID', 'what if I fall?', 0.3)]),
   B(3.0, 'HE FALLS.', 2, {'FALLS A LOT': 0, 'RECKLESS': 10, 'NEVER FALLS': 6, 'AFRAID': 2}, events=[ev('crash', 'FALLS A LOT', 1.0)], tags={'FALLS A LOT': 'FALL #1'}),
   B(3.0, 'AND CLIMBS AGAIN.', 3, {'FALLS A LOT': 9, 'RECKLESS': 15, 'NEVER FALLS': 9, 'AFRAID': 3}, states={'FALLS A LOT': 'active'}, stateAt={'FALLS A LOT': 0.2}, tags={'FALLS A LOT': 'BACK UP'}),
-  B(3.0, 'RECKLESS FALLS ONCE. FOR GOOD.', 5, {'RECKLESS': 0, 'FALLS A LOT': 0, 'NEVER FALLS': 11, 'AFRAID': 3}, events=[ev('crash', 'RECKLESS', 0.5), ev('crash', 'FALLS A LOT', 2.0)], tags={'RECKLESS': 'NEVER AGAIN', 'FALLS A LOT': 'FALL #2'}),
+  B(3.0, 'RECKLESS FALLS ONCE. FOR GOOD.', 5, {'RECKLESS': 0, 'FALLS A LOT': 0, 'NEVER FALLS': 11, 'AFRAID': 3}, events=[ev('crash', 'RECKLESS', 0.5), ev('crash', 'FALLS A LOT', 2.0)], tags={'RECKLESS': 'DONE', 'FALLS A LOT': 'FALL #2'}),
   B(3.2, 'FALL NUMBER TWO. STILL CLIMBING.', 7, {'FALLS A LOT': 16, 'NEVER FALLS': 12, 'AFRAID': 4}, states={'FALLS A LOT': 'active'}, stateAt={'FALLS A LOT': 0.2}, tags={'FALLS A LOT': 'BACK UP'}, bubbles=[bub('NEVER FALLS', 'good enough for me.', 1.2)]),
-  B(3.4, 'NEVER FALLS NEVER RISES.', 10, {'FALLS A LOT': 24, 'NEVER FALLS': 13, 'AFRAID': 4, 'RECKLESS': 5}, states={'RECKLESS': 'active'}, stateAt={'RECKLESS': 0.6}, tags={'RECKLESS': 'CAREFUL NOW'}),
-  B(3.6, 'FELL TWICE. REACHED THE TOP.', 12, {'FALLS A LOT': 30, 'NEVER FALLS': 14, 'AFRAID': 5, 'RECKLESS': 8}, curve='accel', states={'FALLS A LOT': 'win'}, stateAt={'FALLS A LOT': 3.3}, events=[ev('burst', 'FALLS A LOT', 3.35)], tags={'NEVER FALLS': 'NEVER FELL. NEVER ROSE.', 'AFRAID': 'STILL AFRAID'}),
+  B(3.4, 'NEVER FALLS NEVER RISES.', 10, {'FALLS A LOT': 24, 'NEVER FALLS': 13, 'AFRAID': 4, 'RECKLESS': 5}, states={'RECKLESS': 'active'}, stateAt={'RECKLESS': 0.6}, tags={'RECKLESS': 'CAREFUL'}),
+  B(3.6, 'FELL TWICE. REACHED THE TOP.', 12, {'FALLS A LOT': 30, 'NEVER FALLS': 14, 'AFRAID': 5, 'RECKLESS': 8}, curve='accel', states={'FALLS A LOT': 'win'}, stateAt={'FALLS A LOT': 3.3}, events=[ev('burst', 'FALLS A LOT', 3.35)], tags={'NEVER FALLS': 'NEVER ROSE', 'AFRAID': 'STILL LOW'}),
   ], counter='MONTH', keywords=['failure', 'mistakes', 'progress'],
   twist='The one who fell most reached the top; the one who never fell never left the middle.', tagline='FALLING IS PART OF CLIMBING.',
   description="One climbs recklessly. One never falls. One is too afraid to try. One falls twice and gets back up every time.",

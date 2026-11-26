@@ -207,7 +207,7 @@ function pickTurn(i, t) {   // "which one are you?" - each character gets a turn
 function anchorWithMotion(i, t, an, s) {
   if (an.mode === 'hands') return an;
   const st = stateAt(i, t).state, bob = (st === 'idle' || st === 'active' || st === 'sad') ? 3.5 * Math.sin(t * 2.6 + i * 1.9) : 0;
-  return { ...an, y: an.y - (hopAt(i, t) * (T.scene.sideLabels ? 0.3 : 1) + bob) * s };   /* in stacked lanes a hop must not reach the lane above */
+  return { ...an, y: an.y - (hopAt(i, t) * (T.scene.hopScaleAt ? T.scene.hopScaleAt(i, t) : T.scene.sideLabels ? 0.3 : 1) + bob) * s };   /* in stacked lanes a hop must not reach the lane above */
 }
 function drawChar(c, i, t, anchorFn0, opt = {}) {
   const ch = T.chars[i], s = opt.s || 1, sp = opt.speed || 0, a = Math.max(alphaAt(i, t), pickTurn(i, t));
@@ -650,7 +650,7 @@ function drawLabels(t, P, boardTop) {
   const meas = (text, font, sp) => { sc.font = font; sc.letterSpacing = sp + 'px'; return sc.measureText(text).width; };
   const L = T.chars.map((ch, i) => {
     const p = { ...P[i], s: clamp(T.__z || 1, 0.92, 1.08) * (T.style.labelScale || 1) * (T.scene.labelScale || 1) }, s = p.s, rate = fracRate(i, t), grow0 = (1 + 0.16 * fw[i]) * (1 + 0.25 * clamp(Math.abs(rate) * 2.2)) * (1 + 0.35 * Math.max(0, ...T.milestones.filter(m => m.i === i).map(m => bump(m.t, m.t + 0.45, t)))) * (1 + 0.3 * rollPop(i, t));
-    const grow = T.scene.sideLabels ? 0.9 * Math.min(grow0, 1.05) : grow0;   /* lane labels barely grow: a growing label would flip sides or rewrap mid-shot */
+    const grow = T.scene.fixedLabels ? 1 : T.scene.sideLabels ? 0.9 * Math.min(grow0, 1.05) : grow0;   /* lane labels barely grow: a growing label would flip sides or rewrap mid-shot */
     const numW = nonum ? 0 : meas(fmt(value(i, t)), `800 ${(60 * s * grow).toFixed(1)}px Inter`, 0);
     const nf0 = `800 ${(34 * s * grow).toFixed(1)}px Inter`, nameW = meas(ch.name, nf0, 2), words = ch.name.split(' ');
     let split = null; if (words.length > 1) { let best = null; for (let k = 1; k < words.length; k++) { if (/^[=&+]$/.test(words[k]) || /^[=&+]$/.test(words[k - 1])) continue; const l1 = words.slice(0, k).join(' '), l2 = words.slice(k).join(' '), w2 = Math.max(meas(l1, nf0, 2), meas(l2, nf0, 2)) + (Math.min(l1.length, l2.length) <= 2 ? 999 : 0); if (!best || w2 < best[0]) best = [w2, l1, l2]; } split = best && best[0] < 900 ? best : null; }
@@ -670,9 +670,15 @@ function drawLabels(t, P, boardTop) {
     if ((A.w * A.f + Bq.w * Bq.f) / 2 + GAP > dx) { const hi = aB <= bB ? A : Bq, lo = hi === A ? Bq : A; hi.lift += Math.max(20, (hi.top - hi.lift) - (lo.top - lo.lift) + hOf(lo) + 14); }   // 3) stagger: lift the higher stack clear of the other
   }
   };
-  solve();
+  /* fixed scoreboard row (climb): every label at one height, no growth, no staggering; name wrap and size depend only
+     on things that never change during the video (the name, the column spacing, the widest number), so nothing jumps */
+  const fixedRow = () => { const xs = sorted.map(q => q.x), colW = xs.length > 1 ? Math.min(...xs.slice(1).map((x, k) => x - xs[k])) : 900;
+    for (const q of L) { const nf0 = `800 ${(34 * q.s).toFixed(1)}px Inter`, nameW = meas(T.chars[q.i].name, nf0, 2), maxNum = meas(fmt(T.maxV), `800 ${(60 * q.s).toFixed(1)}px Inter`, 0);
+      if (q.split && nameW > colW - 24) { q.lines = [q.split[1], q.split[2]]; }
+      const wMax = Math.max(maxNum, q.lines.length > 1 ? q.split[0] : nameW); q.f = clamp((colW - 14) / wMax, 0.86, 1); q.tagF = q.tagW ? clamp((colW - 14) / (q.tagW * q.f), 0.8, 1) : 1; q.w = Math.max(maxNum, q.lines.length > 1 ? q.split[0] : nameW, q.tagW * q.tagF); q.lift = 0; } };
+  if (T.scene.fixedLabels) fixedRow(); else solve();
   for (const q of L) { const half = q.w * q.f / 2; q.x = clamp(q.x, half + 40, 950 - half); }
-  if (!window.__disableSolver) for (const q of L) {   // a label never sits on another character's body: move it into the free gap beside them (wrap, then shrink <=15% if needed)
+  if (!window.__disableSolver && !T.scene.fixedLabels) for (const q of L) {   // a label never sits on another character's body: move it into the free gap beside them (wrap, then shrink <=15% if needed)
     const yb = q.top - q.lift + 8, yt = yb - stackH(q) - 8, blk = [];
     T.chars.forEach((_, o) => { if (o === q.i) return; const b = bodyBox(o, 10); if (b && !(yb < b.y0 || yt > b.y1)) blk.push([b.x0, b.x1]); });
     const half0 = q.w * q.f / 2; if (!blk.some(([u0, u1]) => q.x + half0 > u0 && q.x - half0 < u1)) continue;
@@ -686,7 +692,7 @@ function drawLabels(t, P, boardTop) {
     if (got) q.x = got[1];
     else { let topB = 1e9; for (const [u0, u1] of blk) if (q.x + q.w * q.f / 2 > u0 && q.x - q.w * q.f / 2 < u1) T.chars.forEach((_, o) => { const bx = o === q.i ? null : bodyBox(o, 10); if (bx && bx.x0 <= u1 && bx.x1 >= u0) topB = Math.min(topB, bx.y0); }); if (topB < 1e9) q.lift += Math.min(70 * q.s, Math.max(0, yb - (topB - 12))); }   // no room beside: rise above the obstacle
   }
-  if (!T.scene.sideLabels) solve();   // body-fit moved some labels: re-check label vs label
+  if (!T.scene.sideLabels && !T.scene.fixedLabels) solve();   // body-fit moved some labels: re-check label vs label
   if (T.scene.sideLabels) for (const q of L) { const p = P[q.i], off = (70 + (T.scene.labelGap || 0)) * p.s + 18, maxR = T.scene.labelMaxX && !(T.scene.beyond && T.scene.beyond(q.i, t)) ? T.__X(T.scene.labelMaxX) : 950, pad = 10 * q.s;   /* lane labels keep their size in the question beat: the badge goes on the far side of the body */
     q.lift = 0; q.f = 1; q.top = p.floor - 0.3 * (p.floor - p.top);   /* lane labels start full size: the stacked-label squeeze above does not apply beside a body */
     if (T.scene.beyond && T.scene.beyond(q.i, t) && T.scene.lightX) { if (q.split && q.lines.length === 1) { q.lines = [q.split[1], q.split[2]]; q.w = Math.max(q.numW, q.split[0], q.tagW); } const half = q.w * q.f / 2; q.top = p.top; q.side = 0; q.x = clamp(p.x, T.__X(T.scene.lightX) + half, 920 - half); continue; }
@@ -708,7 +714,7 @@ function drawLabels(t, P, boardTop) {
       top = numBase - CAP * numPx;
     }
     const tg = tagAt(i, t);
-    if (tg) { const tagPx = 34 * s * q.f, tagBase = top - 10 * s, tf = `800 ${tagPx.toFixed(1)}px Inter`; spaced(sc, tg.text, q.x, tagBase, tf, tg.color || RED, 2, tg.a * Math.max(a, 0.8), 0, true); if (tg.a > 0.5) rectOf(i, tg.text, q.x, tagBase, tf, 2); top = tagBase - CAP * tagPx; }
+    if (tg) { const tagPx = 34 * s * q.f * (q.tagF || 1), tagBase = top - 10 * s, tf = `800 ${tagPx.toFixed(1)}px Inter`; spaced(sc, tg.text, q.x, tagBase, tf, tg.color || RED, 2, tg.a * Math.max(a, 0.8), 0, true); if (tg.a > 0.5) rectOf(i, tg.text, q.x, tagBase, tf, 2); top = tagBase - CAP * tagPx; }
     q.stackTop = top;
     if ((T.question && t >= T.question.t0) || (T.spec.question && t < T.beats[0].t1)) { const pk = pickTurn(i, t), bs = (1 + 0.35 * pk) * s * q.f, predict = !(T.question && t >= T.question.t0), [bx, by] = badgeSpot(i, q, top - 12 * s - 34 * bs - 10 * pk * s, 34 * bs, nameBase - (q.lines.length - 1) * lineH / 2 - CAP * namePx / 2, Math.max(...q.lines.map(ln => meas(ln, mf, 2))), L), qa = (T.question && t >= T.question.t0) ? ss(T.question.t0, T.question.t0 + 0.4, t) : (1 - ss(T.beats[0].t1 - 0.3, T.beats[0].t1, t)) ; sc.save(); sc.globalAlpha = qa; sc.fillStyle = ch.color; sc.shadowColor = ch.color; sc.shadowBlur = 20 * pk; sc.beginPath(); sc.arc(bx, by, 34 * bs, 0, 7); sc.fill(); sc.restore(); spaced(sc, String.fromCharCode(65 + i), bx, by + 14 * bs, `800 ${(40 * bs).toFixed(1)}px Inter`, INK, 0, qa, 0, false, false); if (qa > 0.3) RECTS.push({ owner: 100 + i, text: 'badge', x0: bx - 34 * bs, x1: bx + 34 * bs, y0: by - 34 * bs, y1: by + 34 * bs }); if (qa > 0.02 && by - 34 * bs - 4 < q.stackTop) q.stackTop = by - 34 * bs - 4; }   // bubbles and markers go above the badge
   });

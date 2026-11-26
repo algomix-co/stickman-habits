@@ -171,19 +171,25 @@
    "counter": 45,
    "values": {
     "HYPE FRIEND": 78,
-    "KEEPS GOING": 92
+    "KEEPS GOING": 92,
+    "LAZY FRIEND": 37
    },
    "states": {
-    "HYPE FRIEND": "sad"
+    "HYPE FRIEND": "sad",
+    "LAZY FRIEND": "active"
    },
    "stateAt": {
-    "HYPE FRIEND": 1.8
+    "HYPE FRIEND": 2.6,
+    "LAZY FRIEND": 1.0
+   },
+   "tags": {
+    "LAZY FRIEND": "TRYING AGAIN"
    },
    "bubbles": [
     {
      "who": "HYPE FRIEND",
      "text": "no fun alone.",
-     "at": 2.0
+     "at": 1.6
     }
    ]
   },
@@ -194,19 +200,14 @@
    "values": {
     "KEEPS GOING": 160,
     "HYPE FRIEND": 85,
-    "LAZY FRIEND": 40
+    "LAZY FRIEND": 41
    },
    "curve": "linear",
    "states": {
-    "HYPE FRIEND": "active",
-    "LAZY FRIEND": "active"
+    "HYPE FRIEND": "active"
    },
    "stateAt": {
-    "HYPE FRIEND": 0.6,
-    "LAZY FRIEND": 1.0
-   },
-   "tags": {
-    "LAZY FRIEND": "TRYING AGAIN"
+    "HYPE FRIEND": 0.6
    },
    "events": [
     {

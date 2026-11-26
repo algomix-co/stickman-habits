@@ -152,17 +152,16 @@
    "caption": "SHE LIFTS THROUGH THE COLD.",
    "counter": 13,
    "values": {
-    "ALL YEAR": 68
+    "ALL YEAR": 68,
+    "NEEDS BUDDY": 57
    },
-   "states": {
-    "NEEDS BUDDY": "quit"
-   },
-   "stateAt": {
-    "NEEDS BUDDY": 1.0
-   },
-   "tags": {
-    "NEEDS BUDDY": "NO BUDDY"
-   }
+   "bubbles": [
+    {
+     "who": "NEEDS BUDDY",
+     "text": "lifting alone today.",
+     "at": 0.6
+    }
+   ]
   },
   {
    "dur": 3.2,
@@ -172,17 +171,15 @@
     "SUMMER BODY": 55,
     "TOO COLD": 45,
     "ALL YEAR": 75,
-    "NEEDS BUDDY": 50
+    "NEEDS BUDDY": 58
    },
    "states": {
     "SUMMER BODY": "active",
-    "TOO COLD": "active",
-    "NEEDS BUDDY": "active"
+    "TOO COLD": "active"
    },
    "stateAt": {
     "SUMMER BODY": 0.4,
-    "TOO COLD": 0.6,
-    "NEEDS BUDDY": 1.2
+    "TOO COLD": 0.6
    },
    "tags": {
     "SUMMER BODY": "SUMMER AGAIN",
@@ -196,7 +193,7 @@
    "counter": 20,
    "values": {
     "ALL YEAR": 95,
-    "NEEDS BUDDY": 55
+    "NEEDS BUDDY": 60
    },
    "states": {
     "SUMMER BODY": "quit",
@@ -224,7 +221,7 @@
    "counter": 24,
    "values": {
     "ALL YEAR": 120,
-    "NEEDS BUDDY": 58
+    "NEEDS BUDDY": 64
    },
    "curve": "accel",
    "states": {

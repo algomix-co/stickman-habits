@@ -12,9 +12,9 @@
  ],
  "characters": [
   {
-   "name": "BIG MACHINE",
-   "color": "#ffc53d",
-   "accessory": "cap"
+   "name": "GEAR FIRST",
+   "color": "#b98cff",
+   "accessory": "headphones"
   },
   {
    "name": "TINY SPOON",
@@ -22,9 +22,9 @@
    "accessory": "glasses"
   },
   {
-   "name": "GEAR FIRST",
-   "color": "#b98cff",
-   "accessory": "headphones"
+   "name": "BIG MACHINE",
+   "color": "#ffc53d",
+   "accessory": "cap"
   },
   {
    "name": "LEARNS FIRST",
@@ -33,9 +33,9 @@
   }
  ],
  "start": {
-  "BIG MACHINE": 0,
-  "TINY SPOON": 0,
   "GEAR FIRST": 0,
+  "TINY SPOON": 0,
+  "BIG MACHINE": 0,
   "LEARNS FIRST": 0
  },
  "metric": {
@@ -159,7 +159,7 @@
      "type": "marker",
      "who": "GEAR FIRST",
      "at": 1.6,
-     "text": "BETTER SHOVEL",
+     "text": "SHOVEL #2",
      "dur": 1.2,
      "color": "#ffc53d"
     }

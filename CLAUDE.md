@@ -28,3 +28,23 @@ This repo turns story specs (`specs/*.json`) into YouTube Shorts for the channel
 Record every owner verdict with `node tools/feedback.js` (reject / approve / do / dont / note). When a
 mistake reaches the owner, add the rule to `LEARNINGS.md` and, where a machine can check it, to the
 validator in `make.js`, so it cannot happen again.
+
+## The launch tracker (owner feedback loop)
+Tracker page: https://claude.ai/artifact/PZrHJGJHpy8NAUTzmv3nmE (database collection `videos`, one document per
+Short, id = spec id; fields: batch, idx, title, scene, twist, duration, version, status, video, thumb, launch
+{description, hashtags, tags, pinned}, feedback, history).
+- **Statuses:** `review` (waiting for the owner), `regenerate` (owner wrote feedback), `approved`, `published`,
+  `rejected`. The owner sets them on the page; Claude sets `review` after every new render.
+- **Publishing a batch:** write the stories (`tools/stories/batchNN.py`), review and render
+  (`tools/render_batch.sh specs/batch-NN <log>`, resumable), check frames and run the independent review,
+  upload each mp4 + `thumbnail.jpg` with the Artifact tool (`asset: true`, up to 25 files per call; re-encode
+  any mp4 over 19 MB), record the returned urls in `tracker/assets.json`, build rows with
+  `tools/tracker_rows.py <dir> review <ids...>` and write them with one ArtifactData `batch` (max 50).
+- **Processing feedback ("check the tracker"):** query `videos` where `status == "regenerate"`. For each:
+  log it (`node tools/feedback.js note "<title>: <feedback>"`), change the story in the generator, review,
+  render, upload, bump `version` and append `{v, note: <feedback>}` to `history` in `tracker/assets.json`, then
+  update the row (pin `if_version`) with the new video, thumb, version, history, `status: "review"`,
+  `feedback: ""`. If the feedback is a general rule, add it to LEARNINGS.md (and the validator if checkable).
+- `approved` -> `node tools/feedback.js approve "<title>"`; `rejected` -> `reject "<title>" "<feedback>"`;
+  `published` -> `used "<title>"` so the title can never be reused.
+- Batches are 20 Shorts (owner's request). Research first: `research/batch-NN.md`.

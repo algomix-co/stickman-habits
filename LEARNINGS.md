@@ -61,10 +61,19 @@ pointed at @SimplyAnimatedVisuals (38M / 30M / 12M views). Evidence: `research/r
 - **Don't:** copy Simply Animated's scenes or titles (fishing hard vs smart, the words/actions scale, the
   ego/confidence trees, the luck target, the domino giant, the anchor underwater). Build our own metaphor
   library.
-- **Open decisions (asked the owner 2026-11-27; record the answers here and delete this line):** which
-  middle-class audience (India / global); whether the older rules below (at least 4 characters, a live number
-  over every head, the flash-forward hook, the A·B·C·D comment ending) still bind the new montage format;
-  whether to pilot 4 Shorts before batch 2.
+- **Owner's decisions (2026-11-27):**
+  - **Audience: the global middle class.** Money in $ or neutral, rent and credit cards, the 9-to-5 and the
+    commute, student loans, the safe job vs the dream, neighbours and friends comparing. Nothing that only
+    makes sense in one country.
+  - **The older format rules are tools, not rules, in the new format:** at least 4 characters, a live number
+    over every head, the flash-forward hook and the A·B·C·D comment ending are used only where they fit.
+    Most mini-scenes are 2-figure contrasts; numbers appear only when the number is the point; the opening
+    mini-scene is the hook (the strongest contrast, readable in the first second); the ending is a spectacle
+    (a short "Which one are you?" line is allowed). The race-format rules below still apply to race-format
+    Shorts.
+  - **Pilot first:** build the mini-scene system, make 4 Shorts on 4 different keywords, the owner judges
+    them on the tracker, then batch 2 (20) follows the verdict.
+  - **Batch 1 stays on the tracker** for the owner to approve or reject one by one.
 
 ## Niche & story
 - **Do:** discipline / motivation / self-improvement. Keyword pool: discipline, mindset, motivation, money,
@@ -188,3 +197,4 @@ pointed at @SimplyAnimatedVisuals (38M / 30M / 12M views). Evidence: `research/r
 - 2026-11-26: Owner approved the bridge lanes, near-miss, storm, flash and decimals upgrades
 - 2026-11-26: She Quit 6 Metres Short (regenerate): labels flickered riding up the rope; now a fixed scoreboard row above the bar for every climb
 - 2026-11-27: Round 4 verdict on batch 1: same animation format in every video, no hook, comparisons and topics blunt; use the keyword pool, middle-class relatability and @SimplyAnimatedVisuals as the reference. Diagnosis and new rules: 'Round 4 verdict' section above; evidence research/reference-simply-animated.md; batch variety enforced by tools/batch_check.py.
+- 2026-11-27: Owner decisions: global middle-class audience; 4+ characters, live numbers, flash-forward hook and A·B·C·D ending become tools, not rules, in the new mini-scene format; pilot 4 Shorts before batch 2; batch 1 stays on the tracker for the owner to pick.

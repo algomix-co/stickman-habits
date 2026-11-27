@@ -212,6 +212,7 @@ function anchorWithMotion(i, t, an, s) {
 function drawChar(c, i, t, anchorFn0, opt = {}) {
   const ch = T.chars[i], s = opt.s || 1, sp = opt.speed || 0, a = Math.max(alphaAt(i, t), pickTurn(i, t));
   const anchorFn = tt => anchorWithMotion(i, tt, anchorFn0(tt), s);
+  if (T.events.some(e => e.type === 'look' && e.i === i && t >= e.t && t < e.t + (e.dur || 0.8))) opt = { ...opt, facing: 'front' };   /* looking back at the others */
   const stn = stateAt(i, t); if (stn.state === 'fall' && !(T.scene.noSpin && T.scene.noSpin(i, t))) opt = { ...opt, rot: (t - stn.since) * 11 * (i % 2 ? 1 : -1) };
   if (sp > 0.05) for (let k = 3; k >= 1; k--) { const tt = t - k * 0.05; drawFigure(c, ch, anchorFn(tt), poseAt(i, tt), tt, a * sp * (0.34 - 0.09 * k), s, { ...opt, ghost: true }); }
   const J = drawFigure(c, ch, anchorFn(t), poseAt(i, t), t, a, s, opt);
@@ -273,12 +274,19 @@ function compile(spec, brand, style) {
       T.events.push(ev);
       if (e.type === 'crash') { crashAt[ev.i] = ev.t; curves[ev.i] = 'crash'; T.stateTL[ev.i].push([ev.t, 'fall']); if (!(b.states && b.states[e.who])) T.stateTL[ev.i].push([ev.t + 0.6, 'quit']); }
     }
-    if (b.states) for (const name in b.states) { const i = idx(name); const at = crashAt[i] != null ? crashAt[i] + 0.6 : t0 + ((b.stateAt && b.stateAt[name]) || 0); T.stateTL[i].push([at, b.states[name]]); }
-    if (b.tags) for (const name in b.tags) { const v = b.tags[name], i = idx(name); T.tagTL[i].push([t0 + (crashAt[i] != null ? 1.2 : 0.3), v == null ? null : (typeof v === 'string' ? { text: v, color: RED } : v)]); }
+    /* progress windows (owner rule "every motion means what the number means"): a number only moves while its
+       character is active. It stops when they crash, quit, sit or shelter, and resumes when they get back to work. */
+    const win = chars.map(() => [t0, t1]), stAt = chars.map(() => null), wasActive = i => { let s0 = 'active'; for (const [tk, st] of T.stateTL[i]) if (tk <= t0 + 1e-6) s0 = st; return s0 === 'active'; };
+    const active0 = chars.map((_, i) => wasActive(i));
+    if (b.states) for (const name in b.states) { const i = idx(name); const at = crashAt[i] != null ? crashAt[i] + 0.6 : t0 + ((b.stateAt && b.stateAt[name]) || 0); T.stateTL[i].push([at, b.states[name]]); stAt[i] = at;
+      if (b.states[name] === 'active') { if (!active0[i]) win[i][0] = Math.max(win[i][0], at); } else if (!(b.states[name] === 'win' && at > t1 - 0.6)) win[i][1] = Math.min(win[i][1], at); }
+    chars.forEach((_, i) => { if (crashAt[i] != null) { if (to[i] >= prev[i]) { curves[i] = (b.curves && b.curves[chars[i].name]) || b.curve || 'ease'; win[i][1] = Math.min(win[i][1], crashAt[i]); } }
+      else if (!active0[i] && stAt[i] == null) { win[i] = [t1, t1]; to[i] = prev[i]; } });   /* down for the whole beat: the number cannot move */
+    if (b.tags) for (const name in b.tags) { const v = b.tags[name], i = idx(name); T.tagTL[i].push([crashAt[i] != null ? crashAt[i] + 0.6 : stAt[i] != null ? stAt[i] + 0.15 : t0 + 0.3, v == null ? null : (typeof v === 'string' ? { text: v, color: RED } : v)]); }   /* a tag appears with the event it describes */
     for (const name of b.dim || []) T.dimTL[idx(name)] = Math.min(T.dimTL[idx(name)], t0);
     const bubs = b.bubbles || [];
     bubs.forEach((bb, k) => { const slot = (b.dur - 0.4) / bubs.length, s0 = t0 + (bb.at != null ? bb.at : 0.4 + k * slot); T.bubbles.push({ i: idx(bb.who), text: bb.text, t0: s0, t1: bb.dur != null ? s0 + bb.dur : Math.min(t1 - 0.1, s0 + slot - 0.15) }); });
-    T.beats.push({ bi, t0, t1, b, from: prev.slice(), to, curves, crashAt, c0: cnt, c1: b.counter != null ? b.counter : cnt, mood: b.mood || ((b.events || []).some(e => e.type === 'burst') ? 'climax' : (b.style === 'question' || b.style === 'closing') ? 'end' : (b.events || []).some(e => e.type === 'crash') ? 'crash' : b.curve === 'accel' ? 'build' : 'normal') });
+    T.beats.push({ bi, t0, t1, b, from: prev.slice(), to, curves, crashAt, win, c0: cnt, c1: b.counter != null ? b.counter : cnt, mood: b.mood || ((b.events || []).some(e => e.type === 'burst') ? 'climax' : (b.style === 'question' || b.style === 'closing') ? 'end' : (b.events || []).some(e => e.type === 'crash') ? 'crash' : b.curve === 'accel' ? 'build' : 'normal') });
     prev = to; if (b.counter != null) cnt = b.counter; t = t1;
   });
   T.dur = t;
@@ -322,8 +330,8 @@ function realOf(s) { for (const g of T.segs) if ((g.kind === 'play' || g.kind ==
 function propAt(i, key, t, dflt = 0) { const B = beatAt(Math.max(0, t)), a = B.pfrom[i][key], b = B.pto[i][key]; if (a == null && b == null) return dflt; const u = (B.b.propCurve === 'linear' ? (x => x) : easeIO)(clamp((t - B.t0) / (B.t1 - B.t0))); return lerp(a != null ? a : b, b != null ? b : a, u); }
 function beatAt(t) { for (const B of T.beats) if (t < B.t1) return B; return T.beats[T.beats.length - 1]; }
 function value(i, t) {
-  const B = beatAt(t), u = clamp((t - B.t0) / (B.t1 - B.t0)), c = B.curves[i];
-  const e = c === 'crash' ? ss(B.crashAt[i] != null ? B.crashAt[i] : B.t0, (B.crashAt[i] != null ? B.crashAt[i] : B.t0) + 0.5, t) : (CURVES[c] || easeIO)(u);
+  const B = beatAt(t), w = B.win ? B.win[i] : [B.t0, B.t1], u = w[1] - w[0] > 1e-6 ? clamp((t - w[0]) / (w[1] - w[0])) : (t >= w[1] ? 1 : 0), c = B.curves[i];
+  const e = c === 'crash' ? ss(B.crashAt[i] != null ? B.crashAt[i] : B.t0, (B.crashAt[i] != null ? B.crashAt[i] : B.t0) + 0.25, t) : (CURVES[c] || easeIO)(u);
   let v = lerp(B.from[i], B.to[i], e);
   if (T.chars[i].volatile && B.from[i] !== B.to[i] && c !== 'crash') v *= 1 + 0.08 * Math.sin(t * 9 + i * 2);
   return Math.max(0, v);
@@ -334,7 +342,7 @@ const fracRate = (i, t) => (fracAt(i, t + 0.04) - fracAt(i, t - 0.04)) / 0.08;
 // integrated motion phase (cycles): speed follows progress rate, scaled by the character's tempo
 function phaseInt(i, t, k, idle = 0, cap = 3.2) { let acc = 0; const dt = 0.05, tempo = T.chars[i].tempo || 1; for (let tt = 0; tt < t; tt += dt) acc += clamp((idle + k * Math.abs(fracRate(i, tt))) * tempo, 0, cap) * Math.min(dt, t - tt); return acc; }
 const speedFx = (i, t, lo, hi) => ss(lo, hi, Math.abs(fracRate(i, t)) * (T.chars[i].tempo || 1));
-function counterAt(t) { const B = beatAt(t), u = clamp((t - B.t0) / (B.t1 - B.t0)); const e = (B.b.counterCurve ? CURVES[B.b.counterCurve] : (B.b.curve === 'accel' ? CURVES.accel : easeIO))(u); return lerp(B.c0, B.c1, e); }
+function counterAt(t) { const B = beatAt(t), u = clamp((t - B.t0) / ((B.t1 - B.t0) * 0.7)); const e = (B.b.counterCurve ? CURVES[B.b.counterCurve] : (B.b.curve === 'accel' ? CURVES.accel : easeIO))(u); return lerp(B.c0, B.c1, e); }
 function stateAt(i, t) { const tl = T.stateTL[i]; let s = tl[0]; for (const e of tl) if (e[0] <= t) s = e; return { state: s[1], since: s[0] }; }
 function poseOf(state, i, t) {
   if (state === 'active') return T.scene.activePose ? T.scene.activePose(i, t) : POSES.stand;
@@ -768,8 +776,9 @@ function drawLabels(t, P, boardTop) {
     sc.save(); sc.globalAlpha = a; sc.fillStyle = 'rgba(8,10,14,0.92)'; sc.strokeStyle = GOLD; sc.lineWidth = 2.5; sc.beginPath(); sc.roundRect(mx - mw / 2 - 12, my - px * 0.85, mw + 24, px * 1.15, 10); sc.fill(); sc.stroke(); sc.restore();
     spaced(sc, e.text, mx, my, mf, GOLD, 0, a, 0, false, false); if (a > 0.5) rectOf(200 + e.i, e.text, mx, my, mf, 0);
   }
-  for (const e of T.events) if (e.type === 'marker') {
+  for (let e of T.events) if (e.type === 'marker') {
     const a = ss(e.t, e.t + .3, t) * (1 - ss(e.t + (e.dur || 2) - .3, e.t + (e.dur || 2), t)); if (a <= 0) continue;
+    if (T.scene.fixedLabels && !e.side && e.dx == null) e = { ...e, side: 'right' }; if (T.scene.markerDy != null && e.dy == null && !e.side) e = { ...e, dy: T.scene.markerDy };
     const p = P[e.i], mf = `800 ${(38 * clamp(T.__z || 1, 0.92, 1.08)).toFixed(1)}px Inter`, mw = (sc.font = mf, sc.letterSpacing = '0px', sc.measureText(e.text).width), Jm = T.__joints[e.i], side = e.side === 'right' && Jm, mxR = side ? T.__X(Jm.head[0]) + Jm.hr * (T.__z || 1) + 22 + mw / 2 + 12 : 0, mx = side ? clamp(T.scene.labelMaxX && mxR + mw / 2 + 12 > T.__X(T.scene.labelMaxX) - 30 ? T.__X(Jm.head[0]) - Jm.hr * (T.__z || 1) - 22 - mw / 2 - 12 : mxR, mw / 2 + 40, 950 - mw / 2) : clamp(p.x + (e.dx != null ? e.dx : -110) * p.s, mw / 2 + 40, 950 - mw / 2), my0 = side ? T.__Y(Jm.head[1]) + 12 : p.top + (e.dy != null ? e.dy : 120) * p.s, lab = (T.__labels || [])[e.i], my = (e.dy != null && e.dy < 0 && lab && lab.stackTop != null) ? Math.min(my0, lab.stackTop - 16) : my0; { const px = parseFloat(mf.match(/([0-9.]+)px/)[1]); sc.save(); sc.globalAlpha = a * 0.9; sc.fillStyle = 'rgba(8,10,14,0.9)'; sc.strokeStyle = e.color || RED; sc.lineWidth = 2; sc.beginPath(); sc.roundRect(mx - mw / 2 - 12, my - px * 0.85, mw + 24, px * 1.15, 10); sc.fill(); sc.stroke(); sc.restore(); } spaced(sc, e.text, mx, my, mf, e.color || RED, 0, a, 0, false, false); if (a > 0.5) rectOf(200 + e.i, e.text, mx, my, mf, 0);
   }
 }

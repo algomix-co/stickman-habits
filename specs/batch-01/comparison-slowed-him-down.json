@@ -109,9 +109,10 @@
    },
    "events": [
     {
-     "type": "shake",
+     "type": "look",
      "who": "LOOKS AROUND",
-     "at": 1.4
+     "at": 1.3,
+     "dur": 0.9
     }
    ],
    "bubbles": [
@@ -137,14 +138,16 @@
    },
    "events": [
     {
-     "type": "shake",
+     "type": "look",
      "who": "LOOKS AROUND",
-     "at": 0.8
+     "at": 0.7,
+     "dur": 0.8
     },
     {
-     "type": "shake",
+     "type": "look",
      "who": "LOOKS AROUND",
-     "at": 2.1
+     "at": 2.0,
+     "dur": 0.8
     }
    ],
    "bubbles": [
@@ -187,15 +190,16 @@
    },
    "events": [
     {
-     "type": "shake",
+     "type": "look",
      "who": "LOOKS AROUND",
-     "at": 0.6
+     "at": 0.5,
+     "dur": 1.0
     }
    ],
    "bubbles": [
     {
      "who": "LOOKS AROUND",
-     "text": "is she faster?",
+     "text": "is that one faster?",
      "at": 0.8
     }
    ]

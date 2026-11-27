@@ -104,7 +104,7 @@
    "caption": "THE NIGHT OWL DIGS AT 2AM.",
    "counter": 7,
    "values": {
-    "NIGHT OWL": 9,
+    "NIGHT OWL": 8,
     "EARLY BED": 6,
     "ALL NIGHTER": 12,
     "FIVE COFFEES": 8
@@ -126,7 +126,7 @@
    "caption": "THE NEXT DAY, HE'S WRECKED.",
    "counter": 14,
    "values": {
-    "NIGHT OWL": 10,
+    "NIGHT OWL": 9,
     "EARLY BED": 11,
     "FIVE COFFEES": 13
    },
@@ -170,7 +170,7 @@
    "counter": 21,
    "values": {
     "EARLY BED": 16,
-    "NIGHT OWL": 12,
+    "NIGHT OWL": 11,
     "ALL NIGHTER": 14,
     "FIVE COFFEES": 14
    },
@@ -197,7 +197,7 @@
    "counter": 40,
    "values": {
     "EARLY BED": 24,
-    "NIGHT OWL": 15,
+    "NIGHT OWL": 13,
     "ALL NIGHTER": 16,
     "FIVE COFFEES": 17
    },
@@ -217,7 +217,7 @@
    "counter": 70,
    "values": {
     "EARLY BED": 34,
-    "NIGHT OWL": 18,
+    "NIGHT OWL": 15,
     "ALL NIGHTER": 18,
     "FIVE COFFEES": 19
    },
@@ -237,7 +237,7 @@
    "counter": 100,
    "values": {
     "EARLY BED": 40,
-    "NIGHT OWL": 20,
+    "NIGHT OWL": 17,
     "ALL NIGHTER": 20,
     "FIVE COFFEES": 21
    },

@@ -101,7 +101,7 @@
    "values": {
     "COPYCAT": 4,
     "GOOD ENOUGH": 6,
-    "PERFECT ONLY": 2,
+    "PERFECT ONLY": 1,
     "NEEDS A PLAN": 2
    },
    "events": [
@@ -128,7 +128,7 @@
    "counter": 15,
    "values": {
     "GOOD ENOUGH": 9,
-    "PERFECT ONLY": 3,
+    "PERFECT ONLY": 1,
     "NEEDS A PLAN": 3,
     "COPYCAT": 7
    },
@@ -194,7 +194,7 @@
    "counter": 40,
    "values": {
     "GOOD ENOUGH": 15,
-    "PERFECT ONLY": 4,
+    "PERFECT ONLY": 1,
     "NEEDS A PLAN": 5,
     "COPYCAT": 11
    },
@@ -221,7 +221,7 @@
    "counter": 75,
    "values": {
     "GOOD ENOUGH": 20,
-    "PERFECT ONLY": 5,
+    "PERFECT ONLY": 2,
     "NEEDS A PLAN": 6,
     "COPYCAT": 9
    },
@@ -243,7 +243,7 @@
    "counter": 100,
    "values": {
     "GOOD ENOUGH": 22,
-    "PERFECT ONLY": 6,
+    "PERFECT ONLY": 2,
     "NEEDS A PLAN": 7
    },
    "curve": "accel",
@@ -261,8 +261,7 @@
     }
    ],
    "tags": {
-    "PERFECT ONLY": "6 PERFECT PLANKS",
-    "NEEDS A PLAN": "STILL PLANNING"
+    "PERFECT ONLY": "2 PERFECT PLANKS"
    }
   },
   {

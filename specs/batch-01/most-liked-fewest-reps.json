@@ -108,6 +108,12 @@
     "BEST ANGLE": 3,
     "COPIES REELS": 3
    },
+   "tags": {
+    "POSTS DAILY": {
+     "text": "460 LIKES",
+     "color": "#ffc53d"
+    }
+   },
    "events": [
     {
      "type": "marker",
@@ -144,6 +150,12 @@
     "BEST ANGLE": 3,
     "COPIES REELS": 5
    },
+   "tags": {
+    "POSTS DAILY": {
+     "text": "1.4K LIKES",
+     "color": "#ffc53d"
+    }
+   },
    "events": [
     {
      "type": "marker",
@@ -171,6 +183,12 @@
     "QUIET REPS": 7,
     "BEST ANGLE": 4,
     "COPIES REELS": 4
+   },
+   "tags": {
+    "POSTS DAILY": {
+     "text": "3.4K LIKES",
+     "color": "#ffc53d"
+    }
    },
    "events": [
     {

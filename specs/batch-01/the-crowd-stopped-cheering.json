@@ -91,6 +91,11 @@
    },
    "events": [
     {
+     "type": "crowd",
+     "at": 0.0,
+     "dur": 6.1
+    },
+    {
      "type": "marker",
      "who": "FOR APPLAUSE",
      "at": 0.4,
@@ -151,9 +156,10 @@
     {
      "type": "marker",
      "who": "FOR APPLAUSE",
-     "at": 0.5,
+     "at": 0.9,
      "text": "CROWD LEFT",
-     "dur": 1.8
+     "dur": 1.8,
+     "dx": -170
     }
    ],
    "bubbles": [
@@ -243,7 +249,14 @@
    },
    "tags": {
     "FOR A BET": "NEW BET"
-   }
+   },
+   "bubbles": [
+    {
+     "who": "FOR A MEDAL",
+     "text": "fine. back at it.",
+     "at": 0.5
+    }
+   ]
   },
   {
    "dur": 3.6,

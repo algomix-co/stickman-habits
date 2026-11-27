@@ -115,7 +115,7 @@
    "values": {
     "5 MIN DAILY": 4,
     "IF INSPIRED": 5,
-    "NO PLAN": 3
+    "NO PLAN": 4
    },
    "states": {
     "SUNDAY HOUR": "quit"
@@ -146,7 +146,7 @@
    "values": {
     "5 MIN DAILY": 7,
     "SUNDAY HOUR": 8,
-    "IF INSPIRED": 4,
+    "IF INSPIRED": 5,
     "NO PLAN": 5
    },
    "states": {
@@ -166,7 +166,7 @@
    "values": {
     "5 MIN DAILY": 11,
     "IF INSPIRED": 6,
-    "NO PLAN": 4
+    "NO PLAN": 5
    },
    "states": {
     "SUNDAY HOUR": "quit"
@@ -222,10 +222,7 @@
      "who": "5 MIN DAILY",
      "at": 3.35
     }
-   ],
-   "tags": {
-    "IF INSPIRED": "WAITING TO FEEL IT"
-   }
+   ]
   },
   {
    "dur": 3.0,

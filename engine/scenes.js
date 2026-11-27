@@ -46,6 +46,12 @@ function runPose(ph) {
 SCENES.race = {
   facing: 'right', sideLabels: true, monotonic: true,   /* distance run never goes down: nobody runs backwards */
   workAt(i, t) { return moving(i, t, 0.0008, 0.006); },
+  drawCrowd(c, t, yTop) {   /* 'crowd' event: stands of spectators that cheer, then walk away when it ends */
+    for (const e of T.events) if (e.type === 'crowd') { const d = e.dur || 4, a = ss(e.t - 0.3, e.t + 0.2, t) * (1 - ss(e.t + d - 0.1, e.t + d + 0.9, t)); if (a <= 0) continue;
+      const leave = ss(e.t + d - 0.1, e.t + d + 0.9, t), y = yTop - 70; c.save(); c.globalAlpha = a * 0.85; c.strokeStyle = '#c8d0d8'; c.fillStyle = '#c8d0d8'; c.lineWidth = 3; c.lineCap = 'round';
+      for (let k = 0; k < 11; k++) { const x = this.x0 - 10 + k * 46 - leave * 260, w = Math.sin(t * 9 + k * 1.7), up = 1 - leave;
+        c.beginPath(); c.arc(x, y - 30, 8, 0, 7); c.fill(); c.beginPath(); c.moveTo(x, y - 22); c.lineTo(x, y); c.moveTo(x, y - 18); c.lineTo(x - 11, y - 18 - up * (16 + 6 * w)); c.moveTo(x, y - 18); c.lineTo(x + 11, y - 18 - up * (16 - 6 * w)); c.moveTo(x, y); c.lineTo(x - 7, y + 14); c.moveTo(x, y); c.lineTo(x + 7, y + 14); c.stroke(); }
+      c.restore(); } },
   gapPoints(i, t0) { const y = this.laneY(i) - figH() * this.s * 0.55; return { tip: [this.xAt(i, t0) + 34 * this.s, y], goal: [this.x1 - 80, y], kind: 'h' }; },
   stride(i, t) { return 2 * Math.PI * phaseInt(i, t, 160, 0, 2.3); },   /* legs keep a running cadence even on a slow day; a long day runs faster */
   setup(T) {
@@ -61,7 +67,7 @@ SCENES.race = {
   draw(c, t) {
     const yTop = this.y0 - figH() * this.s - 20, yBot = this.y0 + (T.chars.length - 1) * this.gap, fx = this.x1 - 80;   // the winner ends past the line
     c.save(); c.setLineDash([14, 12]); c.strokeStyle = 'rgba(255,255,255,0.4)'; c.lineWidth = 3; c.beginPath(); c.moveTo(fx, yTop); c.lineTo(fx, yBot + 4); c.stroke(); c.restore();
-    spaced(c, 'FINISH', fx - 110, yTop - 22, '800 44px Inter', '#dfe4e9', 3, 0.9); if (T.__vlines) T.__vlines.push({ x: fx, y0: yTop, y1: yBot + 4 });
+    spaced(c, 'FINISH', fx - 110, yTop - 22, '800 44px Inter', '#dfe4e9', 3, 0.9); if (T.__vlines) T.__vlines.push({ x: fx, y0: yTop, y1: yBot + 4 }); this.drawCrowd(c, t, yTop);
     c.fillStyle = 'rgba(255,255,255,0.12)'; c.fillRect(this.x0 - 30, yTop, 2, yBot - yTop);
     return charsDo((ch, i) => { const y = this.laneY(i); floorLine(c, y, -200, W + 200, 0.16); const p = this.place(i, t); drawChar(c, i, t, tt => ({ mode: 'feet', x: this.xAt(i, tt), y }), { s: this.s, speed: speedFx(i, t, 0.12, 0.35), sweat: speedFx(i, t, 0.08, 0.2) }); return p; });
   },
@@ -106,7 +112,8 @@ SCENES.pullup = {
   setup(T) { this.xs = colsX(T.chars.length, 360, 1240); this.BAR = 900; this.F = FLOOR_MAX; },
   floorY() { return this.F; },
   extent() { return { x0: this.xs[0] - 125, x1: this.xs[this.xs.length - 1] + 125, y0: this.BAR - 10, y1: this.F + 12 }; },
-  dropped(i, t) { const since = fallStart(i, t); return since == null ? null : clamp((t - since) / 0.55); },
+  dropped(i, t) { const since = fallStart(i, t); if (since != null) return clamp((t - since) / 0.55); const st = stateAt(i, t); if (st.state === 'active' && t - st.since < 0.5) { const pr = stateAt(i, st.since - 0.001).state; if (pr === 'quit' || pr === 'fall') return 1 - ss(0, 0.5, t - st.since); } return null; },   /* back on the bar with a jump, never a teleport */
+  markerDy: -50,
   place(i, t) { const d = this.dropped(i, t), hx = figH() - 160, K = this.K; if (d == null) return { x: this.xs[i], top: this.BAR - (78 + hx) * K, s: K, floor: this.F }; const feet = lerp(this.BAR + (180 + hx) * K, this.F, d * d); return { x: this.xs[i], top: lerp(this.BAR - (78 + hx) * K, feet - (150 + hx) * K, d), s: K, floor: this.F, feet }; },
   activePose(i, t) { const p = 0.5 - 0.5 * Math.cos(2 * Math.PI * phaseInt(i, t, 12, 1.0, 2.6)); return blendPose(HANG, blendPose(HANG, PULL, p), Math.max(moving(i, t, 0.001, 0.01), 0.85 * energyAt(t))); },
   idlePose() { return HANG; },

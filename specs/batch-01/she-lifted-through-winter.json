@@ -33,10 +33,10 @@
   }
  ],
  "start": {
-  "SUMMER BODY": 0,
-  "ALL YEAR": 0,
-  "TOO COLD": 0,
-  "NEEDS BUDDY": 0
+  "SUMMER BODY": 20,
+  "ALL YEAR": 20,
+  "TOO COLD": 20,
+  "NEEDS BUDDY": 20
  },
  "metric": {
   "suffix": " KG",
@@ -165,11 +165,11 @@
   },
   {
    "dur": 3.2,
-   "caption": "SPRING. THEY'RE BACK. WEAKER.",
+   "caption": "SPRING. THEY'RE BACK. AGAIN.",
    "counter": 15,
    "values": {
-    "SUMMER BODY": 55,
-    "TOO COLD": 45,
+    "SUMMER BODY": 72,
+    "TOO COLD": 52,
     "ALL YEAR": 75,
     "NEEDS BUDDY": 58
    },

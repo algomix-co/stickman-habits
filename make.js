@@ -18,7 +18,7 @@ const specs = args.filter(a => a.endsWith('.json') && a !== opt('--brand') && a 
 const FPS = +(opt('--fps') || 60) || 60, ROOT = __dirname, PAGE = 'file://' + path.join(ROOT, 'engine', 'page.html');
 const SCENES = ['towers', 'race', 'climb', 'pullup', 'lift', 'dig', 'bridge', 'bricks', 'buckets', 'swords', 'doors'];
 const STATES = ['active', 'idle', 'boast', 'win', 'quit', 'sad', 'shock', 'fall', 'throw', 'cheer', 'stand', 'sit'];
-const EVENTS = ['crash', 'shake', 'marker', 'burst', 'rain', 'fling', 'flash', 'gap', 'storm'];
+const EVENTS = ['crash', 'shake', 'marker', 'burst', 'rain', 'fling', 'flash', 'gap', 'storm', 'look', 'crowd'];
 const GAP_SCENES = ['climb', 'race', 'dig', 'bridge'];   // scenes that can show a near-miss gap
 
 // ---------------------------------------------------------------- variation ("smart" style picker)
@@ -42,6 +42,7 @@ function compatible(dim, v, spec, brand) {
   if (dim === 'labels' && v === 'board') return spec.showValues !== false && !['towers'].includes(spec.scene) && !(spec.scene === 'climb' && n > 3);
   if (dim === 'hook' && v === 'flashforward') return hasBurst && !spec.question;   // a flashforward would reveal the open-loop answer
   if (dim === 'outro' && v === 'endcard') return !!brand.endcard;
+  if (dim === 'transition' && v === 'dayzoom') return !['race', 'bridge'].includes(spec.scene);   // the big day pop would cover FINISH / top-lane labels
   return true;
 }
 function pickStyle(spec, brand, history) {
@@ -97,7 +98,16 @@ function validate(s, brand = {}) {
      climbers each column is narrow, so tags must stay short to stay readable */
   if (s.scene === 'climb' && (s.characters || []).length >= 4) (s.beats || []).forEach((b, k) => { for (const n in b.tags || {}) { const v = b.tags[n], tx = v == null ? '' : typeof v === 'string' ? v : v.text; if (tx.length > 10) E.push(`beat ${k + 1}: tag "${tx}" for ${n} is ${tx.length} characters; climb tags sit in the fixed row above the bar and must be <= 10 ("AGAIN", "PLANNING")`); } });
   const MONO = { race: 'total distance run', dig: 'depth dug', bridge: 'planks laid' }, cumulative = (s.metric && s.metric.cumulative) || MONO[s.scene];
-  if (cumulative) { const pv = { ...(s.start || {}) }; (s.beats || []).forEach((b, k) => { const crashed = new Set((b.events || []).filter(e => e.type === 'crash').map(e => e.who)); for (const n in b.values || {}) { const from = pv[n] || 0, to = b.values[n]; if (to < from && !(['dig', 'bridge'].includes(s.scene) && crashed.has(n))) E.push(`beat ${k + 1}: ${n} goes from ${from} to ${to}, but the number is ${cumulative} and can never go down (on screen the character would move backwards). Show a restart or plan switch as slow progress plus a bubble${['dig', 'bridge'].includes(s.scene) ? '; only a crash (cave-in, collapse) may take it back' : ''}.`); pv[n] = to; } }); }
+  if (cumulative) { const pv = { ...(s.start || {}) }; (s.beats || []).forEach((b, k) => { const crashed = new Set((b.events || []).filter(e => e.type === 'crash').map(e => e.who)); for (const n in b.values || {}) { const from = pv[n] || 0, to = b.values[n]; if (to < from && !(s.scene === 'bridge' && crashed.has(n))) E.push(`beat ${k + 1}: ${n} goes from ${from} to ${to}, but the number is ${cumulative} and can never go down (on screen the character would move backwards). Show a restart or plan switch as slow progress plus a bubble${s.scene === 'bridge' ? '; only a crash (collapse) may take it back' : ''}.`); pv[n] = to; } }); }
+  /* lift and pull-up: a falling number needs something to happen on screen (a crash or a shake) */
+  if (['lift', 'pullup'].includes(s.scene)) { const pv = { ...(s.start || {}) }; (s.beats || []).forEach((b, k) => { const ev = new Set((b.events || []).filter(e => e.type === 'crash' || e.type === 'shake').map(e => e.who)); for (const n in b.values || {}) { if (b.values[n] < (pv[n] || 0) && !ev.has(n)) E.push(`beat ${k + 1}: ${n} goes from ${pv[n] || 0} to ${b.values[n]} with nothing happening on screen; add a crash or a shake for ${n} in this beat, or keep the number`); pv[n] = b.values[n]; } }); }
+  /* a character who is down (quit, sad, sitting, sheltering) for a whole beat cannot make progress in it */
+  { const DN = new Set(['quit', 'fall', 'sad', 'sit', 'idle', 'stand']), st = {}, pv = { ...(s.start || {}) };
+    (s.beats || []).forEach((b, k) => { const crashed = new Set((b.events || []).filter(e => e.type === 'crash').map(e => e.who));
+      for (const n in b.values || {}) if (DN.has(st[n]) && !(b.states && n in b.states) && b.values[n] !== (pv[n] || 0)) E.push(`beat ${k + 1}: ${n} is down (${st[n]}) for the whole beat but their number changes from ${pv[n] || 0} to ${b.values[n]}; get them back to work in this beat (states) or keep the number`);
+      Object.assign(pv, b.values || {}); for (const n of crashed) if (!(b.states && b.states[n])) st[n] = 'quit'; for (const n in b.states || {}) st[n] = b.states[n]; }); }
+  /* climb: a character who quits is on the floor, so their height must be 0 */
+  if (s.scene === 'climb') { const cur = { ...(s.start || {}) }; (s.beats || []).forEach((b, k) => { Object.assign(cur, b.values || {}); const crashed = new Set((b.events || []).filter(e => e.type === 'crash').map(e => e.who)); for (const n in b.states || {}) if (b.states[n] === 'quit' && !crashed.has(n) && (cur[n] || 0) > 0) E.push(`beat ${k + 1}: ${n} quits (drops to the floor) but is still at ${cur[n]}; bring the height to 0 in this beat`); }); }
   { const DOWN = new Set(['quit', 'fall', 'sad', 'sit', 'idle', 'stand']), UP = new Set(['active', 'win', 'boast', 'cheer']), st = {}, tag = {};
     (s.beats || []).forEach((b, k) => { const crashed = (b.events || []).filter(e => e.type === 'crash').map(e => e.who);
       for (const n in b.tags || {}) { const v = b.tags[n]; tag[n] = v == null ? null : (typeof v === 'string' ? v : v.text); }

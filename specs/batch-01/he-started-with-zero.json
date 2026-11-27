@@ -78,7 +78,7 @@
  "beats": [
   {
    "dur": 2.8,
-   "caption": "WEEK 1: ZERO REPS.",
+   "caption": "WEEK 1: JUST ONE REP.",
    "counter": 1,
    "values": {
     "NATURAL": 8,
@@ -92,8 +92,8 @@
    "bubbles": [
     {
      "who": "STARTED AT 0",
-     "text": "can't even do one.",
-     "at": 0.2
+     "text": "one. barely.",
+     "at": 0.4
     }
    ]
   },
@@ -105,7 +105,7 @@
     "NATURAL": 9,
     "STARTED AT 0": 2,
     "ALL OR NONE": 9,
-    "SKIPS WEEKS": 2
+    "SKIPS WEEKS": 4
    },
    "bubbles": [
     {
@@ -142,7 +142,7 @@
    "counter": 12,
    "values": {
     "STARTED AT 0": 6,
-    "SKIPS WEEKS": 3
+    "SKIPS WEEKS": 5
    },
    "states": {
     "NATURAL": "quit"
@@ -187,7 +187,7 @@
    "values": {
     "NATURAL": 9,
     "STARTED AT 0": 16,
-    "SKIPS WEEKS": 5,
+    "SKIPS WEEKS": 6,
     "ALL OR NONE": 5
    },
    "states": {

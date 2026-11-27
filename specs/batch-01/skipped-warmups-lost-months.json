@@ -33,10 +33,10 @@
   }
  ],
  "start": {
-  "SKIPS WARMUP": 0,
-  "WARMS UP": 0,
-  "MAXES DAILY": 0,
-  "COMFORT ZONE": 0
+  "SKIPS WARMUP": 20,
+  "WARMS UP": 20,
+  "MAXES DAILY": 20,
+  "COMFORT ZONE": 20
  },
  "metric": {
   "suffix": " KG",

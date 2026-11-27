@@ -81,7 +81,7 @@
    "caption": "SAME ROPE. SAME MORNING.",
    "counter": 1,
    "values": {
-    "TOMORROW": 1,
+    "TOMORROW": 2,
     "TODAY": 3,
     "WHEN READY": 1,
     "AFTER COFFEE": 2
@@ -103,7 +103,7 @@
    "caption": "TODAY CLIMBS. TOMORROW PLANS.",
    "counter": 10,
    "values": {
-    "TOMORROW": 2,
+    "TOMORROW": 0,
     "TODAY": 8,
     "WHEN READY": 2,
     "AFTER COFFEE": 5
@@ -125,7 +125,7 @@
    "caption": "TOMORROW BECOMES NEXT WEEK.",
    "counter": 25,
    "values": {
-    "TOMORROW": 3,
+    "TOMORROW": 2,
     "TODAY": 13,
     "WHEN READY": 3,
     "AFTER COFFEE": 7
@@ -177,7 +177,7 @@
    "counter": 60,
    "values": {
     "TODAY": 21,
-    "TOMORROW": 5,
+    "TOMORROW": 2,
     "AFTER COFFEE": 10,
     "WHEN READY": 4
    },
@@ -197,7 +197,7 @@
    "counter": 80,
    "values": {
     "TODAY": 26,
-    "TOMORROW": 6,
+    "TOMORROW": 0,
     "AFTER COFFEE": 11,
     "WHEN READY": 5
    },
@@ -218,7 +218,7 @@
    "counter": 100,
    "values": {
     "TODAY": 30,
-    "TOMORROW": 6,
+    "TOMORROW": 0,
     "AFTER COFFEE": 12,
     "WHEN READY": 5
    },

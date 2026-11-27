@@ -144,7 +144,7 @@
    "caption": "THEN THE DIGGER BREAKS.",
    "counter": 9,
    "values": {
-    "BIG MACHINE": 4,
+    "BIG MACHINE": 22,
     "TINY SPOON": 11,
     "GEAR FIRST": 6,
     "LEARNS FIRST": 5
@@ -191,7 +191,7 @@
    "counter": 20,
    "values": {
     "TINY SPOON": 33,
-    "BIG MACHINE": 8,
+    "BIG MACHINE": 23,
     "GEAR FIRST": 10,
     "LEARNS FIRST": 9
    },
@@ -212,7 +212,7 @@
    "counter": 24,
    "values": {
     "TINY SPOON": 40,
-    "BIG MACHINE": 10,
+    "BIG MACHINE": 24,
     "GEAR FIRST": 11,
     "LEARNS FIRST": 10
    },
@@ -231,7 +231,7 @@
     }
    ],
    "tags": {
-    "GEAR FIRST": "4 SHOVELS. 11 M.",
+    "GEAR FIRST": "2 SHOVELS. 11 M.",
     "LEARNS FIRST": "STILL LEARNING"
    }
   },

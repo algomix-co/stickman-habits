@@ -272,7 +272,7 @@ S.append(story(14, 'Most Liked, Fewest Reps', 'pullup',
 # 15 ----------------------------------------------------------------- pullup: started with zero
 S.append(story(15, 'He Started With Zero', 'pullup',
   [('NATURAL', RED), ('STARTED AT 0', TEAL), ('ALL OR NONE', PURPLE), ('SKIPS WEEKS', GOLD)], [
-  B(2.8, 'WEEK 1: JUST ONE REP.', 1, {'NATURAL': 8, 'STARTED AT 0': 1, 'ALL OR NONE': 5, 'SKIPS WEEKS': 4}, curves={'STARTED AT 0': 'late'}, bubbles=[bub('STARTED AT 0', 'one. barely.', 0.4)]),
+  B(2.8, 'WEEK 1: ONE REP.', 1, {'NATURAL': 8, 'STARTED AT 0': 1, 'ALL OR NONE': 5, 'SKIPS WEEKS': 4}, curves={'STARTED AT 0': 'late'}, bubbles=[bub('STARTED AT 0', 'one. barely.', 0.4)]),
   B(3.0, "THE NATURAL DOESN'T TRY HARD.", 3, {'NATURAL': 9, 'STARTED AT 0': 2, 'ALL OR NONE': 9, 'SKIPS WEEKS': 4}, bubbles=[bub('NATURAL', "I'm built for this.", 0.5)]),
   B(3.0, 'ALL OR NOTHING GOES ALL IN.', 6, {'ALL OR NONE': 0, 'STARTED AT 0': 3, 'NATURAL': 9, 'SKIPS WEEKS': 5}, events=[ev('crash', 'ALL OR NONE', 2.0)], tags={'ALL OR NONE': 'INJURED'}),
   B(3.0, 'ZERO ADDS ONE.', 12, {'STARTED AT 0': 6, 'SKIPS WEEKS': 5}, states={'NATURAL': 'quit'}, stateAt={'NATURAL': 1.8}, tags={'NATURAL': 'BORED'}, bubbles=[bub('NATURAL', 'boring now.', 0.5)]),

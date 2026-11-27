@@ -14,10 +14,10 @@ def spec_of(i):
         if os.path.exists(fp): return json.load(open(fp))
 for i in ids:
     s = spec_of(i); lp = os.path.join(ROOT, f'out/{i}/launch.json'); L = json.load(open(lp)) if os.path.exists(lp) else {}
-    u = s.get('upload', {}); a = assets[i]
+    u = s.get('upload', {}); a = assets.get(i, {}) if status == 'rendering' else assets[i]   # a row can be listed before its video exists
     row = {'batch': s.get('batch', 0), 'idx': s.get('batchIndex', 0), 'title': L.get('title') or u.get('title'), 'scene': s['scene'],
            'twist': L.get('twist') or s.get('twist', ''), 'duration': L.get('duration') or a.get('duration'), 'version': a.get('version', 1),
-           'status': status, 'video': a['video'], 'thumb': a['thumb'],
+           'status': status, 'video': a.get('video', '') if status != 'rendering' else '', 'thumb': a.get('thumb', '') if status != 'rendering' else '',
            'launch': {'description': L.get('description') or u.get('description', ''), 'hashtags': L.get('hashtags') or [h.lstrip('#') for h in u.get('hashtags', [])],
                       'tags': list(dict.fromkeys(L.get('tags') or u.get('tags', []))), 'pinned': L.get('pinned') or u.get('pinned') or 'Which one are you? A, B, C or D 👇'},
            'feedback': '', 'history': a.get('history', [{'v': a.get('version', 1), 'note': 'First render'}]), 'updatedAt': int(time.time() * 1000)}

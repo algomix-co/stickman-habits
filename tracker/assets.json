@@ -214,5 +214,18 @@
     "at": 1795779399115
    }
   ]
+ },
+ "strong-arms-weak-why": {
+  "video": "/_blob/1a21aa9a6088b6a489f2d3d3a3bb98af",
+  "thumb": "/_blob/0174e01d656d30e8ffe490ab4252a7e5",
+  "version": 1,
+  "duration": 30.5,
+  "history": [
+   {
+    "v": 1,
+    "note": "First render (after the independent review fixes)",
+    "at": 1795779582889
+   }
+  ]
  }
 }

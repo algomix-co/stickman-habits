@@ -313,26 +313,6 @@
   }
  },
  {
-  "id": "skipped-warmups-lost-months",
-  "scene": "lift",
-  "date": "2026-11-26T22:58:36.749Z",
-  "style": {
-   "theme": "grid",
-   "captionStyle": "tracked",
-   "transition": "dayzoom",
-   "labels": "above",
-   "hook": "flashforward",
-   "speed": "none",
-   "outro": "endcard",
-   "instrument": "piano",
-   "impact": "boom",
-   "root": 50,
-   "bpm": 84,
-   "music": "first",
-   "boost": []
-  }
- },
- {
   "id": "small-spoon-deep-hole",
   "scene": "dig",
   "date": "2026-11-26T23:01:19.382Z",
@@ -856,6 +836,26 @@
    "impact": "boom",
    "root": 54,
    "bpm": 80,
+   "music": "first",
+   "boost": []
+  }
+ },
+ {
+  "id": "skipped-warmups-lost-months",
+  "scene": "lift",
+  "date": "2026-11-27T11:31:07.182Z",
+  "style": {
+   "theme": "navy",
+   "captionStyle": "tracked",
+   "transition": "slide",
+   "labels": "above",
+   "hook": "flashforward",
+   "speed": "slowmo",
+   "outro": "endcard",
+   "instrument": "piano",
+   "impact": "boom",
+   "root": 53,
+   "bpm": 90,
    "music": "first",
    "boost": []
   }

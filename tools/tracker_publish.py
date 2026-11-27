@@ -12,6 +12,6 @@ for arg in sys.argv[2:]:
     L = json.load(open(os.path.join(ROOT, f'out/{i}/launch.json')))
     hist = prev.get('history') or [{'v': ver, 'note': 'First render (after the independent review fixes)', 'at': now}]
     A[i] = {'video': '/_blob/' + v, 'thumb': '/_blob/' + t, 'version': ver, 'duration': L.get('duration'), 'history': hist}
-    json.dump({'status': 'review', 'video': A[i]['video'], 'thumb': A[i]['thumb'], 'version': ver, 'duration': L.get('duration'), 'history': hist, 'doneAt': now, 'updatedAt': now}, open(os.path.join(out_dir, i + '.json'), 'w'))
+    json.dump({'status': 'review', 'video': A[i]['video'], 'thumb': A[i]['thumb'], 'version': ver, 'duration': L.get('duration'), 'history': hist, 'doneAt': now, 'updatedAt': now, 'workNote': {'__delete__': True}, 'workStartedAt': {'__delete__': True}}, open(os.path.join(out_dir, i + '.json'), 'w'))
     print(i, 'v%d' % ver)
 json.dump(A, open(ap, 'w'), indent=1, ensure_ascii=False)

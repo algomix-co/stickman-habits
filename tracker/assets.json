@@ -188,5 +188,18 @@
     "at": 1795778997465
    }
   ]
+ },
+ "skipped-warmups-lost-months": {
+  "video": "/_blob/cc3084686c101e1a97ee51dbe4684aa2",
+  "thumb": "/_blob/67d1920e67f2c769bd0c98750200f574",
+  "version": 1,
+  "duration": 31.6,
+  "history": [
+   {
+    "v": 1,
+    "note": "First render (after the independent review fixes)",
+    "at": 1795779085777
+   }
+  ]
  }
 }

@@ -174,15 +174,20 @@
   ]
  },
  "perfect-planks-unfinished-bridge": {
-  "video": "/_blob/d2de3410ff8ae89dc6390508ef04aa2d",
-  "thumb": "/_blob/1faefa263f2506b39cdcd84249300fef",
-  "version": 1,
+  "video": "/_blob/25df7e448bad903aec376177c0d9072c",
+  "thumb": "/_blob/5e74e5bf1195c92bcea697e07690f0f9",
+  "version": 2,
   "duration": 31.6,
   "history": [
    {
     "v": 1,
     "note": "First render (after the independent review fixes)",
     "at": 1795778830586
+   },
+   {
+    "v": 2,
+    "note": "Names stay on one line (engine fix: they flipped between one and two lines)",
+    "at": 1795782011905
    }
   ]
  },

@@ -358,26 +358,6 @@
   }
  },
  {
-  "id": "comparison-slowed-him-down",
-  "scene": "race",
-  "date": "2026-11-27T10:44:46.220Z",
-  "style": {
-   "theme": "navy",
-   "captionStyle": "tracked",
-   "transition": "slide",
-   "labels": "above",
-   "hook": "flashforward",
-   "speed": "slowmo",
-   "outro": "endcard",
-   "instrument": "piano",
-   "impact": "boom",
-   "root": 59,
-   "bpm": 80,
-   "music": "first",
-   "boost": []
-  }
- },
- {
   "id": "fell-twice-still-won",
   "scene": "climb",
   "date": "2026-11-27T10:48:07.165Z",
@@ -767,6 +747,26 @@
    "impact": "boom",
    "root": 57,
    "bpm": 72,
+   "music": "first",
+   "boost": []
+  }
+ },
+ {
+  "id": "comparison-slowed-him-down",
+  "scene": "race",
+  "date": "2026-11-27T11:58:39.192Z",
+  "style": {
+   "theme": "navy",
+   "captionStyle": "tracked",
+   "transition": "slide",
+   "labels": "above",
+   "hook": "flashforward",
+   "speed": "slowmo",
+   "outro": "endcard",
+   "instrument": "piano",
+   "impact": "boom",
+   "root": 59,
+   "bpm": 80,
    "music": "first",
    "boost": []
   }

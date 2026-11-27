@@ -33,13 +33,19 @@
   ]
  },
  "comparison-slowed-him-down": {
-  "video": "/_blob/cc99569a602ca8af6de09d481d2f9e7d",
-  "thumb": "/_blob/821007e1f03937ee0e304743d82f641d",
-  "version": 1,
+  "video": "/_blob/3fee50f1ce9af61d69c6563d8ffeef76",
+  "thumb": "/_blob/7855fc5773d0fde6fdc9b2d06fba40be",
+  "version": 2,
+  "duration": 31.4,
   "history": [
    {
     "v": 1,
     "note": "First render (after the independent review fixes)"
+   },
+   {
+    "v": 2,
+    "note": "Names stay on one line (engine fix: they flipped between one and two lines)",
+    "at": 1795780734042
    }
   ]
  },

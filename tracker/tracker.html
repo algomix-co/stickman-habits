@@ -84,11 +84,13 @@ textarea { width: 100%; min-height: 84px; resize: vertical; border: 1px solid va
     <h1>Launch tracker</h1>
     <p class="sub">Watch each Short, copy its launch kit, and leave feedback. To change a Short, write what should change and press <b>Request regeneration</b>.</p>
     <ol class="steps" aria-label="How a regeneration works"><li><b>Regeneration requested</b>: your note is saved. Claude checks the tracker every hour, or right away if you message it "check the tracker".</li><li><b>Regenerating</b>: Claude has picked it up and is re-rendering. The row shows what is being changed.</li><li><b>Needs review</b>: the new version is here, with a version number and a history line saying what changed.</li></ol>
+    <p class="facts" style="margin-top:8px">Rendering: Shorts render one at a time, about 4 minutes each. A rendering row says whether it is rendering now or its place in the queue, and moves to Needs review once Claude has checked and uploaded it. Press Refresh to see the latest.</p>
   </header>
 
   <div class="strip" id="stats" role="group" aria-label="Filter by status"></div>
   <div class="controls">
     <div class="batches" id="batches" role="group" aria-label="Batch"></div>
+    <button type="button" class="act primary" id="dlall">Download all</button>
     <span class="syncbar"><span class="note" id="sync">Connecting…</span><button type="button" class="chipbtn" id="refresh">Refresh</button></span>
   </div>
   <div id="banner" hidden class="banner"></div>
@@ -97,6 +99,7 @@ textarea { width: 100%; min-height: 84px; resize: vertical; border: 1px solid va
   </div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <script>
 const STATUS = {
@@ -139,7 +142,7 @@ function renderBody(r) {
   const body = el('div', 'body'), left = el('div'), kit = el('div', 'kit');
   const src = safeSrc(r.video);
   if (src) { const v = document.createElement('video'); v.controls = true; v.playsInline = true; v.preload = 'metadata'; v.src = src; const p = safeSrc(r.thumb); if (p) v.poster = p; left.append(v); }
-  else left.append(el('div', 'empty', r.status === 'rendering' ? 'Rendering now. The video appears here when it is done.' : 'Video not uploaded yet'));
+  else left.append(el('div', 'empty', r.status === 'rendering' ? (r.workNote || 'Waiting to render') + '. The video appears here as soon as it is checked and uploaded.' : 'Video not uploaded yet'));
   if (src) left.append(dlRow(r, src));
   const L = r.launch || {};
   if (r.twist) kit.append(el('p', 'twist', 'Twist: ' + r.twist));
@@ -161,7 +164,7 @@ function renderBody(r) {
   body.append(left, kit); return body;
 }
 function render() {
-  renderBatches(); renderStats();
+  renderBatches(); renderStats(); updateDlAll();
   const waiting = rows.filter(r => r.status === 'regenerate').length, working = rows.filter(r => r.status === 'regenerating').length, b = $('banner');
   if (canWrite && (waiting || working)) { b.hidden = false; b.textContent = (working ? working + (working === 1 ? ' Short is' : ' Shorts are') + ' being regenerated now. ' : '') + (waiting ? waiting + (waiting === 1 ? ' request is' : ' requests are') + ' waiting: Claude picks them up at its next hourly check, or right away if you message it "check the tracker".' : 'The new version will appear here as Needs review.'); }
   else if (canWrite) b.hidden = true;
@@ -177,12 +180,31 @@ function render() {
     const facts = el('div', 'facts'); facts.append(el('span', 'num', (r.batch === 0 ? 'Earlier' : 'B' + r.batch) + ' · #' + (r.idx || '–')), el('span', null, r.scene || ''), el('span', 'num', (r.duration ? r.duration.toFixed(1) + 's' : '')), el('span', 'num', 'v' + (r.version || 1)));
     if (r.status === 'regenerate') facts.append(el('span', null, 'Requested ' + ago(r.feedbackAt) + ' · waiting for Claude'));
     if (r.status === 'regenerating') facts.append(el('span', null, 'Claude started ' + ago(r.workStartedAt) + (r.workNote ? ' · ' + r.workNote : '')));
+    if (r.status === 'rendering' && r.workNote) facts.append(el('span', null, r.workNote + (r.workStartedAt ? ' · ' + ago(r.workStartedAt) : '')));
     if (r.status === 'review' && r.version > 1 && r.doneAt) facts.append(el('span', null, 'v' + r.version + ' ready ' + ago(r.doneAt)));
     meta.append(facts);
     const pill = el('span', 'pill s-' + (r.status || 'review'), STATUS[r.status || 'review'] || r.status);
     head.append(img, meta, pill); head.addEventListener('click', () => { open = open === r.id ? null : r.id; render(); });
     row.append(head); if (open === r.id) row.append(renderBody(r)); list.append(row);
   }
+}
+function viewRows() { return rows.filter(r => (batch == null || r.batch === batch) && (!filter || (r.status || 'review') === filter)); }
+function updateDlAll() { const n = viewRows().filter(r => safeSrc(r.video)).length, b = $('dlall'); if (b.dataset.busy) return; b.textContent = n ? 'Download all (' + n + ')' : 'Download all'; b.disabled = !n; }
+async function downloadAll() {
+  const list = viewRows().filter(r => safeSrc(r.video)); if (!list.length) return;
+  const d = await claude.use('downloads'); if (!d) { toast('Downloads are not available in this view. Open the tracker in a browser.'); return; }
+  if (!window.JSZip) { toast('The zip tool did not load. Refresh the page and try again.'); return; }
+  const b = $('dlall'); b.dataset.busy = '1'; b.disabled = true; const zip = new JSZip();
+  try {
+    let k = 0; for (const r of list) { k++; b.textContent = 'Fetching ' + k + ' of ' + list.length + '…'; const slug = (r.id || 'short') + '-v' + (r.version || 1), f = zip.folder(slug);
+      const vr = await fetch(safeSrc(r.video)); if (!vr.ok) throw { code: 'fetch' }; f.file(slug + '.mp4', await vr.blob());
+      const th = safeSrc(r.thumb); if (th) { const tr = await fetch(th); if (tr.ok) f.file(slug + '-thumbnail.jpg', await tr.blob()); }
+      const L = r.launch || {}; f.file('launch-kit.txt', 'TITLE\n' + (r.title || '') + '\n\nDESCRIPTION\n' + (L.description || '') + '\n\n' + (L.hashtags || []).map(h => '#' + String(h).replace(/^#/, '')).join(' ') + '\n\nTAGS\n' + (L.tags || []).join(', ') + '\n\nPINNED COMMENT\n' + (L.pinned || '') + '\n'); }
+    b.textContent = 'Zipping…'; const blob = await zip.generateAsync({ type: 'blob', compression: 'STORE' });
+    const name = 'mind-the-gap-' + (batch == null ? 'all' : batch === 0 ? 'earlier' : 'batch-' + batch) + (filter ? '-' + filter : '') + '.zip';
+    await d.save({ filename: name, data: blob }); toast('Saved ' + name);
+  } catch (e) { const c = e && e.code; toast(c === 'host_unavailable' ? 'This app cannot save files. Open the tracker in a browser or on a computer.' : c === 'too_large' ? 'Too large for this app. Pick a smaller filter, or use a browser.' : c === 'declined' ? 'Download cancelled.' : 'The download did not complete. Try again.'); }
+  finally { delete b.dataset.busy; updateDlAll(); }
 }
 function stamp() { $('sync').textContent = (rows.length ? 'Live · ' + rows.length + ' Shorts' : 'Live · waiting for the first Short') + ' · updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
 async function refresh() {
@@ -208,7 +230,7 @@ function dlRow(r, src) {
   db = await claude.use('db');
   if (!db) { clearTimeout(timer); $('sync').textContent = 'Sign in to claude.ai to see the tracker data.'; return; }
   try { const u = await claude.use('user'); if (u && u.can) { const c = await u.can('data.write'); if (c === false) { canWrite = false; const b = $('banner'); b.hidden = false; b.textContent = 'You can watch and copy launch kits here. Feedback buttons are for the channel owner.'; } } } catch (e) {}
-  $('refresh').addEventListener('click', refresh);
+  $('refresh').addEventListener('click', refresh); $('dlall').addEventListener('click', downloadAll);
   db.collection('videos').onSnapshot(snap => {
     if (!snap.metadata || !snap.metadata.fromCache) clearTimeout(timer);
     rows = snap.docs.map(d => ({ id: d.id, ...(d.data() || {}) }));

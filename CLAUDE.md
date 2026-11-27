@@ -51,4 +51,9 @@ Short, id = spec id; fields: batch, idx, title, scene, twist, duration, version,
   `feedback: ""`. If the feedback is a general rule, add it to LEARNINGS.md (and the validator if checkable).
 - `approved` -> `node tools/feedback.js approve "<title>"`; `rejected` -> `reject "<title>" "<feedback>"`;
   `published` -> `used "<title>"` so the title can never be reused.
+- **Render progress is visible on the page:** while a batch renders, keep a Monitor on the render log (lines
+  `render <id>`, `done ->`, FAIL/ERROR). Rows that are not finished stay `rendering` with a `workNote`: "Rendering now
+  (about 4 min)" for the current one and "Queued · Nth in line" for the rest. On each `done ->`, check the frames and
+  then upload, `tools/tracker_publish.py`, and update the row to `review` (delete workNote). Never let a finished
+  video sit unpublished.
 - Batches are 20 Shorts (owner's request). Research first: `research/batch-NN.md`.

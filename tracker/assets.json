@@ -266,5 +266,18 @@
     "at": 1795780280774
    }
   ]
+ },
+ "he-started-with-zero": {
+  "video": "/_blob/f5a279ecd3adf2c091ba85da8d1a3d16",
+  "thumb": "/_blob/55211b6d1f20970736da45a83cb093ab",
+  "version": 1,
+  "duration": 29.3,
+  "history": [
+   {
+    "v": 1,
+    "note": "First render (after the independent review fixes)",
+    "at": 1795780498344
+   }
+  ]
  }
 }

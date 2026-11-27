@@ -313,46 +313,6 @@
   }
  },
  {
-  "id": "rest-days-built-this-bridge",
-  "scene": "bridge",
-  "date": "2026-11-26T22:53:00.489Z",
-  "style": {
-   "theme": "void",
-   "captionStyle": "boxed",
-   "transition": "slide",
-   "labels": "above",
-   "hook": "flashforward",
-   "speed": "none",
-   "outro": "endcard",
-   "instrument": "piano",
-   "impact": "boom",
-   "root": 53,
-   "bpm": 72,
-   "music": "first",
-   "boost": []
-  }
- },
- {
-  "id": "she-lifted-through-winter",
-  "scene": "lift",
-  "date": "2026-11-26T22:55:46.136Z",
-  "style": {
-   "theme": "dusk",
-   "captionStyle": "boxed",
-   "transition": "fade",
-   "labels": "above",
-   "hook": "flashforward",
-   "speed": "slowmo",
-   "outro": "endcard",
-   "instrument": "piano",
-   "impact": "boom",
-   "root": 54,
-   "bpm": 80,
-   "music": "first",
-   "boost": []
-  }
- },
- {
   "id": "skipped-warmups-lost-months",
   "scene": "lift",
   "date": "2026-11-26T22:58:36.749Z",
@@ -856,6 +816,46 @@
    "impact": "boom",
    "root": 54,
    "bpm": 84,
+   "music": "first",
+   "boost": []
+  }
+ },
+ {
+  "id": "rest-days-built-this-bridge",
+  "scene": "bridge",
+  "date": "2026-11-27T11:24:11.316Z",
+  "style": {
+   "theme": "void",
+   "captionStyle": "boxed",
+   "transition": "slide",
+   "labels": "above",
+   "hook": "flashforward",
+   "speed": "none",
+   "outro": "endcard",
+   "instrument": "piano",
+   "impact": "boom",
+   "root": 53,
+   "bpm": 72,
+   "music": "first",
+   "boost": []
+  }
+ },
+ {
+  "id": "she-lifted-through-winter",
+  "scene": "lift",
+  "date": "2026-11-27T11:27:33.374Z",
+  "style": {
+   "theme": "navy",
+   "captionStyle": "tracked",
+   "transition": "slide",
+   "labels": "above",
+   "hook": "flashforward",
+   "speed": "slowmo",
+   "outro": "endcard",
+   "instrument": "piano",
+   "impact": "boom",
+   "root": 54,
+   "bpm": 80,
    "music": "first",
    "boost": []
   }

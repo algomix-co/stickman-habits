@@ -253,5 +253,18 @@
     "at": 1795780029901
    }
   ]
+ },
+ "small-spoon-deep-hole": {
+  "video": "/_blob/7e1969a4a675aa087f5ce12732655a77",
+  "thumb": "/_blob/bb5025c56dd1547e6431258003da13c7",
+  "version": 1,
+  "duration": 31.6,
+  "history": [
+   {
+    "v": 1,
+    "note": "First render (after the independent review fixes)",
+    "at": 1795780280774
+   }
+  ]
  }
 }

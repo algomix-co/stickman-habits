@@ -313,26 +313,6 @@
   }
  },
  {
-  "id": "small-spoon-deep-hole",
-  "scene": "dig",
-  "date": "2026-11-26T23:01:19.382Z",
-  "style": {
-   "theme": "void",
-   "captionStyle": "boxed",
-   "transition": "cut",
-   "labels": "above",
-   "hook": "flashforward",
-   "speed": "none",
-   "outro": "endcard",
-   "instrument": "piano",
-   "impact": "boom",
-   "root": 50,
-   "bpm": 90,
-   "music": "first",
-   "boost": []
-  }
- },
- {
   "id": "most-quit-before-results",
   "scene": "climb",
   "date": "2026-11-26T23:31:08.331Z",
@@ -762,6 +742,26 @@
    "labels": "above",
    "hook": "flashforward",
    "speed": "none",
+   "outro": "endcard",
+   "instrument": "piano",
+   "impact": "boom",
+   "root": 50,
+   "bpm": 90,
+   "music": "first",
+   "boost": []
+  }
+ },
+ {
+  "id": "small-spoon-deep-hole",
+  "scene": "dig",
+  "date": "2026-11-27T11:51:03.434Z",
+  "style": {
+   "theme": "navy",
+   "captionStyle": "tracked",
+   "transition": "slide",
+   "labels": "above",
+   "hook": "flashforward",
+   "speed": "slowmo",
    "outro": "endcard",
    "instrument": "piano",
    "impact": "boom",

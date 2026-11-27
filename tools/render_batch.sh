@@ -3,6 +3,7 @@
 # the engine is skipped, so a restart picks up where it stopped.  usage: tools/render_batch.sh specs/batch-01 [log]
 set -u
 dir=$1; log=${2:-/dev/stdout}; cd "$(dirname "$0")/.."
+python3 tools/batch_check.py "$dir" >> "$log" 2>&1 || { echo "BATCH CHECK FAILED: fix the batch (see log) before rendering" >> "$log"; exit 1; }   # variety rules (LEARNINGS round 4)
 for spec in "$dir"/*.json; do
   id=$(basename "$spec" .json); mp4=out/$id/$id.mp4
   if [ -f "$mp4" ] && [ "$mp4" -nt "$spec" ] && [ "$mp4" -nt engine/engine.js ] && [ "$mp4" -nt engine/scenes.js ] && [ "$mp4" -nt engine/audio_first.py ]; then echo "skip $id" >> "$log"; continue; fi

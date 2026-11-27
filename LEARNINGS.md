@@ -14,6 +14,58 @@ are enforced by `make.js` (see "Enforced" at the bottom); a spec that breaks one
 5. **After publishing:** note YouTube Studio numbers in "Performance notes"; formats that underperform three
    times in a row get a Don't.
 
+## Round 4 verdict (2026-11-27): "every video has the same format" — READ THIS FIRST
+Owner, on batch 1 (20 Shorts): "Most of the videos have the same animation format. There is no
+differentiation or nothing to which the users get hooked; even the comparisons and the topics look blunt."
+They had already given the keyword pool and asked for stories a middle-class viewer associates with, and
+pointed at @SimplyAnimatedVisuals (38M / 30M / 12M views). Evidence: `research/reference-simply-animated.md`.
+
+**What we did wrong (do not repeat):**
+- **Don't:** one template for a whole batch. All 20 Shorts were the same video in six costumes (race, climb,
+  bridge, dig, lift, pull-up): flash-forward, "SAME X. SAME Y." (16 of 20 openers), fast starter crashes,
+  storm, steady one wins, WHICH ONE ARE YOU. Changing the activity is not variety.
+- **Don't:** one moral for a whole batch. Every Short said "steady beats fast". A batch must say 20 different
+  things.
+- **Don't:** a speed contest as the comparison. Four people doing the same activity at different speeds is a
+  bar chart in costume: the viewer gets it in two seconds and has nothing left to discover. The comparison
+  must be an **idea made physical** that lands an "aha" (Ego = tall tree, shallow roots; Confidence = small
+  tree, deep roots).
+- **Don't:** ignore the keyword pool. Batch 1 used discipline 13x and consistency 7x, and money, top 1%,
+  comfort, lust, ambition, dreams, choices, obsession 0x. (enforced: `tools/batch_check.py`)
+- **Don't:** generic people. No salary, EMI, family, relatives, phone, job or savings appeared anywhere, so a
+  middle-class viewer had nothing to recognise from their own life.
+
+**What to do instead:**
+- **Do:** one idea per Short (its title), shown through **3-6 different mini-scenes of 4-8 s each** (about
+  30-35 s total), every mini-scene a different visual metaphor for that idea, each with its own small payoff.
+  A new picture every few seconds is what holds viewers.
+- **Do:** label the **concepts themselves** (EGO / CONFIDENCE, WORDS / ACTIONS, SALARY / SKILLS, LUXURY
+  FIRST / ASSETS FIRST), with one short heading line that states the truth. Quotable lines get shared.
+- **Do:** end on a **spectacle payoff** (a chain reaction, a summit, a tower rising, a giant falling), and
+  build each Short to it: the last mini-scene is the biggest.
+- **Do:** keep the round-2 lesson at the same time: figures always DO something physical in every mini-scene
+  (push, pull, dig, climb, swing, carry, dive, build). A metaphor where props change while people stand is
+  still the worst format (round 2). Metaphor + action, never metaphor instead of action.
+- **Do:** see it through a **middle-class life**: month-end salary, EMI and loans, luxury first vs assets
+  first, the 9-to-5 and the commute, a side project after work, parents' sacrifices, relatives and neighbours
+  comparing ("what will people say"), the phone at 2 a.m., the unused gym membership, the safe job vs the
+  dream, first-salary splurges, the friend who flexes, exams and marks. Every Short needs at least one
+  moment the viewer has lived.
+- **Do:** spread the keyword pool across a batch: no main topic in more than 2 Shorts, 12+ main topics in a
+  batch of 20, no keyword in more than 30% of Shorts, the owner's priority topics present (money, top 1%,
+  comfort, ego, overthinking, procrastination, social, luck, failure, choices), every opener different.
+  (enforced: `tools/batch_check.py`, run by `tools/render_batch.sh`; a failing batch does not render)
+- **Do:** a look that reads instantly: dark background, white figures, ONE accent colour for the winning
+  choice, minimal text. Numbers only where the number is the point ("DAY 365 · 365 BRICKS" vs
+  "ALL AT ONCE, LATER · 0 BRICKS").
+- **Don't:** copy Simply Animated's scenes or titles (fishing hard vs smart, the words/actions scale, the
+  ego/confidence trees, the luck target, the domino giant, the anchor underwater). Build our own metaphor
+  library.
+- **Open decisions (asked the owner 2026-11-27; record the answers here and delete this line):** which
+  middle-class audience (India / global); whether the older rules below (at least 4 characters, a live number
+  over every head, the flash-forward hook, the A·B·C·D comment ending) still bind the new montage format;
+  whether to pilot 4 Shorts before batch 2.
+
 ## Niche & story
 - **Do:** discipline / motivation / self-improvement. Keyword pool: discipline, mindset, motivation, money,
   fitness, top 1%, consistency, strengths, goal, vision, willpower, ambition, procrastination, overthinking,
@@ -135,3 +187,4 @@ are enforced by `make.js` (see "Enforced" at the bottom); a spec that breaks one
 - 2026-11-26: approved "She Quit 6 Metres Short"
 - 2026-11-26: Owner approved the bridge lanes, near-miss, storm, flash and decimals upgrades
 - 2026-11-26: She Quit 6 Metres Short (regenerate): labels flickered riding up the rope; now a fixed scoreboard row above the bar for every climb
+- 2026-11-27: Round 4 verdict on batch 1: same animation format in every video, no hook, comparisons and topics blunt; use the keyword pool, middle-class relatability and @SimplyAnimatedVisuals as the reference. Diagnosis and new rules: 'Round 4 verdict' section above; evidence research/reference-simply-animated.md; batch variety enforced by tools/batch_check.py.

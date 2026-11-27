@@ -17,6 +17,10 @@ given"). The keyword pool lives in `brands/mind-the-gap.json` (`rules.keywords`)
 gym rest). **Secondary:** 35-45 restarting (fitness, money, career). UK/US English, gender-neutral stakes.
 
 ## 3. The evergreen rules (every video), restored in round 3
+> **Round 4 (2026-11-27): these rules produced 20 near-identical Shorts. The owner's verdict and the new
+> direction (one idea through 3-6 visual metaphors, middle-class life, the full keyword pool) are in
+> LEARNINGS.md "Round 4 verdict", which overrides this list where they differ.**
+
 1. **One physical activity everyone does on screen** (lift, pull-up, climb, run, dig): progress you can see.
 2. **Four relatable people**, not abstract traits (NEW YEAR, HACK HUNTER, QUITS AT 80%...), each with a
    **live number over the head** and a DAY / WEEK / MONTH counter.

@@ -5,6 +5,10 @@ This repo turns story specs (`specs/*.json`) into YouTube Shorts for the channel
 ## Before writing any new story
 1. Read `LEARNINGS.md` (the owner's do's and don'ts; it overrides everything else) and the title ledger
    `brands/mind-the-gap.titles.json`.
+   Start with its **"Round 4 verdict"** section: batch 1 failed because every Short had the same format and
+   moral. Each Short is one idea told through 3-6 different visual metaphors with physical action, seen
+   through middle-class life, and a batch spreads the whole keyword pool (`tools/batch_check.py` must pass).
+   Reference: `research/reference-simply-animated.md`.
 2. Read the drafting guide in `README.md`, especially **"On-screen logic"**. Every motion must mean what
    the number means:
    - totals only go up, so a restart is slow progress plus a bubble, never a falling number;
@@ -14,7 +18,7 @@ This repo turns story specs (`specs/*.json`) into YouTube Shorts for the channel
    - bubbles match the motion;
    - nobody stands around.
 3. Use the retention tools in README (near-miss, storm, stacked lanes, story titles); the evidence is in
-   `research/reference-channel.md`.
+   `research/reference-channel.md` and `research/reference-simply-animated.md` (the owner's main reference).
 4. Play each beat in your head with the sound off. If anything could look like a glitch to a viewer,
    change the story.
 
@@ -39,7 +43,8 @@ Short, id = spec id; fields: batch, idx, title, scene, twist, duration, version,
   `published`, `rejected`. Claude sets `review` with `doneAt` after every new render.
 - **Hourly check:** a scheduled task ("Mind the Gap tracker check", trig_01TWZ7sYnvmsnewSCCAfX9ub) wakes this
   session every hour to process `regenerate` rows; the owner can also say "check the tracker".
-- **Publishing a batch:** write the stories (`tools/stories/batchNN.py`), review and render
+- **Publishing a batch:** write the stories (`tools/stories/batchNN.py`), run `python3 tools/batch_check.py
+  specs/batch-NN` (variety: keywords, openers, formats; `render_batch.sh` refuses a failing batch), review and render
   (`tools/render_batch.sh specs/batch-NN <log>`, resumable), check frames and run the independent review,
   upload each mp4 + `thumbnail.jpg` with the Artifact tool (`asset: true`, up to 25 files per call; re-encode
   any mp4 over 19 MB), record the returned urls in `tracker/assets.json`, build rows with

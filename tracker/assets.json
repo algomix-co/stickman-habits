@@ -322,5 +322,57 @@
     "at": 1795780498344
    }
   ]
+ },
+ "pay-yourself-first": {
+  "video": "/_blob/efc93a79ebb995b5c3aef6f4b886b880",
+  "thumb": "/_blob/2e2c1cabcc0a197abfa5025a48d3adb8",
+  "version": 1,
+  "duration": 30.4,
+  "history": [
+   {
+    "v": 1,
+    "note": "Round 4 pilot: one idea told through 4 mini-scenes (new format)",
+    "at": 1795813357776
+   }
+  ]
+ },
+ "thinking-isnt-doing": {
+  "video": "/_blob/df46eaa8ae65a08b4f16561dc506c4e3",
+  "thumb": "/_blob/1dddb486bef5ec4c7984f826f0287912",
+  "version": 1,
+  "duration": 29.9,
+  "history": [
+   {
+    "v": 1,
+    "note": "Round 4 pilot: one idea told through 4 mini-scenes (new format)",
+    "at": 1795813357776
+   }
+  ]
+ },
+ "comfort-is-a-slow-trap": {
+  "video": "/_blob/b982b237d9e85babbf5dafbbeff89614",
+  "thumb": "/_blob/5097a67db17a27825f805c7c58205569",
+  "version": 1,
+  "duration": 29.9,
+  "history": [
+   {
+    "v": 1,
+    "note": "Round 4 pilot: one idea told through 4 mini-scenes (new format)",
+    "at": 1795813357776
+   }
+  ]
+ },
+ "ego-pays-full-price": {
+  "video": "/_blob/cb6352864924fb021d13360d8c1c59a3",
+  "thumb": "/_blob/6c331946ed7292707b146052bb2b3c45",
+  "version": 1,
+  "duration": 29.9,
+  "history": [
+   {
+    "v": 1,
+    "note": "Round 4 pilot: one idea told through 4 mini-scenes (new format)",
+    "at": 1795813357776
+   }
+  ]
  }
 }

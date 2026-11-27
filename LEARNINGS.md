@@ -75,6 +75,20 @@ pointed at @SimplyAnimatedVisuals (38M / 30M / 12M views). Evidence: `research/r
     them on the tracker, then batch 2 (20) follows the verdict.
   - **Batch 1 stays on the tracker** for the owner to approve or reject one by one.
 
+## Montage format: how it is built (round 4 pilot)
+- Spec: `"format": "montage"`, 3-6 `scenes` of 3-9 s (`kind`, `heading`, `left.label`, `right.label`, optional
+  `line` on the last scene), `endcard.tagline`. Each `kind` is a mini-scene in `engine/montage.js` (`MK.<kind>`);
+  a new metaphor means a new kind. Validator: different kind per scene, labels <= 13 chars, 22-40 s total.
+- **Do:** the split stage: left = the losing choice (white), right = the winning choice (gold). Labels at y 690,
+  status lines and counters at y 785, the closing line in the box at y 1290-1400.
+- **Do:** keep heads clear of the label rows: figures that climb (ladder, stairs, cliff) are drawn smaller and
+  their counters go under the floor (y 1268). The reviewer cannot see figure/label overlaps here: check the strip.
+- **Do:** keep key props left of x 985 (the like/comment buttons cover x > 985, y 900-1650).
+- **Do:** props at a believable size next to the figures (a car bigger than a person: pilot D's first car was a toy).
+- **Do:** every figure acts for its whole scene (fetch-and-build loops, hauling in lunges, hand over hand). Small
+  in-place motions fail the motion check; a static cheer at the end fails it too, so finales hop, wave and keep
+  confetti falling until the end card.
+
 ## Niche & story
 - **Do:** discipline / motivation / self-improvement. Keyword pool: discipline, mindset, motivation, money,
   fitness, top 1%, consistency, strengths, goal, vision, willpower, ambition, procrastination, overthinking,
@@ -198,3 +212,4 @@ pointed at @SimplyAnimatedVisuals (38M / 30M / 12M views). Evidence: `research/r
 - 2026-11-26: She Quit 6 Metres Short (regenerate): labels flickered riding up the rope; now a fixed scoreboard row above the bar for every climb
 - 2026-11-27: Round 4 verdict on batch 1: same animation format in every video, no hook, comparisons and topics blunt; use the keyword pool, middle-class relatability and @SimplyAnimatedVisuals as the reference. Diagnosis and new rules: 'Round 4 verdict' section above; evidence research/reference-simply-animated.md; batch variety enforced by tools/batch_check.py.
 - 2026-11-27: Owner decisions: global middle-class audience; 4+ characters, live numbers, flash-forward hook and A·B·C·D ending become tools, not rules, in the new mini-scene format; pilot 4 Shorts before batch 2; batch 1 stays on the tracker for the owner to pick.
+- 2026-11-27: Round 4 pilot built and on the tracker (batch 2): Pay Yourself First (money), Thinking Isn't Doing (overthinking), Comfort Is A Slow Trap (comfort), Ego Pays Full Price (ego). Waiting for the owner's verdict before batch 2.

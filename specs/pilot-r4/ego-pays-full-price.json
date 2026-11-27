@@ -2,20 +2,88 @@
  "id": "ego-pays-full-price",
  "brand": "mind-the-gap",
  "format": "montage",
- "keywords": ["ego", "mistakes", "problem solving"],
- "scenes": [
-  {"kind": "stuckcar", "dur": 6.5, "heading": "STUCK.", "left": {"label": "EGO"}, "right": {"label": "LEARNER"}},
-  {"kind": "feedback", "dur": 6.5, "heading": "FEEDBACK.", "left": {"label": "EGO"}, "right": {"label": "LEARNER"}},
-  {"kind": "trip", "dur": 7, "heading": "MISTAKES.", "left": {"label": "EGO"}, "right": {"label": "LEARNER"}},
-  {"kind": "summit", "dur": 7.5, "heading": "ONE YEAR LATER.", "left": {"label": "EGO"}, "right": {"label": "LEARNER"}, "line": "EGO PAYS FULL PRICE."}
+ "keywords": [
+  "ego",
+  "mistakes",
+  "problem solving"
  ],
- "endcard": {"tagline": "ASK. LISTEN. CLIMB."},
+ "scenes": [
+  {
+   "kind": "stuckcar",
+   "dur": 6.5,
+   "heading": "STUCK.",
+   "left": {
+    "label": "EGO"
+   },
+   "right": {
+    "label": "LEARNER"
+   }
+  },
+  {
+   "kind": "feedback",
+   "dur": 6.5,
+   "heading": "FEEDBACK.",
+   "left": {
+    "label": "EGO"
+   },
+   "right": {
+    "label": "LEARNER"
+   }
+  },
+  {
+   "kind": "trip",
+   "dur": 7,
+   "heading": "MISTAKES.",
+   "left": {
+    "label": "EGO"
+   },
+   "right": {
+    "label": "LEARNER"
+   }
+  },
+  {
+   "kind": "summit",
+   "dur": 7.5,
+   "heading": "ONE YEAR LATER.",
+   "left": {
+    "label": "EGO"
+   },
+   "right": {
+    "label": "LEARNER"
+   },
+   "line": "EGO PAYS FULL PRICE."
+  }
+ ],
+ "endcard": {
+  "tagline": "ASK. LISTEN. CLIMB."
+ },
  "upload": {
   "title": "Ego Pays Full Price",
   "description": "Stuck, criticised, tripped up: the same three moments for two people. Ego waves off help, blocks every arrow and trips on the same rock. The learner asks, catches the arrows and turns mistakes into steps. Which one are you?",
-  "hashtags": ["ego", "mindset", "growthmindset", "selfimprovement", "motivation", "shorts"],
-  "tags": ["ego", "ego vs growth", "taking feedback", "learning from mistakes", "asking for help", "growth mindset", "humility", "self improvement", "motivation", "stickman animation", "shorts"],
+  "hashtags": [
+   "ego",
+   "mindset",
+   "growthmindset",
+   "selfimprovement",
+   "motivation",
+   "shorts"
+  ],
+  "tags": [
+   "ego",
+   "ego vs growth",
+   "taking feedback",
+   "learning from mistakes",
+   "asking for help",
+   "growth mindset",
+   "humility",
+   "self improvement",
+   "motivation",
+   "stickman animation",
+   "shorts"
+  ],
   "pinned": "Hardest one for you: asking for help, taking feedback, or admitting a mistake? 👇"
  },
- "twist": "The same rock trips the ego every time; the learner carries it and climbs the steps it makes."
+ "twist": "The same rock trips the ego every time; the learner carries it and climbs the steps it makes.",
+ "batch": 2,
+ "batchIndex": 4
 }

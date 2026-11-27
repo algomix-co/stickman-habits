@@ -333,26 +333,6 @@
   }
  },
  {
-  "id": "started-together-finished-alone",
-  "scene": "race",
-  "date": "2026-11-26T23:04:25.231Z",
-  "style": {
-   "theme": "navy",
-   "captionStyle": "tracked",
-   "transition": "slide",
-   "labels": "above",
-   "hook": "flashforward",
-   "speed": "slowmo",
-   "outro": "endcard",
-   "instrument": "piano",
-   "impact": "boom",
-   "root": 53,
-   "bpm": 90,
-   "music": "first",
-   "boost": []
-  }
- },
- {
   "id": "the-crowd-stopped-cheering",
   "scene": "race",
   "date": "2026-11-26T23:08:03.410Z",
@@ -844,6 +824,26 @@
   "id": "skipped-warmups-lost-months",
   "scene": "lift",
   "date": "2026-11-27T11:31:07.182Z",
+  "style": {
+   "theme": "navy",
+   "captionStyle": "tracked",
+   "transition": "slide",
+   "labels": "above",
+   "hook": "flashforward",
+   "speed": "slowmo",
+   "outro": "endcard",
+   "instrument": "piano",
+   "impact": "boom",
+   "root": 53,
+   "bpm": 90,
+   "music": "first",
+   "boost": []
+  }
+ },
+ {
+  "id": "started-together-finished-alone",
+  "scene": "race",
+  "date": "2026-11-27T11:35:16.903Z",
   "style": {
    "theme": "navy",
    "captionStyle": "tracked",

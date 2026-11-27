@@ -201,5 +201,18 @@
     "at": 1795779085777
    }
   ]
+ },
+ "started-together-finished-alone": {
+  "video": "/_blob/f17d9494a89bec87048484ca4dec0103",
+  "thumb": "/_blob/3c7be848480904cfe6b9a20f1ccf9a78",
+  "version": 1,
+  "duration": 30.3,
+  "history": [
+   {
+    "v": 1,
+    "note": "First render (after the independent review fixes)",
+    "at": 1795779399115
+   }
+  ]
  }
 }

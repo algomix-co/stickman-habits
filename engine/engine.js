@@ -301,7 +301,7 @@ function compile(spec, brand, style) {
   if (spec.showValues !== false) { const mx2 = spec.metric.max || mx || 1, steps = []; for (let k = Math.floor(Math.log10(mx2)) - 2; k <= Math.floor(Math.log10(mx2)); k++) for (const m of [1, 2, 5]) { const v = m * Math.pow(10, k); if (v >= mx2 * 0.04 && v <= mx2 * 1.0001 && v >= 1) steps.push(v); }
     T.chars.forEach((_, i) => { let last = -9; let prevV = null;
       for (let tt = 0; tt <= T.dur; tt += 0.02) { const v = (() => { const B = T.beats.find(B => tt < B.t1) || T.beats[T.beats.length - 1]; const u = clamp((tt - B.t0) / (B.t1 - B.t0)); return lerp(B.from[i], B.to[i], (CURVES[B.curves[i]] || easeIO)(u)); })();
-        if (prevV != null) for (const th of steps) if (prevV < th && v >= th && tt - last > 1.1 && !T.events.some(e => e.i === i && Math.abs(e.t - tt) < 0.7)) { T.milestones.push({ i, t: tt, v: th }); last = tt; }
+        if (prevV != null) for (const th of steps) if (prevV < th && v >= th && tt - last > 1.1 && !(T.question && tt > T.question.t0 - 0.5) && !T.events.some(e => e.i === i && Math.abs(e.t - tt) < 0.7)) { T.milestones.push({ i, t: tt, v: th }); last = tt; }   /* no size pop once the answer badges are due: they need still labels */
         prevV = v; } });
     T.milestones.sort((a, b) => a.t - b.t); }
   T.scene = SCENES[spec.scene]; if (!T.scene) throw new Error(`unknown scene "${spec.scene}". Options: ${Object.keys(SCENES).join(', ')}`);

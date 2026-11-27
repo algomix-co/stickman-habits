@@ -69,6 +69,8 @@ are enforced by `make.js` (see "Enforced" at the bottom); a spec that breaks one
   sit in a fixed scoreboard row above the bar; climb tags are at most 10 characters (enforced).
 - **Do:** in stacked lanes, everything stays in its lane: hops are small, labels don't grow or flip sides,
   the A·B·C·D badge sits beside the body.
+  A lane name wraps to two lines only when it cannot fit beside the body, never because another lane's
+  runner is level with it (batch 1: names flipped between one and two lines; fixed in the engine).
 - **Don't:** let a label change size while the A·B·C·D badges appear (batch 1: a "10 M" milestone pop pushed a
   label into its neighbour's badge). Milestone pops stop 0.5 s before the question beat (engine).
 - **Don't:** static frames toward the end, or a quiet opening. Use big movements, not small tweaks.

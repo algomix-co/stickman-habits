@@ -1,0 +1,219 @@
+<title>Mind the Gap Tracker</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: a production log. Summary strip on top, then one row per Short; a row opens into player + launch kit + feedback. */
+:root {
+  --bg: #f3f5f6; --panel: #ffffff; --line: #dfe4e7; --fg: #12171b; --muted: #5b6870;
+  --accent: #0f9e8c; --accent-ink: #ffffff; --gold: #a66d00; --coral: #c8364a; --sky: #2f6fd6; --stone: #7c868c;
+  --chip: #e8ecee; --shadow: 0 1px 2px rgba(15, 25, 30, .06);
+  --display: "Space Grotesk", "Segoe UI", system-ui, sans-serif; --body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0b0e11; --panel: #12171c; --line: #222b32; --fg: #e9eef1; --muted: #93a1aa;
+  --accent: #36e0c8; --accent-ink: #062a25; --gold: #ffc53d; --coral: #ff6b7d; --sky: #7fb2ff; --stone: #8d989f;
+  --chip: #1a2229; --shadow: none; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0b0e11; --panel: #12171c; --line: #222b32; --fg: #e9eef1; --muted: #93a1aa;
+  --accent: #36e0c8; --accent-ink: #062a25; --gold: #ffc53d; --coral: #ff6b7d; --sky: #7fb2ff; --stone: #8d989f;
+  --chip: #1a2229; --shadow: none; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--fg); font: 14px/1.5 var(--body); }
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 28px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 20px }
+header { display: grid; gap: 6px }
+.eyebrow { font: 600 12px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--muted) }
+h1 { font: 700 clamp(24px, 4vw, 34px)/1.1 var(--display); margin: 0; text-wrap: balance }
+.sub { color: var(--muted); margin: 0; max-width: 68ch }
+.steps { margin: 4px 0 0; padding-left: 20px; color: var(--muted); display: grid; gap: 2px; max-width: 80ch; font-size: 13px }
+.steps b { color: var(--fg); font-weight: 600 }
+.when { font-size: 12px; color: var(--muted) }
+.strip { display: flex; flex-wrap: wrap; gap: 8px }
+.stat { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; min-width: 120px; display: grid; gap: 2px; cursor: pointer; text-align: left; color: var(--fg); font: inherit }
+.stat[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset }
+.stat b { font: 700 22px/1 var(--display); font-variant-numeric: tabular-nums }
+.stat span { font-size: 12px; color: var(--muted) }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between }
+.batches { display: flex; flex-wrap: wrap; gap: 6px }
+.chipbtn { border: 1px solid var(--line); background: var(--chip); color: var(--fg); border-radius: 999px; padding: 6px 12px; font: 500 13px var(--body); cursor: pointer }
+.chipbtn[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg) }
+.note { font-size: 12px; color: var(--muted) }
+.syncbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap }
+.dl { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; max-width: 300px }
+.dl .act { flex: 1 1 auto }
+.list { display: grid; gap: 8px }
+.row { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden }
+.rowhead { display: grid; grid-template-columns: 54px 1fr auto; gap: 14px; align-items: center; padding: 10px 14px; cursor: pointer; width: 100%; background: none; border: 0; color: inherit; font: inherit; text-align: left }
+.rowhead:focus-visible, button:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.thumb { width: 54px; aspect-ratio: 9/16; border-radius: 6px; background: var(--chip); object-fit: cover; max-width: 100% }
+.meta { min-width: 0; display: grid; gap: 3px }
+.title { font: 700 16px/1.25 var(--display); overflow-wrap: anywhere }
+.facts { display: flex; flex-wrap: wrap; gap: 6px 12px; color: var(--muted); font-size: 12px }
+.facts .num { font-family: var(--mono); font-variant-numeric: tabular-nums }
+.pill { font: 600 12px/1 var(--body); padding: 6px 10px; border-radius: 999px; white-space: nowrap; border: 1px solid currentColor }
+.s-review { color: var(--gold) } .s-regenerate { color: var(--coral) } .s-regenerating { color: var(--sky) } .s-approved { color: var(--accent) } .s-published { color: var(--sky) } .s-rejected { color: var(--stone) } .s-rendering { color: var(--muted) }
+.body { border-top: 1px solid var(--line); padding: 16px; display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 20px }
+@media (max-width: 760px) { .body { grid-template-columns: minmax(0, 1fr) } .rowhead { grid-template-columns: 44px 1fr; } .rowhead .pill { grid-column: 2; justify-self: start } .thumb { width: 44px } }
+video { width: 100%; max-width: 300px; aspect-ratio: 9/16; background: #000; border-radius: 10px; display: block }
+.kit { display: grid; gap: 14px; min-width: 0 }
+.field { display: grid; gap: 6px; min-width: 0 }
+.fieldhead { display: flex; justify-content: space-between; align-items: center; gap: 8px }
+.label { font: 600 11px/1 var(--body); letter-spacing: .1em; text-transform: uppercase; color: var(--muted) }
+.value { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; white-space: pre-wrap; overflow-wrap: anywhere; min-width: 0 }
+.value.mono { font: 500 12.5px/1.6 var(--mono) }
+.copy { border: 1px solid var(--line); background: var(--panel); color: var(--fg); border-radius: 6px; padding: 4px 10px; font: 500 12px var(--body); cursor: pointer }
+.twist { color: var(--muted); font-size: 13px; margin: 0 }
+textarea { width: 100%; min-height: 84px; resize: vertical; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--fg); padding: 10px 12px; font: 14px/1.5 var(--body) }
+.actions { display: flex; flex-wrap: wrap; gap: 8px }
+.act { border-radius: 8px; padding: 8px 14px; font: 600 13px var(--body); cursor: pointer; border: 1px solid var(--line); background: var(--panel); color: var(--fg) }
+.act.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink) }
+.act.warn { color: var(--coral); border-color: var(--coral) }
+.act:disabled { opacity: .5; cursor: not-allowed }
+.history { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none }
+.history li { font-size: 13px; color: var(--muted); border-left: 2px solid var(--line); padding-left: 10px }
+.empty, .banner { background: var(--panel); border: 1px dashed var(--line); border-radius: 12px; padding: 24px; color: var(--muted); text-align: center }
+.banner { border-style: solid; padding: 10px 14px; text-align: left; font-size: 13px }
+.toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 8px 14px; border-radius: 8px; font-size: 13px; opacity: 0; transition: opacity .2s; pointer-events: none }
+.toast.on { opacity: 1 }
+@media (prefers-reduced-motion: reduce) { .toast { transition: none } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Mind the Gap · @mindDgap · Shorts production</div>
+    <h1>Launch tracker</h1>
+    <p class="sub">Watch each Short, copy its launch kit, and leave feedback. To change a Short, write what should change and press <b>Request regeneration</b>.</p>
+    <ol class="steps" aria-label="How a regeneration works"><li><b>Regeneration requested</b>: your note is saved. Claude checks the tracker every hour, or right away if you message it "check the tracker".</li><li><b>Regenerating</b>: Claude has picked it up and is re-rendering. The row shows what is being changed.</li><li><b>Needs review</b>: the new version is here, with a version number and a history line saying what changed.</li></ol>
+  </header>
+
+  <div class="strip" id="stats" role="group" aria-label="Filter by status"></div>
+  <div class="controls">
+    <div class="batches" id="batches" role="group" aria-label="Batch"></div>
+    <span class="syncbar"><span class="note" id="sync">Connecting…</span><button type="button" class="chipbtn" id="refresh">Refresh</button></span>
+  </div>
+  <div id="banner" hidden class="banner"></div>
+  <div class="list" id="list">
+    <div class="empty">The batch appears here as each Short finishes rendering: player, title, description, hashtags, tags and pinned comment, ready to copy.</div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const STATUS = {
+  rendering: 'Rendering', review: 'Needs review', regenerate: 'Regeneration requested', regenerating: 'Regenerating', approved: 'Approved', published: 'Published', rejected: 'Rejected'
+};
+const ORDER = ['review', 'regenerate', 'regenerating', 'approved', 'published', 'rejected', 'rendering'];
+let rows = [], filter = null, batch = null, open = null, db = null, canWrite = true;
+const $ = id => document.getElementById(id);
+function ago(ms) { if (!ms) return ''; const d = (Date.now() - ms) / 60000; if (d < 1) return 'just now'; if (d < 60) return Math.round(d) + ' min ago'; if (d < 1440) return Math.round(d / 60) + ' h ago'; return new Date(ms).toLocaleDateString(); }
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const safeSrc = u => (typeof u === 'string' && (u.startsWith('/_blob/') || u.startsWith('https://'))) ? u : '';
+function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('on'), 1800); }
+async function copy(text, label, node) {
+  try { await navigator.clipboard.writeText(text); toast(label + ' copied'); }
+  catch (e) { const r = document.createRange(); r.selectNodeContents(node); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast('Selected: press Ctrl+C or ⌘C to copy'); }
+}
+function field(label, text, mono) {
+  const f = el('div', 'field'), h = el('div', 'fieldhead'), v = el('div', 'value' + (mono ? ' mono' : ''), text);
+  const b = el('button', 'copy', 'Copy'); b.type = 'button'; b.addEventListener('click', () => copy(text, label, v));
+  h.append(el('span', 'label', label), b); f.append(h, v); return f;
+}
+function renderStats() {
+  const inBatch = rows.filter(r => batch == null || r.batch === batch), s = $('stats'); s.textContent = '';
+  const all = el('button', 'stat'); all.type = 'button'; all.setAttribute('aria-pressed', String(filter === null)); all.append(el('b', null, String(inBatch.length)), el('span', null, 'All Shorts')); all.onclick = () => { filter = null; render(); }; s.append(all);
+  for (const k of ORDER) { const n = inBatch.filter(r => (r.status || 'review') === k).length; if (!n && k === 'rendering') continue;
+    const b = el('button', 'stat'); b.type = 'button'; b.setAttribute('aria-pressed', String(filter === k)); const num = el('b', 's-' + k, String(n)); b.append(num, el('span', null, STATUS[k])); b.onclick = () => { filter = filter === k ? null : k; render(); }; s.append(b); }
+}
+function renderBatches() {
+  const set = [...new Set(rows.map(r => r.batch))].sort((a, b) => a - b), w = $('batches'); w.textContent = '';
+  const mk = (val, label) => { const b = el('button', 'chipbtn', label); b.type = 'button'; b.setAttribute('aria-pressed', String(batch === val)); b.onclick = () => { batch = val; render(); }; w.append(b); };
+  mk(null, 'All batches'); for (const v of set) mk(v, v === 0 ? 'Approved earlier' : 'Batch ' + v);
+}
+async function setStatus(r, status, fb) {
+  if (!db) return; const ref = db.collection('videos').doc(r.id), now = Date.now();
+  const patch = { status, updatedAt: now }; if (fb != null) { patch.feedback = fb; patch.feedbackAt = now; }
+  try { await ref.update(patch); toast(status === 'regenerate' ? 'Request saved. Claude picks it up at its next check.' : STATUS[status]); }
+  catch (e) { toast(e && e.code === 'permission_denied' ? 'You can view this tracker but not change it' : 'Could not save. Try again.'); }
+}
+function renderBody(r) {
+  const body = el('div', 'body'), left = el('div'), kit = el('div', 'kit');
+  const src = safeSrc(r.video);
+  if (src) { const v = document.createElement('video'); v.controls = true; v.playsInline = true; v.preload = 'metadata'; v.src = src; const p = safeSrc(r.thumb); if (p) v.poster = p; left.append(v); }
+  else left.append(el('div', 'empty', r.status === 'rendering' ? 'Rendering now. The video appears here when it is done.' : 'Video not uploaded yet'));
+  if (src) left.append(dlRow(r, src));
+  const L = r.launch || {};
+  if (r.twist) kit.append(el('p', 'twist', 'Twist: ' + r.twist));
+  kit.append(field('Title', r.title || ''));
+  const desc = (L.description || '') + (L.hashtags && L.hashtags.length ? '\n\n' + L.hashtags.map(h => '#' + String(h).replace(/^#/, '')).join(' ') : '');
+  kit.append(field('Description + hashtags', desc));
+  kit.append(field('Tags', (L.tags || []).join(', '), true));
+  kit.append(field('Pinned comment', L.pinned || ''));
+  const fbf = el('div', 'field'), lab = el('label', 'label', 'Your feedback'); lab.htmlFor = 'fb-' + r.id;
+  const ta = document.createElement('textarea'); ta.id = 'fb-' + r.id; ta.placeholder = 'What should change? e.g. "make the storm earlier", "shorter title", "winner should be red"'; ta.value = r.feedback || '';
+  const acts = el('div', 'actions');
+  const btn = (txt, cls, fn) => { const b = el('button', 'act ' + cls, txt); b.type = 'button'; b.disabled = !canWrite; b.addEventListener('click', fn); acts.append(b); return b; };
+  btn('Approve', 'primary', () => setStatus(r, 'approved', ta.value.trim() || null));
+  const rb = btn(r.status === 'regenerate' ? 'Update request' : 'Request regeneration', 'warn', () => { const t = ta.value.trim(); if (!t) { toast('Write what should change first'); ta.focus(); return; } setStatus(r, 'regenerate', t); }); if (r.status === 'regenerating') { rb.disabled = true; rb.title = 'Claude is working on this one'; }
+  btn('Mark published', '', () => setStatus(r, 'published', null));
+  btn('Reject', '', () => setStatus(r, 'rejected', ta.value.trim() || null));
+  fbf.append(lab, ta, acts); kit.append(fbf);
+  if (Array.isArray(r.history) && r.history.length) { const h = el('div', 'field'); h.append(el('span', 'label', 'History')); const ul = el('ul', 'history'); for (const it of r.history.slice().reverse()) ul.append(el('li', null, 'v' + (it.v || '?') + ': ' + (it.note || '') + (it.at ? ' · ' + ago(it.at) : ''))); h.append(ul); kit.append(h); }
+  body.append(left, kit); return body;
+}
+function render() {
+  renderBatches(); renderStats();
+  const waiting = rows.filter(r => r.status === 'regenerate').length, working = rows.filter(r => r.status === 'regenerating').length, b = $('banner');
+  if (canWrite && (waiting || working)) { b.hidden = false; b.textContent = (working ? working + (working === 1 ? ' Short is' : ' Shorts are') + ' being regenerated now. ' : '') + (waiting ? waiting + (waiting === 1 ? ' request is' : ' requests are') + ' waiting: Claude picks them up at its next hourly check, or right away if you message it "check the tracker".' : 'The new version will appear here as Needs review.'); }
+  else if (canWrite) b.hidden = true;
+  const list = $('list'); list.textContent = '';
+  let view = rows.filter(r => (batch == null || r.batch === batch) && (!filter || (r.status || 'review') === filter));
+  view.sort((a, b) => (a.batch - b.batch) || ((a.idx || 0) - (b.idx || 0)));
+  if (!rows.length) { list.append(el('div', 'empty', 'The batch appears here as each Short finishes rendering: player, title, description, hashtags, tags and pinned comment, ready to copy.')); return; }
+  if (!view.length) { list.append(el('div', 'empty', 'Nothing matches this filter.')); return; }
+  for (const r of view) {
+    const row = el('article', 'row'), head = el('button', 'rowhead'); head.type = 'button'; head.setAttribute('aria-expanded', String(open === r.id));
+    const img = document.createElement('img'); img.className = 'thumb'; img.alt = ''; const t = safeSrc(r.thumb); if (t) img.src = t;
+    const meta = el('div', 'meta'); meta.append(el('div', 'title', r.title || r.id));
+    const facts = el('div', 'facts'); facts.append(el('span', 'num', (r.batch === 0 ? 'Earlier' : 'B' + r.batch) + ' · #' + (r.idx || '–')), el('span', null, r.scene || ''), el('span', 'num', (r.duration ? r.duration.toFixed(1) + 's' : '')), el('span', 'num', 'v' + (r.version || 1)));
+    if (r.status === 'regenerate') facts.append(el('span', null, 'Requested ' + ago(r.feedbackAt) + ' · waiting for Claude'));
+    if (r.status === 'regenerating') facts.append(el('span', null, 'Claude started ' + ago(r.workStartedAt) + (r.workNote ? ' · ' + r.workNote : '')));
+    if (r.status === 'review' && r.version > 1 && r.doneAt) facts.append(el('span', null, 'v' + r.version + ' ready ' + ago(r.doneAt)));
+    meta.append(facts);
+    const pill = el('span', 'pill s-' + (r.status || 'review'), STATUS[r.status || 'review'] || r.status);
+    head.append(img, meta, pill); head.addEventListener('click', () => { open = open === r.id ? null : r.id; render(); });
+    row.append(head); if (open === r.id) row.append(renderBody(r)); list.append(row);
+  }
+}
+function stamp() { $('sync').textContent = (rows.length ? 'Live · ' + rows.length + ' Shorts' : 'Live · waiting for the first Short') + ' · updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
+async function refresh() {
+  if (!db) { toast('Still connecting'); return; } const b = $('refresh'); b.disabled = true; b.textContent = 'Refreshing…';
+  try { const snap = await db.collection('videos').get(); rows = snap.docs.map(d => ({ id: d.id, ...(d.data() || {}) })); render(); stamp(); toast('Up to date'); }
+  catch (e) { toast('Could not refresh. Try again.'); }
+  finally { b.disabled = false; b.textContent = 'Refresh'; }
+}
+function dlRow(r, src) {
+  const box = el('div', 'dl'), slug = (r.id || 'short') + '-v' + (r.version || 1);
+  const mk = (label, url, filename) => { const b = el('button', 'act', label); b.type = 'button'; b.addEventListener('click', async () => {
+    const d = await claude.use('downloads'); if (!d) { toast('Downloads are not available in this view. Open the tracker in a browser.'); return; }
+    b.disabled = true; const keep = b.textContent; b.textContent = 'Preparing…';
+    try { const res = await fetch(url); if (!res.ok) throw { code: 'fetch' }; const blob = await res.blob(); await d.save({ filename, data: blob }); toast('Saved ' + filename); }
+    catch (e) { const c = e && e.code; toast(c === 'host_unavailable' ? 'This app cannot save files. Open the tracker in a browser or on a computer.' : c === 'rate_limited' ? 'A save is already open. Try again in a moment.' : c === 'too_large' ? 'The file is too large to save here.' : 'The download did not complete. Try again.'); }
+    finally { b.disabled = false; b.textContent = keep; } }); box.append(b); };
+  mk('Download video', src, slug + '.mp4');
+  const th = safeSrc(r.thumb); if (th) mk('Download thumbnail', th, slug + '-thumbnail.jpg');
+  return box;
+}
+(async () => {
+  const timer = setTimeout(() => { $('sync').textContent = 'Still connecting to the tracker data…'; }, 10000);
+  db = await claude.use('db');
+  if (!db) { clearTimeout(timer); $('sync').textContent = 'Sign in to claude.ai to see the tracker data.'; return; }
+  try { const u = await claude.use('user'); if (u && u.can) { const c = await u.can('data.write'); if (c === false) { canWrite = false; const b = $('banner'); b.hidden = false; b.textContent = 'You can watch and copy launch kits here. Feedback buttons are for the channel owner.'; } } } catch (e) {}
+  $('refresh').addEventListener('click', refresh);
+  db.collection('videos').onSnapshot(snap => {
+    if (!snap.metadata || !snap.metadata.fromCache) clearTimeout(timer);
+    rows = snap.docs.map(d => ({ id: d.id, ...(d.data() || {}) }));
+    stamp();
+    render();
+  }, e => { clearTimeout(timer); $('sync').textContent = 'The tracker data could not be loaded (' + (e && e.code || 'error') + ').'; });
+})();
+</script>

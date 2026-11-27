@@ -30,7 +30,8 @@ mistake reaches the owner, add the rule to `LEARNINGS.md` and, where a machine c
 validator in `make.js`, so it cannot happen again.
 
 ## The launch tracker (owner feedback loop)
-Tracker page: https://claude.ai/artifact/PZrHJGJHpy8NAUTzmv3nmE (database collection `videos`, one document per
+Tracker page: https://claude.ai/artifact/PZrHJGJHpy8NAUTzmv3nmE (source: `tracker/tracker.html`; publish it with
+capabilities db, assets, user, downloads) (database collection `videos`, one document per
 Short, id = spec id; fields: batch, idx, title, scene, twist, duration, version, status, video, thumb, launch
 {description, hashtags, tags, pinned}, feedback, history).
 - **Statuses:** `review` (waiting for the owner), `regenerate` (owner wrote feedback), `regenerating` (Claude

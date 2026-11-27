@@ -632,26 +632,6 @@
   }
  },
  {
-  "id": "the-crowd-stopped-cheering",
-  "scene": "race",
-  "date": "2026-11-27T11:43:03.944Z",
-  "style": {
-   "theme": "navy",
-   "captionStyle": "tracked",
-   "transition": "slide",
-   "labels": "above",
-   "hook": "flashforward",
-   "speed": "slowmo",
-   "outro": "endcard",
-   "instrument": "piano",
-   "impact": "boom",
-   "root": 53,
-   "bpm": 84,
-   "music": "first",
-   "boost": []
-  }
- },
- {
   "id": "tomorrow-never-reached-the-top",
   "scene": "climb",
   "date": "2026-11-27T11:46:43.927Z",
@@ -767,6 +747,26 @@
    "impact": "boom",
    "root": 53,
    "bpm": 90,
+   "music": "first",
+   "boost": []
+  }
+ },
+ {
+  "id": "the-crowd-stopped-cheering",
+  "scene": "race",
+  "date": "2026-11-27T12:08:20.078Z",
+  "style": {
+   "theme": "navy",
+   "captionStyle": "tracked",
+   "transition": "slide",
+   "labels": "above",
+   "hook": "flashforward",
+   "speed": "slowmo",
+   "outro": "endcard",
+   "instrument": "piano",
+   "impact": "boom",
+   "root": 53,
+   "bpm": 84,
    "music": "first",
    "boost": []
   }

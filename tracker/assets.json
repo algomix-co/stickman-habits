@@ -246,15 +246,20 @@
   ]
  },
  "the-crowd-stopped-cheering": {
-  "video": "/_blob/d0c3532aa05eb581bbbc47d4c22c2d15",
-  "thumb": "/_blob/072ad894bead34e7c910a072b99a57dd",
-  "version": 1,
+  "video": "/_blob/4cd93d328969aa790b563e4df6afbcbf",
+  "thumb": "/_blob/0a7754fc4d0b1ae5ee30f70f6ab54460",
+  "version": 2,
   "duration": 30.3,
   "history": [
    {
     "v": 1,
     "note": "First render (after the independent review fixes)",
     "at": 1795779808962
+   },
+   {
+    "v": 2,
+    "note": "Names stay on one line (engine fix: they flipped between one and two lines)",
+    "at": 1795781313535
    }
   ]
  },

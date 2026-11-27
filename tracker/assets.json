@@ -72,13 +72,19 @@
   ]
  },
  "he-built-it-after-work": {
-  "video": "/_blob/a4d31f7b87372d2b3fc33a9124ee16ac",
-  "thumb": "/_blob/0b1d694c487fe6326f43974d589c09ed",
-  "version": 1,
+  "video": "/_blob/52d5991129bd1e9bceaeca0d2d90445b",
+  "thumb": "/_blob/ab604fa6b10fcc74f324f6710816881a",
+  "version": 2,
+  "duration": 30.5,
   "history": [
    {
     "v": 1,
     "note": "First render (after the independent review fixes)"
+   },
+   {
+    "v": 2,
+    "note": "Names stay on one line (engine fix: they flipped between one and two lines)",
+    "at": 1795781536776
    }
   ]
  },

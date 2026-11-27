@@ -398,26 +398,6 @@
   }
  },
  {
-  "id": "he-built-it-after-work",
-  "scene": "bridge",
-  "date": "2026-11-27T10:54:46.221Z",
-  "style": {
-   "theme": "dusk",
-   "captionStyle": "boxed",
-   "transition": "fade",
-   "labels": "above",
-   "hook": "flashforward",
-   "speed": "slowmo",
-   "outro": "endcard",
-   "instrument": "piano",
-   "impact": "boom",
-   "root": 54,
-   "bpm": 80,
-   "music": "first",
-   "boost": []
-  }
- },
- {
   "id": "he-celebrated-too-early",
   "scene": "dig",
   "date": "2026-11-27T10:57:27.759Z",
@@ -767,6 +747,26 @@
    "impact": "boom",
    "root": 53,
    "bpm": 84,
+   "music": "first",
+   "boost": []
+  }
+ },
+ {
+  "id": "he-built-it-after-work",
+  "scene": "bridge",
+  "date": "2026-11-27T12:12:02.909Z",
+  "style": {
+   "theme": "dusk",
+   "captionStyle": "boxed",
+   "transition": "fade",
+   "labels": "above",
+   "hook": "flashforward",
+   "speed": "slowmo",
+   "outro": "endcard",
+   "instrument": "piano",
+   "impact": "boom",
+   "root": 54,
+   "bpm": 80,
    "music": "first",
    "boost": []
   }

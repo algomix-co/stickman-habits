@@ -487,26 +487,6 @@
   }
  },
  {
-  "id": "rest-days-built-this-bridge",
-  "scene": "bridge",
-  "date": "2026-11-27T11:24:11.316Z",
-  "style": {
-   "theme": "void",
-   "captionStyle": "boxed",
-   "transition": "slide",
-   "labels": "above",
-   "hook": "flashforward",
-   "speed": "none",
-   "outro": "endcard",
-   "instrument": "piano",
-   "impact": "boom",
-   "root": 53,
-   "bpm": 72,
-   "music": "first",
-   "boost": []
-  }
- },
- {
   "id": "she-lifted-through-winter",
   "scene": "lift",
   "date": "2026-11-27T11:27:33.374Z",
@@ -767,6 +747,26 @@
    "impact": "boom",
    "root": 54,
    "bpm": 84,
+   "music": "first",
+   "boost": []
+  }
+ },
+ {
+  "id": "rest-days-built-this-bridge",
+  "scene": "bridge",
+  "date": "2026-11-27T12:23:28.310Z",
+  "style": {
+   "theme": "void",
+   "captionStyle": "boxed",
+   "transition": "slide",
+   "labels": "above",
+   "hook": "flashforward",
+   "speed": "none",
+   "outro": "endcard",
+   "instrument": "piano",
+   "impact": "boom",
+   "root": 53,
+   "bpm": 72,
    "music": "first",
    "boost": []
   }

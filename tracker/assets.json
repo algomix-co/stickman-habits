@@ -192,15 +192,20 @@
   ]
  },
  "rest-days-built-this-bridge": {
-  "video": "/_blob/55b768a373508de3d6cd23a916012f21",
-  "thumb": "/_blob/f0441c8ccd1fb08818336d868cb8202f",
-  "version": 1,
+  "video": "/_blob/72c2f0fdc2d1a8827ab3ebd5a2eddb64",
+  "thumb": "/_blob/69057e419be5ae87442d38674af456fc",
+  "version": 2,
   "duration": 29.3,
   "history": [
    {
     "v": 1,
     "note": "First render (after the independent review fixes)",
     "at": 1795778830586
+   },
+   {
+    "v": 2,
+    "note": "Names stay on one line (engine fix: they flipped between one and two lines)",
+    "at": 1795782220542
    }
   ]
  },

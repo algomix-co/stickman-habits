@@ -94,13 +94,19 @@
   ]
  },
  "head-start-still-lost": {
-  "video": "/_blob/ea92a4558a09d6562187b2bf7a83ed12",
-  "thumb": "/_blob/a686b25c07b6e1fb49f5c5657b764dcb",
-  "version": 1,
+  "video": "/_blob/5eec048c1551c9f226278b00ee3c162f",
+  "thumb": "/_blob/fe46826d7cc9c369a81ecc5e418371a1",
+  "version": 2,
+  "duration": 29.1,
   "history": [
    {
     "v": 1,
     "note": "First render (after the independent review fixes)"
+   },
+   {
+    "v": 2,
+    "note": "Names stay on one line (engine fix: they flipped between one and two lines)",
+    "at": 1795780914883
    }
   ]
  },

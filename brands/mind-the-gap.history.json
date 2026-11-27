@@ -438,26 +438,6 @@
   }
  },
  {
-  "id": "head-start-still-lost",
-  "scene": "race",
-  "date": "2026-11-27T11:03:29.540Z",
-  "style": {
-   "theme": "grid",
-   "captionStyle": "boxed",
-   "transition": "dayzoom",
-   "labels": "above",
-   "hook": "flashforward",
-   "speed": "none",
-   "outro": "endcard",
-   "instrument": "piano",
-   "impact": "boom",
-   "root": 57,
-   "bpm": 76,
-   "music": "first",
-   "boost": []
-  }
- },
- {
   "id": "most-liked-fewest-reps",
   "scene": "pullup",
   "date": "2026-11-27T11:06:46.576Z",
@@ -767,6 +747,26 @@
    "impact": "boom",
    "root": 59,
    "bpm": 80,
+   "music": "first",
+   "boost": []
+  }
+ },
+ {
+  "id": "head-start-still-lost",
+  "scene": "race",
+  "date": "2026-11-27T12:01:41.925Z",
+  "style": {
+   "theme": "grid",
+   "captionStyle": "boxed",
+   "transition": "dayzoom",
+   "labels": "above",
+   "hook": "flashforward",
+   "speed": "none",
+   "outro": "endcard",
+   "instrument": "piano",
+   "impact": "boom",
+   "root": 57,
+   "bpm": 76,
    "music": "first",
    "boost": []
   }

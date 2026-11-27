@@ -1,0 +1,21 @@
+{
+ "id": "thinking-isnt-doing",
+ "brand": "mind-the-gap",
+ "format": "montage",
+ "keywords": ["overthinking", "decision", "procrastination"],
+ "scenes": [
+  {"kind": "idea", "dur": 6.5, "heading": "SAME IDEA.", "left": {"label": "OVERTHINKER"}, "right": {"label": "DOER"}},
+  {"kind": "plan", "dur": 6.5, "heading": "THE PLAN.", "left": {"label": "PLANS MORE"}, "right": {"label": "BUILDS"}},
+  {"kind": "firsttry", "dur": 7, "heading": "THE FIRST TRY.", "left": {"label": "WAITS"}, "right": {"label": "SINKS"}},
+  {"kind": "sailaway", "dur": 7.5, "heading": "ONE YEAR LATER.", "left": {"label": "STILL PLANS"}, "right": {"label": "ARRIVED"}, "line": "DONE BEATS A PERFECT PLAN."}
+ ],
+ "endcard": {"tagline": "THE PLAN NEVER SAILED."},
+ "upload": {
+  "title": "Thinking Isn't Doing",
+  "description": "Same idea, two people. One keeps planning for every 'what if'; the other starts ugly, sinks, and builds again. One year later only one of them has left the shore. Which one are you?",
+  "hashtags": ["overthinking", "procrastination", "mindset", "motivation", "selfimprovement", "shorts"],
+  "tags": ["overthinking", "stop overthinking", "procrastination", "just start", "done is better than perfect", "fear of failure", "taking action", "mindset", "motivation", "stickman animation", "shorts"],
+  "pinned": "What's the plan you've been perfecting instead of starting? 👇"
+ },
+ "twist": "The planner's tower of pages falls on him; the doer's first boat sank, the second one reached the island."
+}

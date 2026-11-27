@@ -1,0 +1,22 @@
+{
+ "id": "pay-yourself-first",
+ "brand": "mind-the-gap",
+ "format": "montage",
+ "keywords": ["money", "choices", "results"],
+ "footnote": "Illustrative",
+ "scenes": [
+  {"kind": "payday", "dur": 6.5, "heading": "SAME PAYCHECK.", "left": {"label": "SPENDS FIRST"}, "right": {"label": "SAVES FIRST"}},
+  {"kind": "credit", "dur": 7, "heading": "THE CAR ON CREDIT.", "left": {"label": "LOOKS RICH"}, "right": {"label": "GETS RICH"}},
+  {"kind": "monthly", "dur": 7, "heading": "EVERY MONTH.", "left": {"label": "PAYS OTHERS"}, "right": {"label": "PAYS HIMSELF"}, "saved": 14200},
+  {"kind": "tenyears", "dur": 7.5, "heading": "TEN YEARS LATER.", "left": {"label": "SPENDS FIRST"}, "right": {"label": "SAVES FIRST"}, "final": 186000, "line": "PAY YOURSELF FIRST."}
+ ],
+ "endcard": {"tagline": "THE JAR BEATS THE CAR."},
+ "upload": {
+  "title": "Pay Yourself First",
+  "description": "Same paycheck, two habits. One spends first and saves what's left; the other saves first and spends what's left. Ten years later the gap is a different life. Which one are you? (Illustrative numbers.)",
+  "hashtags": ["money", "personalfinance", "savingmoney", "mindset", "discipline", "shorts"],
+  "tags": ["pay yourself first", "saving money", "personal finance", "car loan", "compound interest", "money habits", "middle class money", "financial discipline", "motivation", "stickman animation", "shorts"],
+  "pinned": "Be honest: does your paycheck go to the jar or the car first? 👇"
+ },
+ "twist": "Same paycheck: one buys a car on credit and runs in a wheel of bills; the other feeds a jar that grows into a money tree."
+}

@@ -15,7 +15,8 @@ const flag = f => args.includes(f), opt = f => (args.indexOf(f) >= 0 ? args[args
 const CHECK = flag('--check'), REVIEW = flag('--review'), SKIP_REVIEW = flag('--skip-review'), FORCE = flag('--force'), PREVIEW = flag('--preview') || CHECK || REVIEW, KEEP = flag('--keep-frames'), RESTYLE = flag('--restyle'), SHEET = opt('--sheet');
 const WORKERS = +(opt('--workers') || 4) || 4;
 const specs = args.filter(a => a.endsWith('.json') && a !== opt('--brand') && a !== SHEET);
-const FPS = +(opt('--fps') || 60) || 60, ROOT = __dirname, PAGE = 'file://' + path.join(ROOT, 'engine', 'page.html');
+const FPS = +(opt('--fps') || 60) || 60, ROOT = __dirname, PAGE = 'file://' + path.join(ROOT, 'engine', 'page.html'), PAGE_M = 'file://' + path.join(ROOT, 'engine', 'montage.html');
+const pageFor = spec => spec && spec.format === 'montage' ? PAGE_M : PAGE;
 const SCENES = ['towers', 'race', 'climb', 'pullup', 'lift', 'dig', 'bridge', 'bricks', 'buckets', 'swords', 'doors'];
 const STATES = ['active', 'idle', 'boast', 'win', 'quit', 'sad', 'shock', 'fall', 'throw', 'cheer', 'stand', 'sit'];
 const EVENTS = ['crash', 'shake', 'marker', 'burst', 'rain', 'fling', 'flash', 'gap', 'storm', 'look', 'crowd'];
@@ -47,6 +48,7 @@ function compatible(dim, v, spec, brand) {
 }
 function pickStyle(spec, brand, history) {
   const rnd = seededRand(spec.id + ':' + history.length), recent = history.slice(-6).reverse(), style = {}, why = {};
+  if (spec.format === 'montage') { const f = brand.fixed || {}; return { music: f.music || 'first', instrument: f.instrument || 'piano', impact: f.impact || 'boom', outro: 'endcard', root: DIMS.root[Math.floor(rnd() * DIMS.root.length)], bpm: DIMS.bpm[Math.floor(rnd() * DIMS.bpm.length)], ...(spec.style || {}) }; }
   for (const dim of Object.keys(DIMS)) {
     if (spec.style && spec.style[dim] != null) { style[dim] = spec.style[dim]; why[dim] = 'spec'; continue; }
     if (brand.fixed && brand.fixed[dim] != null) { style[dim] = brand.fixed[dim]; why[dim] = 'brand'; continue; }
@@ -68,6 +70,7 @@ function pickStyle(spec, brand, history) {
 
 // ---------------------------------------------------------------- validation
 function validate(s, brand = {}) {
+  if (s.format === 'montage') return validateMontage(s, brand);
   const E = [], Wn = [], need = (c, m) => { if (!c) E.push(m); };
   need(s.id && /^[a-z0-9-]+$/.test(s.id), 'id must be lowercase-kebab');
   need(SCENES.includes(s.scene), `scene must be one of ${SCENES.join(', ')}`);
@@ -146,6 +149,39 @@ function validate(s, brand = {}) {
   if (R.oneChange) need(caps.some(c => c.startsWith('ONE CHANGE:')), 'one caption must state the single change ("ONE CHANGE: ...")');
   return { errors: E, warnings: Wn };
 }
+/* round 4 format (LEARNINGS "Round 4 verdict"): one idea through 3-6 mini-scenes, each a different visual metaphor */
+function validateMontage(s, brand = {}) {
+  const E = [], Wn = [], need = (c, m) => { if (!c) E.push(m); };
+  need(s.id && /^[a-z0-9-]+$/.test(s.id), 'id must be lowercase-kebab');
+  need(Array.isArray(s.scenes) && s.scenes.length >= 3 && s.scenes.length <= 6, 'a montage needs 3-6 mini-scenes (one idea, several pictures)');
+  const kinds = (s.scenes || []).map(S => S.kind);
+  need(new Set(kinds).size === kinds.length, 'every mini-scene must be a different kind (a new picture each time)');
+  (s.scenes || []).forEach((S, k) => {
+    const at = `scene ${k + 1}`;
+    need(typeof S.kind === 'string', `${at}: kind required`);
+    need(S.dur >= 3 && S.dur <= 9, `${at}: dur must be 3-9 s`);
+    need(typeof S.heading === 'string' && S.heading.length <= 34 && S.heading === S.heading.toUpperCase(), `${at}: heading required, ALL CAPS, <= 34 chars`);
+    for (const side of ['left', 'right']) if (S[side] && S[side].label) need(S[side].label.length <= 13 && S[side].label === S[side].label.toUpperCase(), `${at}: ${side} label "${S[side].label}" must be ALL CAPS, <= 13 chars`);
+    if (S.line) need(S.line.length <= 30, `${at}: line "${S.line}" must be <= 30 chars`);
+  });
+  const total = (s.scenes || []).reduce((a, S) => a + (S.dur || 0), 0);
+  need(total >= 22 && total <= 40, `mini-scenes add up to ${total.toFixed(1)} s; aim for 26-35 s (22-40 allowed)`);
+  titleRules(s, brand, need);
+  if (brand.rules && brand.rules.storyTagline) need(s.endcard && s.endcard.tagline && s.endcard.tagline.length <= 40, 'endcard.tagline required (written for this story, <= 40 chars)');
+  return { errors: E, warnings: Wn };
+}
+function titleRules(s, brand, need) {
+  need(s.upload && s.upload.title && s.upload.title.length <= 100, 'upload.title required (<= 100 chars)');
+  const T0 = (s.upload && s.upload.title) || '', BR = brand.rules || {};
+  if (T0 && brand.titleMaxWords) { const words = T0.split(/\s+/).filter(w => /[A-Za-z0-9]/.test(w)).length; need(words <= brand.titleMaxWords, `title "${T0}" has ${words} words; the ${brand.name} brand allows ${brand.titleMaxWords}`); }
+  for (const pat of BR.titleBan || []) need(!new RegExp(pat, 'i').test(T0), `title "${T0}" matches banned pattern /${pat}/ (see LEARNINGS.md)`);
+  if (BR.ledger && T0) { let L = {}; try { L = JSON.parse(fs.readFileSync(path.join(ROOT, BR.ledger))); } catch (e) {}
+    const STOP = new Set(['the', 'a', 'an', 'is', 'are', 'you', 'your', 'of', 'to', 'it', 'and', 'or', 'not', 'in', 'on', 'for', 'never', 'always']);
+    const words = t => new Set(t.toLowerCase().replace(/['’]/g, '').replace(/[^a-z0-9% ]/g, ' ').split(/\s+/).filter(w => w && !STOP.has(w))), mine = words(T0);
+    for (const e of (L.rejected || []).map(x => x.title || x)) { const w = words(e), inter = [...mine].filter(x => w.has(x)).length; need(e.toLowerCase() !== T0.toLowerCase() && inter / Math.max(1, Math.min(mine.size, w.size)) < 0.6, `title "${T0}" repeats rejected title "${e}" (ledger)`); }
+    for (const e of (L.used || []).map(x => x.title || x)) need(e.toLowerCase() !== T0.toLowerCase() || s.upload.rerender === true, `title "${T0}" was already used (ledger)`); }
+  if (BR.keywords) { const kw = (s.keywords || []).map(k => String(k).toLowerCase()); need(kw.some(k => BR.keywords.includes(k)), `"keywords" must include at least one of the brand keywords (${BR.keywords.slice(0, 6).join(', ')}, ...)`); }
+}
 const readJSON = p => JSON.parse(fs.readFileSync(p, 'utf8'));
 // story pacing: beats where nothing happens in the first second (no event, bubble, value change or state change)
 function paceLint(spec) {
@@ -164,17 +200,18 @@ function paceLint(spec) {
 // reviewer: render every frame in memory, measure defects, apply automatic fixes, repeat
 async function reviewLoop(page, spec, brand, style0, out) {
   const style = { ...style0, boost: [...(style0.boost || [])] }, log = []; let pass = false, last = null;
-  for (const p of paceLint(spec)) { style.boost.push([p.t0, p.t0 + 1.2]); log.push({ iteration: 0, issues: [`beat ${p.beat}: nothing happens in its first second`], fixes: ['energy boost'] }); console.log(`  review 0: beat ${p.beat} has nothing in its first second -> fix: energy boost`); }
+  for (const p of (spec.format === 'montage' ? [] : paceLint(spec))) { style.boost.push([p.t0, p.t0 + 1.2]); log.push({ iteration: 0, issues: [`beat ${p.beat}: nothing happens in its first second`], fixes: ['energy boost'] }); console.log(`  review 0: beat ${p.beat} has nothing in its first second -> fix: energy boost`); }
   for (let it = 1; it <= 5; it++) {
     await page.evaluate(([s, b, st]) => window.loadSpec(s, b, st), [spec, brand, style]);
-    const st = await page.evaluate(() => window.reviewRun(15)); last = st;
+    const st = await page.evaluate(() => window.reviewRun(15)); last = st; if (spec.format === 'montage') st.washed = st.washed || [];
     const issues = [], fixes = [];
     const early = st.motion.map((m, k) => [k, m]).filter(([k, m]) => m < 0.6 && k < st.realDur * 0.6);   // stricter than the post-render 0.35: video encoding smooths small motion
     if (early.length) { issues.push(`quiet seconds ${early.map(e => e[0] + 's').join(',')}`); for (const [k] of early) { const a = await page.evaluate(r => window.__storyAt(r), Math.max(0, k - 0.3)), b = await page.evaluate(r => window.__storyAt(r), k + 1.3); style.boost.push([Math.min(a, b), Math.max(a, b)]); } fixes.push('energy boost'); }
     const crowd = st.warnings.filter(w => /overlap|out of frame|too small|covers its own/.test(w)), edge = st.warnings.filter(w => /off-screen|Shorts like|bottom overlay/.test(w));
     if (crowd.length || edge.length) {
       issues.push(...crowd.concat(edge).slice(0, 3));
-      if (crowd.length && style.labels !== 'board' && compatible('labels', 'board', spec, brand) && !(brand.allow && brand.allow.labels && !brand.allow.labels.includes('board'))) { style.labels = 'board'; if (style.transition === 'dayzoom') style.transition = 'cut'; fixes.push('leaderboard labels'); }
+      if (spec.format === 'montage') { /* no automatic layout fix: the mini-scene has to be changed */ }
+      else if (crowd.length && style.labels !== 'board' && compatible('labels', 'board', spec, brand) && !(brand.allow && brand.allow.labels && !brand.allow.labels.includes('board'))) { style.labels = 'board'; if (style.transition === 'dayzoom') style.transition = 'cut'; fixes.push('leaderboard labels'); }
       else if (edge.length && !crowd.some(w => /too small/.test(w)) && (style.labelScale || 1) > 0.85) { style.labelScale = +((style.labelScale || 1) * 0.94).toFixed(3); fixes.push('labels -6%'); }
       // "too small" is never fixed by shrinking; if the leaderboard is already on, a human has to shorten names/tags
     }
@@ -218,7 +255,7 @@ async function sheet(page, times, cols) {
     const brand = fs.existsSync(brandPath) ? readJSON(brandPath) : {};
     const histPath = brandPath.replace(/\.json$/, '.history.json'), history = (fs.existsSync(histPath) ? readJSON(histPath) : []).concat(session.filter(h => h.brand === brandPath));
     const v = validate(spec, brand);
-    console.log(`\n== ${spec.id || file} (${spec.scene}, brand: ${brand.name || 'none'})`);
+    console.log(`\n== ${spec.id || file} (${spec.scene || spec.format}, brand: ${brand.name || 'none'})`);
     if (v.errors.length) { v.errors.forEach(e => console.log('  ERROR:', e)); failed++; continue; }
     const out = path.join(ROOT, 'out', spec.id); fs.mkdirSync(out, { recursive: true });
     const stylePath = path.join(out, 'style.json'), key = hashOf(spec, brand);
@@ -227,7 +264,7 @@ async function sheet(page, times, cols) {
     else { style = pickStyle(spec, brand, history.filter(h => h.id !== spec.id)); fs.writeFileSync(stylePath, JSON.stringify({ key, style }, null, 1)); }
     session.push({ id: spec.id, brand: brandPath, style });
     console.log('  style:', Object.entries(style).map(([k, x]) => `${k}=${x}`).join(' '));
-    const pages = await Promise.all([...Array(PREVIEW ? 1 : WORKERS)].map(async () => { const p = await browser.newPage(); await p.goto(PAGE); await p.evaluate(() => window.ready); return p; }));
+    const pages = await Promise.all([...Array(PREVIEW ? 1 : WORKERS)].map(async () => { const p = await browser.newPage(); await p.goto(pageFor(spec)); await p.evaluate(() => window.ready); return p; }));
     let info;
     try { for (const p of pages) info = await p.evaluate(([s, b, st]) => window.loadSpec(s, b, st), [spec, brand, style]); } catch (e) { console.log('  ERROR:', e.message); failed++; await Promise.all(pages.map(p => p.close())); continue; }
     console.log(`  duration: story ${info.dur.toFixed(1)}s -> video ${info.realDur.toFixed(1)}s`);
@@ -264,16 +301,16 @@ async function sheet(page, times, cols) {
     /* launch kit: everything needed to publish, plus a thumbnail frame at the climax */
     let thumbAt = Math.min(info.realDur - 3, 2.5); try { const cu = JSON.parse(fs.readFileSync(path.join(out, 'cues.json'))); if (cu.burst && cu.burst.length) thumbAt = cu.burst[cu.burst.length - 1] + 0.7; } catch (e) {}
     try { execFileSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', '-ss', String(thumbAt), '-i', mp4, '-frames:v', '1', '-q:v', '3', path.join(out, 'thumbnail.jpg')]); } catch (e) { console.log('  thumbnail failed'); }
-    fs.writeFileSync(path.join(out, 'launch.json'), JSON.stringify({ id: spec.id, title: u.title, description: u.description || '', hashtags: (u.hashtags || []).map(h => h.replace(/^#/, '')), tags: u.tags || [], pinned: u.pinned || 'Which one are you? A, B, C or D 👇', twist: spec.twist || '', scene: spec.scene, keywords: spec.keywords || [], duration: +info.realDur.toFixed(1), thumbnailAt: +thumbAt.toFixed(2) }, null, 1));
+    fs.writeFileSync(path.join(out, 'launch.json'), JSON.stringify({ id: spec.id, title: u.title, description: u.description || '', hashtags: (u.hashtags || []).map(h => h.replace(/^#/, '')), tags: u.tags || [], pinned: u.pinned || 'Which one are you? A, B, C or D 👇', twist: spec.twist || '', scene: spec.scene || spec.format, keywords: spec.keywords || [], duration: +info.realDur.toFixed(1), thumbnailAt: +thumbAt.toFixed(2) }, null, 1));
     // motion check: no quiet second allowed in the first 60% of the video (a planned breather later is fine)
     const mot = JSON.parse(execFileSync('python3', ['-I', path.join(ROOT, 'tools_motion.py'), mp4, '--json']).toString());
     const quiet = mot.per_second.map((v, k) => [k, v]).filter(([k, v]) => v < 0.35);
     const early = quiet.filter(([k]) => k < info.realDur * 0.6).map(([k]) => k + 's');
     if (early.length) warns.add(`quiet seconds in the first 60% of the video: ${early.join(', ')}`);
     console.log(`  motion: mean ${mot.mean} | quiet seconds: ${quiet.map(([k]) => k + 's').join(' ') || 'none'}`);
-    const qa = { id: spec.id, scene: spec.scene, brand: brand.name || null, duration: info.realDur, fps: FPS, frames: total, style, motion: mot, warnings: [...v.warnings, ...warns] };
+    const qa = { id: spec.id, scene: spec.scene || spec.format, brand: brand.name || null, duration: info.realDur, fps: FPS, frames: total, style, motion: mot, warnings: [...v.warnings, ...warns] };
     fs.writeFileSync(path.join(out, 'qa.json'), JSON.stringify(qa, null, 2)); qa.warnings.forEach(w => console.log('  warn:', w));
-    const hist = history.filter(h => h.id !== spec.id && !h.brand); hist.push({ id: spec.id, scene: spec.scene, date: new Date().toISOString(), style }); fs.writeFileSync(histPath, JSON.stringify(hist, null, 1));
+    const hist = history.filter(h => h.id !== spec.id && !h.brand); hist.push({ id: spec.id, scene: spec.scene || spec.format, date: new Date().toISOString(), style }); fs.writeFileSync(histPath, JSON.stringify(hist, null, 1));
     console.log('  done ->', path.relative(ROOT, mp4));
   }
   await browser.close(); process.exit(failed ? 1 : 0);

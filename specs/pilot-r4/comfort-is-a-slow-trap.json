@@ -1,0 +1,21 @@
+{
+ "id": "comfort-is-a-slow-trap",
+ "brand": "mind-the-gap",
+ "format": "montage",
+ "keywords": ["comfort", "focus", "social"],
+ "scenes": [
+  {"kind": "night", "dur": 6.5, "heading": "11 PM.", "left": {"label": "COMFORT ZONE"}, "right": {"label": "GROWTH ZONE"}},
+  {"kind": "alarm", "dur": 6.5, "heading": "6 AM.", "left": {"label": "COMFORT ZONE"}, "right": {"label": "GROWTH ZONE"}},
+  {"kind": "sinking", "dur": 7, "heading": "ONE YEAR LATER.", "left": {"label": "COMFORT ZONE"}, "right": {"label": "GROWTH ZONE"}},
+  {"kind": "theview", "dur": 7.5, "heading": "FIVE YEARS LATER.", "left": {"label": "STILL COMFY"}, "right": {"label": "THE VIEW"}, "line": "COMFORT KEEPS YOU STUCK."}
+ ],
+ "endcard": {"tagline": "LEAVE BEFORE IT HOLDS YOU."},
+ "upload": {
+  "title": "Comfort Is A Slow Trap",
+  "description": "11 PM, 6 AM, one year, five years. The comfort zone never grabs you all at once; it just feels nice every single night. Which zone are you in?",
+  "hashtags": ["comfortzone", "discipline", "selfimprovement", "motivation", "mindset", "shorts"],
+  "tags": ["comfort zone", "get out of your comfort zone", "phone addiction", "doom scrolling", "morning routine", "wake up early", "discipline", "self improvement", "motivation", "stickman animation", "shorts"],
+  "pinned": "Be honest: what time did you put your phone down last night? 👇"
+ },
+ "twist": "The couch sinks into sand one comfortable night at a time; the climber throws a rope down from the top."
+}

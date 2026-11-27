@@ -607,26 +607,6 @@
   }
  },
  {
-  "id": "started-together-finished-alone",
-  "scene": "race",
-  "date": "2026-11-27T11:35:16.903Z",
-  "style": {
-   "theme": "navy",
-   "captionStyle": "tracked",
-   "transition": "slide",
-   "labels": "above",
-   "hook": "flashforward",
-   "speed": "slowmo",
-   "outro": "endcard",
-   "instrument": "piano",
-   "impact": "boom",
-   "root": 53,
-   "bpm": 90,
-   "music": "first",
-   "boost": []
-  }
- },
- {
   "id": "strong-arms-weak-why",
   "scene": "climb",
   "date": "2026-11-27T11:39:27.068Z",
@@ -767,6 +747,26 @@
    "impact": "boom",
    "root": 57,
    "bpm": 76,
+   "music": "first",
+   "boost": []
+  }
+ },
+ {
+  "id": "started-together-finished-alone",
+  "scene": "race",
+  "date": "2026-11-27T12:05:03.388Z",
+  "style": {
+   "theme": "navy",
+   "captionStyle": "tracked",
+   "transition": "slide",
+   "labels": "above",
+   "hook": "flashforward",
+   "speed": "slowmo",
+   "outro": "endcard",
+   "instrument": "piano",
+   "impact": "boom",
+   "root": 53,
+   "bpm": 90,
    "music": "first",
    "boost": []
   }

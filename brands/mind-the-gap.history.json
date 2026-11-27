@@ -487,26 +487,6 @@
   }
  },
  {
-  "id": "oldest-beginner-crossed-first",
-  "scene": "bridge",
-  "date": "2026-11-27T11:17:23.141Z",
-  "style": {
-   "theme": "navy",
-   "captionStyle": "tracked",
-   "transition": "slide",
-   "labels": "above",
-   "hook": "flashforward",
-   "speed": "slowmo",
-   "outro": "endcard",
-   "instrument": "piano",
-   "impact": "boom",
-   "root": 54,
-   "bpm": 84,
-   "music": "first",
-   "boost": []
-  }
- },
- {
   "id": "perfect-planks-unfinished-bridge",
   "scene": "bridge",
   "date": "2026-11-27T11:21:08.858Z",
@@ -767,6 +747,26 @@
    "impact": "boom",
    "root": 54,
    "bpm": 80,
+   "music": "first",
+   "boost": []
+  }
+ },
+ {
+  "id": "oldest-beginner-crossed-first",
+  "scene": "bridge",
+  "date": "2026-11-27T12:15:50.516Z",
+  "style": {
+   "theme": "navy",
+   "captionStyle": "tracked",
+   "transition": "slide",
+   "labels": "above",
+   "hook": "flashforward",
+   "speed": "slowmo",
+   "outro": "endcard",
+   "instrument": "piano",
+   "impact": "boom",
+   "root": 54,
+   "bpm": 84,
    "music": "first",
    "boost": []
   }

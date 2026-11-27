@@ -156,15 +156,20 @@
   ]
  },
  "oldest-beginner-crossed-first": {
-  "video": "/_blob/fcf56f5edeb87e3405018cc59d5b4e02",
-  "thumb": "/_blob/1d4f20652e6fa3cf7f6c2c18ba238f1b",
-  "version": 1,
+  "video": "/_blob/1c68661d50583b26789dabfc1d04b408",
+  "thumb": "/_blob/0ee87c9f8dc3a9197ba4ac0b01fcda05",
+  "version": 2,
   "duration": 30.5,
   "history": [
    {
     "v": 1,
     "note": "First render (after the independent review fixes)",
     "at": 1795778830586
+   },
+   {
+    "v": 2,
+    "note": "Names stay on one line (engine fix: they flipped between one and two lines)",
+    "at": 1795781763495
    }
   ]
  },
